@@ -1,16 +1,17 @@
+import { getCurrentLocation } from "./libs/get-current-location";
+
+// biome-ignore lint/correctness/noUnusedVariables: We are setting up the map
+let map: google.maps.Map;
 const mapElement = document.getElementById("map") as HTMLElement;
 
-let map: google.maps.Map;
-const center: google.maps.LatLngLiteral = { lat: 30, lng: -110 };
-
-async function initMap(): Promise<void> {
-	map = await new google.maps.Map(mapElement, {
+const initMap = async () => {
+	const center: google.maps.LatLngLiteral = await getCurrentLocation();
+	map = new google.maps.Map(mapElement, {
 		center,
-		zoom: 8,
+		zoom: 13,
 	});
-}
+};
 
-// Wait for Google Maps API to load before initializing
 window.addEventListener("load", () => {
 	initMap();
 });
