@@ -1,3 +1,4 @@
+use api::queries::Query;
 use async_graphql::{http::GraphiQLSource, *};
 use async_graphql_axum::GraphQL;
 use axum::{
@@ -5,9 +6,7 @@ use axum::{
     response::{Html, IntoResponse},
     routing::get,
 };
-
 mod api;
-use api::Query;
 
 #[tokio::main]
 async fn main() {
