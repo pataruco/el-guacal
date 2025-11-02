@@ -11,3 +11,5 @@ chrono = {version = "0.4.42", features = ["clock"]}
 tokio = {version = "1.48.0",  features = ["full"]}
 uuid = { version = "1.17.0", features = ["v4"] }
 diesel = { version = "2.2.0", features = ["postgres"] }
+postgis_diesel = {version = "3.0.2", features = ["postgres", "diesel", "serde", "serde_geojson"]}
+dotenvy = "0.15"

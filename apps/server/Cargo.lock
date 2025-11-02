@@ -446,6 +446,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
+
+[[package]]
 name = "downcast-rs"
 version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -480,6 +486,8 @@ dependencies = [
  "axum",
  "chrono",
  "diesel",
+ "dotenvy",
+ "postgis_diesel",
  "tokio",
  "uuid",
 ]
@@ -984,6 +992,17 @@ name = "pkg-config"
 version = "0.3.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
+
+[[package]]
+name = "postgis_diesel"
+version = "3.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "45fa8e0611d2cc63b52034db2a4880b1dd2d2237568c1cb0f83442b77c1729f7"
+dependencies = [
+ "byteorder",
+ "diesel",
+ "serde",
+]
 
 [[package]]
 name = "ppv-lite86"
