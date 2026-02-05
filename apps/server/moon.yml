@@ -1,0 +1,9 @@
+language: "rust"
+
+tasks:
+  build:
+    command: "cargo build"
+    description: "Build the server application"
+  dev:
+    command: "cargo run"
+    description: "Start the development server"
