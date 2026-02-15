@@ -4,18 +4,18 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-async-graphql = "7.0.17"
+async-graphql = { version = "7.0.17", features = ["chrono", "uuid"] }
 async-graphql-axum = "7.0.17"
 axum = "0.8.6"
 chrono = { version = "0.4.42", features = ["clock"] }
 tokio = { version = "1.48.0", features = ["full"] }
-uuid = { version = "1.18.1", features = ["v4"] }
-diesel = { version = "2.3.3", features = ["postgres"] }
-postgis_diesel = { version = "3.0.2", features = [
+uuid = { version = "1.18.1", features = ["v4", "serde"] }
+sqlx = { version = "0.8.3", features = [
+    "runtime-tokio-native-tls",
     "postgres",
-    "diesel",
-    "serde",
-    "serde_geojson",
+    "uuid",
+    "chrono",
+    "macros",
 ] }
 dotenvy = "0.15"
 serde = { version = "1.0.228", features = ["derive"] }

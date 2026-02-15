@@ -1,21 +1,13 @@
+use async_graphql::SimpleObject;
+use chrono::{DateTime, Utc};
+use sqlx::FromRow;
 use uuid::Uuid;
 
+#[derive(SimpleObject, FromRow, Clone, Debug)]
 pub struct Product {
-    brand: String,
-    created_at: String,
-    id: Uuid,
-    name: String,
-    updated_at: Option<String>,
-}
-
-impl Product {
-    pub fn new(name: String, brand: String) -> Self {
-        Product {
-            brand,
-            created_at: chrono::offset::Utc::now().to_string(),
-            id: Uuid::new_v4(),
-            name,
-            updated_at: None,
-        }
-    }
+    pub product_id: Uuid,
+    pub name: String,
+    pub brand: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
 }

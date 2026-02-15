@@ -1,4 +1,3 @@
-use api::queries::Query;
 use async_graphql::{http::GraphiQLSource, *};
 use async_graphql_axum::GraphQL;
 use axum::{
@@ -6,9 +5,10 @@ use axum::{
     response::{Html, IntoResponse},
     routing::get,
 };
-mod api;
+use sqlx::postgres::PgPoolOptions;
 
 use el_guacal_server::config::Config;
+use el_guacal_server::api::queries::Query;
 
 #[tokio::main]
 async fn main() {
@@ -20,8 +20,20 @@ async fn main() {
         }
     };
 
-    let schema = Schema::build(Query, EmptyMutation, EmptySubscription).finish();
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&config.database_url)
+        .await
+        .expect("Failed to create pool");
+
+    let schema = Schema::build(Query, EmptyMutation, EmptySubscription)
+        .data(pool)
+        .finish();
+
     let router = Router::new().route("/graphql", get(graphql).post_service(GraphQL::new(schema)));
+
+    println!("Server running on http://0.0.0.0:{}", config.port);
+
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", config.port))
         .await
         .unwrap();
