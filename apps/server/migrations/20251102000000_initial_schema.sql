@@ -420,3 +420,16 @@ VALUES
     'Las Iguanas',
     'Unit 3 Coliseum Leisure Park,Cheshire Oaks,Ellesmere Port,Cheshire CH65 9HD'
   );
+
+  -- Insert Harina P.A.N. product
+  INSERT INTO products (name, brand)
+  VALUES ('Harina P.A.N.', 'Alimentos Polar');
+
+  -- Add Harina P.A.N. to all stores
+  INSERT INTO store_products (store_id, product_id)
+  SELECT
+    s.store_id,
+    p.product_id
+  FROM stores s
+  CROSS JOIN products p
+  WHERE p.name = 'Harina P.A.N.' AND p.brand = 'Alimentos Polar';
