@@ -1,6 +1,10 @@
+use async_graphql::SimpleObject;
+use serde::{Deserialize, Serialize};
+
+#[derive(SimpleObject, Serialize, Deserialize, Clone, Debug)]
 pub struct Location {
-    lat: f64,
-    lng: f64,
+    pub lat: f64,
+    pub lng: f64,
 }
 
 impl Location {
