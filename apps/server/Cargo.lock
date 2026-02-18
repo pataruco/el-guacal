@@ -510,9 +510,12 @@ dependencies = [
  "axum",
  "chrono",
  "dotenvy",
+ "http",
  "serde",
+ "serde_json",
  "sqlx",
  "tokio",
+ "tower",
  "uuid",
 ]
 

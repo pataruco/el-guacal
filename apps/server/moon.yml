@@ -7,3 +7,21 @@ tasks:
   dev:
     command: "cargo run"
     description: "Start the development server"
+  install-sqlx:
+    command: "cargo install sqlx-cli --no-default-features --features postgres"
+    description: "Install sqlx-cli for database migrations"
+  migrate-create:
+    command: "sqlx migrate add"
+    description: "Create a new database migration"
+  migrate-run:
+    command: "sqlx migrate run"
+    description: "Run pending database migrations"
+  migrate-revert:
+    command: "sqlx migrate revert"
+    description: "Revert the last database migration"
+  migrate-status:
+    command: "sqlx migrate info"
+    description: "Show the status of database migrations"
+  test:
+    command: "cargo test"
+    description: "Run unit and integration tests"
