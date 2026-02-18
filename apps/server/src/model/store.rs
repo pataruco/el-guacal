@@ -67,3 +67,31 @@ impl Store {
         Ok(products)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::location::Location;
+    use chrono::Utc;
+    use uuid::Uuid;
+
+    #[test]
+    fn test_store_creation() {
+        let id = Uuid::new_v4();
+        let now = Utc::now();
+        let loc = Location::new(51.5074, -0.1278);
+        let store = Store {
+            store_id: id,
+            name: "Test Store".to_string(),
+            address: "123 Test St".to_string(),
+            location: loc.clone(),
+            created_at: now,
+            updated_at: now,
+        };
+        assert_eq!(store.store_id, id);
+        assert_eq!(store.name, "Test Store");
+        assert_eq!(store.address, "123 Test St");
+        assert_eq!(store.location.lat, loc.lat);
+        assert_eq!(store.location.lng, loc.lng);
+    }
+}

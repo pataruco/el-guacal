@@ -1,14 +1,5 @@
-use async_graphql::{http::GraphiQLSource, *};
-use async_graphql_axum::GraphQL;
-use axum::{
-    Router,
-    response::{Html, IntoResponse},
-    routing::get,
-};
+use server::{config::Config, create_router, create_schema};
 use sqlx::postgres::PgPoolOptions;
-
-use el_guacal_server::config::Config;
-use el_guacal_server::api::queries::Query;
 
 #[tokio::main]
 async fn main() {
@@ -26,11 +17,13 @@ async fn main() {
         .await
         .expect("Failed to create pool");
 
-    let schema = Schema::build(Query, EmptyMutation, EmptySubscription)
-        .data(pool)
-        .finish();
+    sqlx::migrate!()
+        .run(&pool)
+        .await
+        .expect("Failed to run migrations");
 
-    let router = Router::new().route("/graphql", get(graphql).post_service(GraphQL::new(schema)));
+    let schema = create_schema(pool);
+    let router = create_router(schema);
 
     println!("Server running on http://0.0.0.0:{}", config.port);
 
@@ -38,8 +31,4 @@ async fn main() {
         .await
         .unwrap();
     axum::serve(listener, router).await.unwrap();
-}
-
-async fn graphql() -> impl IntoResponse {
-    Html(GraphiQLSource::build().endpoint("/graphql").finish())
 }
