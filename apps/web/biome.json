@@ -12,7 +12,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/dist", "!**/node_modules"]
+    "includes": ["**", "!/dist", "!/node_modules"]
   },
   "formatter": {
     "enabled": true,
@@ -46,7 +46,7 @@
       }
     }
   },
-  "root": false,
+  "root": true,
   "vcs": {
     "clientKind": "git",
     "enabled": true,
