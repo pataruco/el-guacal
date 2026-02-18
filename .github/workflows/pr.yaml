@@ -8,6 +8,7 @@ on:
       - main
       - '!release-please--branches--main'
     paths-ignore:
+      - '.github/**'
       - 'CHANGELOG.md'
       - .release-please-manifest.json
   merge_group:
