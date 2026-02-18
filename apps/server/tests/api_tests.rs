@@ -2,9 +2,9 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use el_guacal_server::config::Config;
-use el_guacal_server::{create_router, create_schema};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
+use server::config::Config;
+use server::{create_router, create_schema};
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
@@ -47,10 +47,14 @@ async fn test_graphql_stores_near() {
 
     assert_eq!(response.status(), StatusCode::OK);
 
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let body: Value = serde_json::from_slice(&body).unwrap();
 
-    let stores = body["data"]["storesNear"].as_array().expect("storesNear should be an array");
+    let stores = body["data"]["storesNear"]
+        .as_array()
+        .expect("storesNear should be an array");
     assert!(!stores.is_empty(), "Should return at least one store");
 
     let first_store = &stores[0];
@@ -96,17 +100,26 @@ async fn test_graphql_store_products() {
 
     assert_eq!(response.status(), StatusCode::OK);
 
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let body: Value = serde_json::from_slice(&body).unwrap();
 
     if let Some(errors) = body["errors"].as_array() {
         panic!("GraphQL errors: {:?}", errors);
     }
 
-    let stores = body["data"]["storesNear"].as_array().expect("storesNear should be an array");
+    let stores = body["data"]["storesNear"]
+        .as_array()
+        .expect("storesNear should be an array");
     assert!(!stores.is_empty(), "Should return at least one store");
 
-    let products = stores[0]["products"].as_array().expect("products should be an array");
-    assert!(!products.is_empty(), "Should return at least one product for the store");
+    let products = stores[0]["products"]
+        .as_array()
+        .expect("products should be an array");
+    assert!(
+        !products.is_empty(),
+        "Should return at least one product for the store"
+    );
     assert_eq!(products[0]["name"], "Harina P.A.N.");
 }

@@ -1,5 +1,4 @@
-use el_guacal_server::config::Config;
-use el_guacal_server::{create_router, create_schema};
+use server::{config::Config, create_router, create_schema};
 use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]

@@ -6,9 +6,9 @@ use api::queries::Query;
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use async_graphql_axum::GraphQL;
 use axum::{
+    Router,
     response::{Html, IntoResponse},
     routing::get,
-    Router,
 };
 use sqlx::PgPool;
 

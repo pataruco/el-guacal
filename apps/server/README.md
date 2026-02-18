@@ -7,12 +7,13 @@ This is the GraphQL server for El Guacal, built with Rust using Axum and async-g
 ### Prerequisites
 
 - [Moon](https://moonrepo.dev/) task runner.
-- [Docker](https://www.docker.com/) for running the database.
+- [Colima](https://github.com/abiosoft/colima) for running the database.
 
 ### Database Setup
 
 1. Start the PostgreSQL database with PostGIS:
    ```bash
+   colima start
    docker compose up -d
    ```
 
@@ -30,19 +31,19 @@ This is the GraphQL server for El Guacal, built with Rust using Axum and async-g
 
 The following `moon` tasks are available for migration management:
 
-- **Create a new migration:**
+- Create a new migration:
   ```bash
   moon run server:migrate-create -- <migration_name>
   ```
-- **Run pending migrations:**
+- Run pending migrations:
   ```bash
   moon run server:migrate-run
   ```
-- **Revert the last migration:**
+- Revert the last migration:
   ```bash
   moon run server:migrate-revert
   ```
-- **Check migration status:**
+- Check migration status:
   ```bash
   moon run server:migrate-status
   ```
