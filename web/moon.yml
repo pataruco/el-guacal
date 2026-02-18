@@ -1,0 +1,15 @@
+language: "javascript"
+
+tasks:
+  build:
+    command: "pnpm build"
+    description: "Build the web application"
+  dev:
+    command: "pnpm dev"
+    description: "Start the development server"
+  format:
+    command: "pnpm exec biome check --write"
+    description: "Format the code"
+  lint:
+    command: "pnpm exec biome check"
+    description: "Lint the code"
