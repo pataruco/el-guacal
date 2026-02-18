@@ -1,0 +1,7 @@
+{
+	"name": "el-guacal",
+	"packageManager": "pnpm@10.29.3",
+	"devDependencies": {
+		"@moonrepo/cli": "^1.41.7"
+	}
+}
