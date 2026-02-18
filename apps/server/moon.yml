@@ -10,6 +10,9 @@ tasks:
   install-sqlx:
     command: "cargo install sqlx-cli --no-default-features --features postgres"
     description: "Install sqlx-cli for database migrations"
+  lint:
+    command: "cargo clippy -- -D warnings"
+    description: "Run linter"
   migrate-create:
     command: "sqlx migrate add"
     description: "Create a new database migration"

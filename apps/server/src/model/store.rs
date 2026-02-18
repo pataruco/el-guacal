@@ -39,12 +39,12 @@ impl Store {
     async fn products(&self, ctx: &Context<'_>) -> async_graphql::Result<Vec<Product>> {
         let pool = ctx.data::<PgPool>()?;
         let rows = sqlx::query(
-            r#"
+            r"
             SELECT p.product_id, p.name, p.brand, p.created_at, p.updated_at
             FROM products p
             JOIN store_products sp ON p.product_id = sp.product_id
             WHERE sp.store_id = $1
-            "#,
+            ",
         )
         .bind(self.store_id)
         .fetch_all(pool)

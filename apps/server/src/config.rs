@@ -18,6 +18,11 @@ pub struct Config {
 }
 
 impl Config {
+    /// Creates a new `Config` instance from environment variables.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the `PORT` environment variable is set
     pub fn new() -> Result<Self, anyhow::Error> {
         dotenv().ok();
 

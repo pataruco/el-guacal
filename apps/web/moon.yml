@@ -13,3 +13,5 @@ tasks:
   lint:
     command: "pnpm exec biome check"
     description: "Lint the code"
+    options:
+      affectedFiles: true

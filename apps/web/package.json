@@ -1,27 +1,30 @@
 {
-	"name": "el-guacal-web",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc && vite build",
-		"preview": "vite preview"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.3.2",
-		"@types/google.maps": "^3.58.1",
-		"typescript": "~5.9.3",
-		"vite": "npm:rolldown-vite@7.1.14"
-	},
-	"pnpm": {
-		"overrides": {
-			"vite": "npm:rolldown-vite@7.1.14"
-		}
-	},
-	"dependencies": {
-		"@apollo/client": "^4.0.9",
-		"graphql": "^16.12.0",
-		"rxjs": "^7.8.2"
-	}
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "globals": "^16.5.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.0-beta.13"
+  },
+  "name": "web",
+  "pnpm": {
+    "overrides": {
+      "vite": "^8.0.0-beta.13"
+    }
+  },
+  "private": true,
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "type": "module",
+  "version": "0.0.0"
 }

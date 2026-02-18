@@ -14,6 +14,7 @@ use sqlx::PgPool;
 
 pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
 
+#[must_use]
 pub fn create_schema(pool: PgPool) -> AppSchema {
     Schema::build(Query, EmptyMutation, EmptySubscription)
         .data(pool)
