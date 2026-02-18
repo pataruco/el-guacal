@@ -25,3 +25,21 @@ jobs:
       - uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_GH_TOKEN }}
+  ci-validation:
+    name: CI validation
+    needs: [release-please]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+
+      - name: Check jobs for errors
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { default: checkJobsForErrors } = await import('${{ github.workspace }}/.github/scripts/check-for-errors.mjs');
+            const jobs = ${{ toJSON(needs) }};
+            checkJobsForErrors({ core, jobs });
