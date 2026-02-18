@@ -1,0 +1,17 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"packages": {
+		"apps/web": {
+			"changelog-path": "apps/web/CHANGELOG.md",
+			"package-name": "web",
+			"release-type": "node",
+			"versioning": "default"
+		},
+		"apps/server": {
+			"changelog-path": "apps/server/CHANGELOG.md",
+			"package-name": "server",
+			"release-type": "rust",
+			"versioning": "default"
+		}
+	}
+}
