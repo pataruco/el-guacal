@@ -1,13 +1,13 @@
-name: Draft release
-run-name: ${{ github.actor }} is drafting a release
+name: Release
+run-name: ${{ github.actor }} is releasing
 
 on:
   push:
     branches:
       - main
     paths:
-      - .github/workflows/draft-release.yaml
-      - "!**/CHANGELOG.md"
+      - .github/workflows/release.yaml
+      - "**/CHANGELOG.md"
       - apps/**
 
 permissions:
@@ -23,6 +23,5 @@ jobs:
         with:
           fetch-depth: 0
       - uses: googleapis/release-please-action@v4
-        id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_GH_TOKEN }}
