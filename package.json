@@ -2,6 +2,9 @@
 	"name": "el-guacal",
 	"packageManager": "pnpm@10.29.3",
 	"devDependencies": {
-		"@moonrepo/cli": "^1.41.7"
+		"@commitlint/cli": "^20.4.1",
+		"@commitlint/config-conventional": "^20.4.1",
+		"@commitlint/types": "^20.4.0",
+		"@moonrepo/cli": "^2.0.0-rc.4"
 	}
 }

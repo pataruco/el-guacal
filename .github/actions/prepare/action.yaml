@@ -1,0 +1,23 @@
+name: 'Install dependencies'
+description: 'Set environment and install dependencies'
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        run_install: false
+
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+
+    - name: Install dependencies 📦
+      shell: bash
+      run: pnpm install
+
+    - name: Install Rust 🦀
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Run sccache-cache
+      uses: mozilla-actions/sccache-action@v0.0.9
