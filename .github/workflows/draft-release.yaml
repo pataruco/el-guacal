@@ -1,12 +1,12 @@
-name: Deploy
-run-name: ${{ github.actor }} is deploying
+name: Draft release
+run-name: ${{ github.actor }} is drafting a release
 
 on:
   push:
     branches:
       - main
     paths:
-      - .github/workflows/deploy.yaml
+      - .github/workflows/draft-release.yaml
       - "!**/CHANGELOG.md"
       - apps/**
 
