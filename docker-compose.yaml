@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: always
+    # volumes:
+    #   - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_PASSWORD: pataruco
+      POSTGRES_USER: pataruco
+      POSTGRES_DB: productsdb
+    ports:
+      - 5432:5432
