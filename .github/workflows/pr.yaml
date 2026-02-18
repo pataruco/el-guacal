@@ -98,8 +98,21 @@ jobs:
       - name: Set environment and install dependencies
         uses: ./.github/actions/prepare
 
+      - name: Install sqlx-cli
+        shell: bash
+        run: cargo install sqlx-cli --no-default-features --features postgres
+
+      - name: Run database migrations
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://pataruco:pataruco@localhost:5432/productsdb
+        working-directory: apps/server
+        run: sqlx migrate run
+
       - name: Run unit tests
         shell: bash
+        env:
+          DATABASE_URL: postgresql://pataruco:pataruco@localhost:5432/productsdb
         run: |
           pnpm exec moon run :test
 
