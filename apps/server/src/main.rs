@@ -6,7 +6,7 @@ async fn main() {
     let config = match Config::new() {
         Ok(config) => config,
         Err(err) => {
-            eprintln!("Failed to load configuration: {}", err);
+            eprintln!("Failed to load configuration: {err}");
             std::process::exit(1);
         }
     };
@@ -25,7 +25,7 @@ async fn main() {
     let schema = create_schema(pool);
     let router = create_router(schema);
 
-    println!("Server running on http://0.0.0.0:{}", config.port);
+    println!("Server running on http://0.0.0.0:{}/graphql", config.port);
 
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", config.port))
         .await

@@ -1,9 +1,9 @@
-use async_graphql::{Context, Enum, InputObject, Object};
-use sqlx::PgPool;
-use crate::model::store::Store;
 use crate::model::location::Location;
-use uuid::Uuid;
+use crate::model::store::Store;
+use async_graphql::{Context, Enum, InputObject, Object};
 use chrono::{DateTime, Utc};
+use sqlx::PgPool;
+use uuid::Uuid;
 
 pub struct Query;
 
@@ -22,7 +22,7 @@ pub enum Radius {
 }
 
 impl Radius {
-    fn to_meters(&self) -> f64 {
+    fn to_meters(self) -> f64 {
         match self {
             Radius::Km1 => 1000.0,
             Radius::Km2 => 2000.0,
@@ -51,7 +51,7 @@ impl Query {
         let radius_meters = radius.to_meters();
 
         let rows = sqlx::query(
-            r#"
+            r"
             SELECT
                 store_id,
                 name,
@@ -66,7 +66,7 @@ impl Query {
                 ST_SetSRID(ST_Point($1, $2), 4326)::geography,
                 $3
             )
-            "#
+            ",
         )
         .bind(location.lng)
         .bind(location.lat)
