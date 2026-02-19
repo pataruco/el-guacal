@@ -28,6 +28,7 @@ http = "1.4.0"
 
 [lints.clippy]
 pedantic = "warn"
+nursery = "warn"
 
 [lints.rust]
 unsafe_code = "forbid"

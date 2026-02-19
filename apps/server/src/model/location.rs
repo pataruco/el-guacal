@@ -9,8 +9,8 @@ pub struct Location {
 
 impl Location {
     #[must_use]
-    pub fn new(lat: f64, lng: f64) -> Self {
-        Location { lat, lng }
+    pub const fn new(lat: f64, lng: f64) -> Self {
+        Self { lat, lng }
     }
 }
 

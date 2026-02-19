@@ -2,7 +2,7 @@ use dotenvy::dotenv;
 use serde::Deserialize;
 use std::env;
 
-fn default_port() -> u16 {
+const fn default_port() -> u16 {
     8000
 }
 
@@ -30,9 +30,9 @@ impl Config {
             .map(|p| p.parse::<u16>())
             .unwrap_or(Ok(default_port()))?;
 
-        let config = Config {
+        let config = Self {
             port,
-            database_url: env::var("DATABASE_URL").unwrap_or(default_database_url()),
+            database_url: env::var("DATABASE_URL").unwrap_or_else(|_| default_database_url()),
         };
 
         Ok(config)

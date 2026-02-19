@@ -9,6 +9,8 @@ use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
 #[tokio::test]
+// These "ignored" test are integration test and will run by cargo test -- --include-ignored
+#[ignore]
 async fn test_graphql_stores_near() {
     let config = Config::new().expect("Failed to load config");
     let pool = PgPoolOptions::new()
@@ -63,6 +65,7 @@ async fn test_graphql_stores_near() {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_graphql_store_products() {
     let config = Config::new().expect("Failed to load config");
     let pool = PgPoolOptions::new()
