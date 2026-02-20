@@ -12,7 +12,9 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
     "@graphql-codegen/cli": "^6.1.1",
+    "@graphql-codegen/near-operation-file-preset": "^4.0.0",
     "@graphql-codegen/typescript": "^5.0.8",
+    "@graphql-codegen/typescript-operations": "^5.0.8",
     "@graphql-codegen/typescript-resolvers": "^5.1.6",
     "@graphql-codegen/typescript-rtk-query": "^3.1.2",
     "@testing-library/dom": "^10.4.0",
@@ -31,11 +33,6 @@
     "vitest": "^4.0.18"
   },
   "name": "web",
-  "pnpm": {
-    "overrides": {
-      "vite": "^8.0.0-beta.13"
-    }
-  },
   "private": true,
   "scripts": {
     "build": "tsc -b && vite build",
