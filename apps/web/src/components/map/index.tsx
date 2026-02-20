@@ -9,7 +9,7 @@ import {
 } from '@vis.gl/react-google-maps'
 
 import { useGetStoresNearQuery } from '@/graphql/queries/get-stores-near/index.generated';
-import { Radius } from '../../graphql/types';
+import type { Radius } from '../../graphql/types';
 import {
   getUserLocation,
   selectMap,
@@ -23,12 +23,19 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const MapComponent = () => {
   const dispatch = useAppDispatch();
-  const { center } = useAppSelector(selectMap);
+  const { center, zoom } = useAppSelector(selectMap);
 
-  const { data, isLoading, error } = useGetStoresNearQuery({
-    location: center,
-    radius: Radius.Km_10,
-  });
+  const roundedZoom = Math.round(zoom);
+  const skip = roundedZoom < 11 || roundedZoom > 22;
+  const radius = skip ? 'ZOOM_11' : (`ZOOM_${roundedZoom}` as Radius);
+
+  const { data, isLoading, error } = useGetStoresNearQuery(
+    {
+      location: center,
+      radius,
+    },
+    { skip },
+  );
 
   const handleOnLoad = () => {
     dispatch(getUserLocation());

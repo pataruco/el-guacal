@@ -47,13 +47,19 @@ export type QueryStoresNearArgs = {
   radius: Radius;
 };
 
-export enum Radius {
-  Km_1 = 'KM_1',
-  Km_2 = 'KM_2',
-  Km_3 = 'KM_3',
-  Km_5 = 'KM_5',
-  Km_10 = 'KM_10'
-}
+export type Radius =
+  | 'ZOOM_11'
+  | 'ZOOM_12'
+  | 'ZOOM_13'
+  | 'ZOOM_14'
+  | 'ZOOM_15'
+  | 'ZOOM_16'
+  | 'ZOOM_17'
+  | 'ZOOM_18'
+  | 'ZOOM_19'
+  | 'ZOOM_20'
+  | 'ZOOM_21'
+  | 'ZOOM_22';
 
 export type Store = {
   __typename?: 'Store';

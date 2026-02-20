@@ -9,27 +9,51 @@ pub struct Query;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Radius {
-    #[graphql(name = "KM_1")]
-    Km1,
-    #[graphql(name = "KM_2")]
-    Km2,
-    #[graphql(name = "KM_3")]
-    Km3,
-    #[graphql(name = "KM_5")]
-    Km5,
-    #[graphql(name = "KM_10")]
-    Km10,
+    #[graphql(name = "ZOOM_11")]
+    Zoom11,
+    #[graphql(name = "ZOOM_12")]
+    Zoom12,
+    #[graphql(name = "ZOOM_13")]
+    Zoom13,
+    #[graphql(name = "ZOOM_14")]
+    Zoom14,
+    #[graphql(name = "ZOOM_15")]
+    Zoom15,
+    #[graphql(name = "ZOOM_16")]
+    Zoom16,
+    #[graphql(name = "ZOOM_17")]
+    Zoom17,
+    #[graphql(name = "ZOOM_18")]
+    Zoom18,
+    #[graphql(name = "ZOOM_19")]
+    Zoom19,
+    #[graphql(name = "ZOOM_20")]
+    Zoom20,
+    #[graphql(name = "ZOOM_21")]
+    Zoom21,
+    #[graphql(name = "ZOOM_22")]
+    Zoom22,
 }
 
 impl Radius {
-    const fn to_meters(self) -> f64 {
-        match self {
-            Self::Km1 => 1000.0,
-            Self::Km2 => 2000.0,
-            Self::Km3 => 3000.0,
-            Self::Km5 => 5000.0,
-            Self::Km10 => 10000.0,
-        }
+    fn to_meters(self, lat: f64) -> f64 {
+        let zoom = match self {
+            Self::Zoom11 => 11.0,
+            Self::Zoom12 => 12.0,
+            Self::Zoom13 => 13.0,
+            Self::Zoom14 => 14.0,
+            Self::Zoom15 => 15.0,
+            Self::Zoom16 => 16.0,
+            Self::Zoom17 => 17.0,
+            Self::Zoom18 => 18.0,
+            Self::Zoom19 => 19.0,
+            Self::Zoom20 => 20.0,
+            Self::Zoom21 => 21.0,
+            Self::Zoom22 => 22.0,
+        };
+
+        let meters_per_pixel = (lat.to_radians().cos() * 156543.03392) / 2.0_f64.powf(zoom);
+        meters_per_pixel * 1280.0
     }
 }
 
@@ -48,7 +72,7 @@ impl Query {
         radius: Radius,
     ) -> async_graphql::Result<Vec<Store>> {
         let pool = ctx.data::<PgPool>()?;
-        let radius_meters = radius.to_meters();
+        let radius_meters = radius.to_meters(location.lat);
 
         let rows = sqlx::query(
             r"

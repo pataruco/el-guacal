@@ -24,7 +24,7 @@ async fn test_graphql_stores_near() {
 
     let query = r"
         query {
-            storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: KM_1) {
+            storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: ZOOM_11) {
                 name
                 address
                 location {
@@ -79,7 +79,7 @@ async fn test_graphql_store_products() {
 
     let query = r"
         query {
-            storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: KM_1) {
+            storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: ZOOM_11) {
                 name
                 products {
                     name

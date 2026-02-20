@@ -24,6 +24,9 @@ const config: CodegenConfig = {
       },
     },
     './src/graphql/types.ts': {
+      config: {
+        enumsAsTypes: true,
+      },
       plugins: ['typescript'],
     },
   },
