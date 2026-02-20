@@ -68,28 +68,13 @@ jobs:
         shell: bash
         run: |
           pnpm exec moon run :lint
+
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
     needs: [prepare]
     permissions:
       contents: read
-
-    services:
-      postgres:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: pataruco
-          POSTGRES_USER: pataruco
-          POSTGRES_DB: productsdb
-        ports:
-          - 5432:5432
-        # Set health checks to wait until postgres is ready
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v6
@@ -98,17 +83,6 @@ jobs:
 
       - name: Set environment and install dependencies
         uses: ./.github/actions/prepare
-
-      - name: Install sqlx-cli
-        shell: bash
-        run: cargo install sqlx-cli --no-default-features --features postgres
-
-      - name: Run database migrations
-        shell: bash
-        env:
-          DATABASE_URL: postgresql://pataruco:pataruco@localhost:5432/productsdb
-        working-directory: apps/server
-        run: sqlx migrate run
 
       - name: Run unit tests
         shell: bash

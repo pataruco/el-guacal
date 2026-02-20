@@ -10,7 +10,7 @@ use tower::ServiceExt;
 
 #[tokio::test]
 // These "ignored" test are integration test and will run by cargo test -- --include-ignored
-#[ignore]
+#[ignore = "integration tests"]
 async fn test_graphql_stores_near() {
     let config = Config::new().expect("Failed to load config");
     let pool = PgPoolOptions::new()
@@ -22,7 +22,7 @@ async fn test_graphql_stores_near() {
     let schema = create_schema(pool);
     let app = create_router(schema);
 
-    let query = r#"
+    let query = r"
         query {
             storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: KM_1) {
                 name
@@ -33,7 +33,7 @@ async fn test_graphql_stores_near() {
                 }
             }
         }
-    "#;
+    ";
 
     let response = app
         .oneshot(
@@ -65,7 +65,7 @@ async fn test_graphql_stores_near() {
 }
 
 #[tokio::test]
-#[ignore]
+#[ignore = "integration tests"]
 async fn test_graphql_store_products() {
     let config = Config::new().expect("Failed to load config");
     let pool = PgPoolOptions::new()
@@ -77,7 +77,7 @@ async fn test_graphql_store_products() {
     let schema = create_schema(pool);
     let app = create_router(schema);
 
-    let query = r#"
+    let query = r"
         query {
             storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: KM_1) {
                 name
@@ -87,7 +87,7 @@ async fn test_graphql_store_products() {
                 }
             }
         }
-    "#;
+    ";
 
     let response = app
         .oneshot(
@@ -109,7 +109,7 @@ async fn test_graphql_store_products() {
     let body: Value = serde_json::from_slice(&body).unwrap();
 
     if let Some(errors) = body["errors"].as_array() {
-        panic!("GraphQL errors: {:?}", errors);
+        panic!("GraphQL errors: {errors:?}");
     }
 
     let stores = body["data"]["storesNear"]
