@@ -1,0 +1,12 @@
+query GetStoresNear($location: LocationInput!, $radius: Radius!) {
+  storesNear(location: $location, radius: $radius) {
+    name
+    location {
+      lat
+      lng
+    }
+    products {
+      name
+    }
+  }
+}
