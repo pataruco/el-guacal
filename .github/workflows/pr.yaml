@@ -8,7 +8,6 @@ on:
       - main
       - '!release-please--branches--main'
     paths-ignore:
-      - '.github/**'
       - 'CHANGELOG.md'
       - .release-please-manifest.json
   merge_group:
@@ -19,22 +18,9 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.ref }}'
 
 jobs:
-  prepare:
-    name: Prepare
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/prepare
-
   conventional-commits:
     name: Conventional Commits
     runs-on: ubuntu-latest
-    needs: [prepare]
     permissions:
       contents: read
     steps:
@@ -49,10 +35,33 @@ jobs:
       - name: Conventional Commits
         uses: ./.github/actions/conventional-commits
 
-  lint-format:
-    name: Linting and formatting
+  detect-changes:
+    name: Detect changes
     runs-on: ubuntu-latest
-    needs: [prepare]
+    permissions:
+      contents: read
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect file changes
+        uses: actions/github-script@v8
+        id: filter
+        with:
+          script: |
+            const { default: detectChanges } = await import('${{ github.workspace }}/.github/scripts/detect-changes.mjs');
+            await detectChanges({ github, context, core });
+
+  lint-format-web:
+    name: Lint & format (web)
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
@@ -64,15 +73,16 @@ jobs:
       - name: Set environment and install dependencies
         uses: ./.github/actions/prepare
 
-      - name: Linting and formatting
+      - name: Linting and formatting (web)
         shell: bash
         run: |
-          pnpm exec moon run :lint
+          pnpm exec moon run web:lint
 
-  unit-tests:
-    name: Unit tests
+  lint-format-server:
+    name: Lint (server)
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.server == 'true'
     runs-on: ubuntu-latest
-    needs: [prepare]
     permissions:
       contents: read
     steps:
@@ -84,16 +94,58 @@ jobs:
       - name: Set environment and install dependencies
         uses: ./.github/actions/prepare
 
-      - name: Run unit tests
+      - name: Linting (server)
+        shell: bash
+        run: |
+          pnpm exec moon run server:lint
+
+  unit-tests-web:
+    name: Unit tests (web)
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set environment and install dependencies
+        uses: ./.github/actions/prepare
+
+      - name: Run unit tests (web)
+        shell: bash
+        run: |
+          pnpm exec moon run web:test
+
+  unit-tests-server:
+    name: Unit tests (server)
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set environment and install dependencies
+        uses: ./.github/actions/prepare
+
+      - name: Run unit tests (server)
         shell: bash
         env:
           DATABASE_URL: postgresql://pataruco:pataruco@localhost:5432/productsdb
         run: |
-          pnpm exec moon run :test
+          pnpm exec moon run server:test
 
   ci-validation:
     name: CI validation
-    needs: [prepare, conventional-commits, lint-format, unit-tests]
+    needs: [conventional-commits, lint-format-web, lint-format-server, unit-tests-web, unit-tests-server]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
