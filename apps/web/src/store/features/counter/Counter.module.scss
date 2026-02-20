@@ -1,0 +1,87 @@
+$primary-color: rgb(112, 76, 182);
+$primary-bg: rgba($primary-color, 0.1);
+$primary-bg-hover: rgba($primary-color, 0.2);
+$primary-border: rgba($primary-color, 0.4);
+$primary-bg-async: rgba($primary-color, 0.15);
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > button {
+    margin-right: 8px;
+    margin-left: 4px;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.value {
+  padding-right: 16px;
+  padding-left: 16px;
+  margin-top: 2px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 78px;
+}
+
+.button {
+  padding-right: 12px;
+  padding-bottom: 4px;
+  padding-left: 12px;
+  font-size: 32px;
+  color: $primary-color;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  background: none;
+  background-color: $primary-bg;
+  border: 2px solid transparent;
+  border-radius: 2px;
+  transition: all 0.15s;
+
+  &:hover,
+  &:focus {
+    border: 2px solid $primary-border;
+  }
+
+  &:active {
+    background-color: $primary-bg-hover;
+  }
+}
+
+.textbox {
+  width: 64px;
+  padding: 2px;
+  margin-right: 4px;
+  font-size: 32px;
+  text-align: center;
+}
+
+.asyncButton {
+  composes: button;
+  position: relative;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    content: '';
+    background-color: $primary-bg-async;
+    opacity: 0;
+    transition:
+      width 1s linear,
+      opacity 0.5s ease 1s;
+  }
+
+  &:active::after {
+    width: 0%;
+    opacity: 1;
+    transition: 0s;
+  }
+}
