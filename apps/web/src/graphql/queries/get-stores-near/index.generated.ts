@@ -1,6 +1,6 @@
 import * as Types from '../../types';
 
-import { api } from '@/store/features/guacal-api/base';
+import { gualcalGraphqlApiSlice } from '@/store/features/guacal-api/base';
 export type GetStoresNearQueryVariables = Types.Exact<{
   location: Types.LocationInput;
   radius: Types.Radius;
@@ -25,7 +25,7 @@ export const GetStoresNearDocument = `
 }
     `;
 
-const injectedRtkApi = api.injectEndpoints({
+const injectedRtkApi = gualcalGraphqlApiSlice.injectEndpoints({
   endpoints: (build) => ({
     GetStoresNear: build.query<GetStoresNearQuery, GetStoresNearQueryVariables>({
       query: (variables) => ({ document: GetStoresNearDocument, variables })
