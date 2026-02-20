@@ -27,4 +27,7 @@ tasks:
     description: "Show the status of database migrations"
   test:
     command: "cargo test"
+    description: "Run unit tests"
+  integration-test:
+    command: "cargo test -- --include-ignored"
     description: "Run unit and integration tests"

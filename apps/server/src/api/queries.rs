@@ -22,13 +22,13 @@ pub enum Radius {
 }
 
 impl Radius {
-    fn to_meters(self) -> f64 {
+    const fn to_meters(self) -> f64 {
         match self {
-            Radius::Km1 => 1000.0,
-            Radius::Km2 => 2000.0,
-            Radius::Km3 => 3000.0,
-            Radius::Km5 => 5000.0,
-            Radius::Km10 => 10000.0,
+            Self::Km1 => 1000.0,
+            Self::Km2 => 2000.0,
+            Self::Km3 => 3000.0,
+            Self::Km5 => 5000.0,
+            Self::Km10 => 10000.0,
         }
     }
 }
