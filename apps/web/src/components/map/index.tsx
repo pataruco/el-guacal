@@ -3,27 +3,38 @@ import {
   Map as GoogleMap,
   type MapCameraChangedEvent,
 } from '@vis.gl/react-google-maps';
+import {
+  getUserLocation,
+  selectMap,
+  setCenter,
+  setZoom,
+} from '../../store/features/map/slice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import styles from './index.module.scss';
 
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
 const MapComponent = () => {
+  const dispatch = useAppDispatch();
+  const { center } = useAppSelector(selectMap);
+
+  const handleOnLoad = () => {
+    dispatch(getUserLocation());
+  };
+
+  const handleOnCameraChanged = (ev: MapCameraChangedEvent) => {
+    dispatch(setCenter(ev.detail.center));
+    dispatch(setZoom(ev.detail.zoom));
+  };
+
   return (
     <div className={styles.map}>
-      <APIProvider
-        apiKey={'AIzaSyBD3PvjPjasXy9gJWqxHAHGLSVzKAfbN5M'}
-        onLoad={() => console.log('Maps API has loaded.')}
-      >
+      <APIProvider apiKey={GOOGLE_MAPS_API_KEY} onLoad={handleOnLoad}>
         <GoogleMap
-          style={{ height: '100%', width: '100%' }}
           defaultZoom={13}
-          defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
-          onCameraChanged={(ev: MapCameraChangedEvent) =>
-            console.log(
-              'camera changed:',
-              ev.detail.center,
-              'zoom:',
-              ev.detail.zoom,
-            )
-          }
+          center={center}
+          defaultCenter={center}
+          onCameraChanged={handleOnCameraChanged}
         />
       </APIProvider>
     </div>
