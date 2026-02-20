@@ -10,4 +10,12 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: {
+    proxy: {
+      '/graphql': {
+        changeOrigin: true,
+        target: 'http://localhost:8080',
+      },
+    },
+  },
 });
