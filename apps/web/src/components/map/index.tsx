@@ -2,11 +2,8 @@ import {
   APIProvider,
   Map as GoogleMap,
   type MapCameraChangedEvent,
-<<<<<<< HEAD
   Marker,
-=======
->>>>>>> e22d0d5 (feat: getting data from guacal server)
-} from '@vis.gl/react-google-maps'
+} from '@vis.gl/react-google-maps';
 
 import { useGetStoresNearQuery } from '@/graphql/queries/get-stores-near/index.generated';
 import type { Radius } from '../../graphql/types';
