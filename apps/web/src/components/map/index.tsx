@@ -4,7 +4,6 @@ import {
   type MapCameraChangedEvent,
   Marker,
 } from '@vis.gl/react-google-maps';
-
 import { useGetStoresNearQuery } from '@/graphql/queries/get-stores-near/index.generated';
 import type { Radius } from '../../graphql/types';
 import {
@@ -39,13 +38,13 @@ const MapComponent = () => {
   };
 
   const handleOnCameraChanged = (ev: MapCameraChangedEvent) => {
-    console.log(ev.detail.zoom);
     dispatch(setCenter(ev.detail.center));
     dispatch(setZoom(ev.detail.zoom));
   };
 
+  // TODO: add Advanced marker and MapId
   return (
-    <div className={styles.map}>
+    <div className={isLoading ? styles.loading : styles.map}>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY} onLoad={handleOnLoad}>
         <GoogleMap
           defaultZoom={13}

@@ -18,3 +18,6 @@ tasks:
   test:
     command: "pnpm vitest --config ./config/vitest.config.ts"
     description: "Format the code"
+  graphql-codegen:
+    command: "pnpm graphql-codegen --config ./config/codegen.ts"
+    description: "Format the code"

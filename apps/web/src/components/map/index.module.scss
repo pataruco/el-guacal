@@ -2,3 +2,22 @@
   flex: 1 auto;
   width: 100%;
 }
+
+.loading {
+  flex: 1 auto;
+  width: 100%;
+  min-height: 300px;
+  background: linear-gradient(110deg, #e2e2e2 8%, #f0f0f0 18%, #e2e2e2 33%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
