@@ -35,6 +35,7 @@ pub enum Radius {
     Zoom22,
 }
 
+#[allow(clippy::suboptimal_flops)]
 impl Radius {
     fn to_meters(self, lat: f64) -> f64 {
         let zoom = match self {
@@ -52,7 +53,7 @@ impl Radius {
             Self::Zoom22 => 22.0,
         };
 
-        let meters_per_pixel = (lat.to_radians().cos() * 156543.03392) / 2.0_f64.powf(zoom);
+        let meters_per_pixel = (lat.to_radians().cos() * 156_543.033_92) / 2.0_f64.powf(zoom);
         meters_per_pixel * 1280.0
     }
 }
