@@ -6,4 +6,6 @@
 node_modules
 .env
 target
-c
+
+# zed
+.zed

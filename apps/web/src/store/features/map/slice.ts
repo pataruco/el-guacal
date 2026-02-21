@@ -24,7 +24,6 @@ export const mapSlice = createAppSlice({
   reducers: (create) => ({
     getUserLocation: create.asyncThunk(
       async () => {
-        console.log('getUserLocation');
         const position = await new Promise<GeolocationPosition>(
           (resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject);

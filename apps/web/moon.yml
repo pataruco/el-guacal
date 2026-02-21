@@ -15,3 +15,9 @@ tasks:
     description: "Lint the code"
     options:
       affectedFiles: true
+  test:
+    command: "pnpm vitest --config ./config/vitest.config.ts"
+    description: "Format the code"
+  graphql-codegen:
+    command: "pnpm graphql-codegen --config ./config/codegen.ts"
+    description: "Format the code"

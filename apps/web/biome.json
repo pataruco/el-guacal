@@ -12,7 +12,15 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!/dist", "!/node_modules", "!*.yaml", "!*.yml"]
+    "includes": [
+      "**",
+      "!/dist",
+      "!/node_modules",
+      "!*.yaml",
+      "!*.yml",
+      "!src/graphql/**/*.generated.ts",
+      "!src/graphql/types.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
