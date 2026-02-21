@@ -2,6 +2,7 @@ import {
   APIProvider,
   Map as GoogleMap,
   type MapCameraChangedEvent,
+  Marker,
 } from '@vis.gl/react-google-maps';
 import { useGetStoresNearQuery } from '@/graphql/queries/get-stores-near/index.generated';
 import { Radius } from '../../graphql/types';
@@ -25,8 +26,6 @@ const MapComponent = () => {
     radius: Radius.Km_10,
   });
 
-  // console.log({ data, error, isLoading });
-
   const handleOnLoad = () => {
     dispatch(getUserLocation());
   };
@@ -45,7 +44,15 @@ const MapComponent = () => {
           center={center}
           defaultCenter={center}
           onCameraChanged={handleOnCameraChanged}
-        />
+        >
+          {data?.storesNear.map((store) => (
+            <Marker
+              key={store.name}
+              position={store.location}
+              title={store.name}
+            />
+          ))}
+        </GoogleMap>
       </APIProvider>
     </div>
   );
