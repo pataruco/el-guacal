@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.tag }}
+          # ref: ${{ github.event.inputs.tag }}
 
       - name: Set environment and install dependencies
         uses: ./.github/actions/prepare
@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.tag }}
+          # ref: ${{ github.event.inputs.tag }}
 
       - name: Set environment and install dependencies
         uses: ./.github/actions/prepare
@@ -61,11 +61,11 @@ jobs:
         shell: bash
         env:
           VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          VITE_GOOGLE_MAPS_ID: ${{ vars.VITE_GOOGLE_MAPS_ID }}
           VITE_GUACAL_GRAPHQL_API: ${{ vars.VITE_GUACAL_GRAPHQL_API }}
         run: |
           pnpm exec moon run web:build
 
-      # Authenticate to Google Cloud using WIF
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v3
@@ -77,7 +77,7 @@ jobs:
         shell: bash
         working-directory: apps/web
         run: |
-          pnpm exec firebase deploy --only hosting --project ${{ vars.GCP_PROJECT_ID || 'el-guacal' }}
+          pnpm exec firebase deploy --only hosting --project 'el-guacal'
 
 
   ci-validation:
@@ -92,7 +92,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.tag }}
+          # ref: ${{ github.event.inputs.tag }}
 
       - name: Check jobs for errors
         uses: actions/github-script@v8
