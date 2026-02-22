@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/pataruco/el-guacal/compare/web-v1.0.0...web-v1.1.0) (2026-02-22)
+
+
+### Features
+
+* add OTLP logging and tracing to server ([49be735](https://github.com/pataruco/el-guacal/commit/49be735a61086e40fd16418429674d33b5345a8e))
+* add redux ([f9e921b](https://github.com/pataruco/el-guacal/commit/f9e921bba0c4fe33b6cc5aa6214d05f04d0e7576))
+* add store feature ([7e29779](https://github.com/pataruco/el-guacal/commit/7e29779015256f295a314e35a84928fd852eb037))
+* complete OTLP observability with GraphQL and SQLx logging ([a7a4347](https://github.com/pataruco/el-guacal/commit/a7a43476610f47b7cce3fce127198920d69eb864))
+* drawing markers in the map ([ad1448a](https://github.com/pataruco/el-guacal/commit/ad1448a5f696ee0260387b506acabf8c822c2cdf))
+* get store by id ([8e9a356](https://github.com/pataruco/el-guacal/commit/8e9a3562e6b68f4b90a772ed4bec1655a25f1cc8))
+* getting data from guacal server ([23ad79e](https://github.com/pataruco/el-guacal/commit/23ad79e6dbd0be096eae5b12bea4aaf9df72ecab))
+* getting data from guacal server ([f32e604](https://github.com/pataruco/el-guacal/commit/f32e60475e847d4b9d29ef2517304285670a11cc))
+* graphql integration ([827ff5c](https://github.com/pataruco/el-guacal/commit/827ff5c6f19aee52d038e566a19e2bff453e39a8))
+* map search radius to Google Maps zoom levels ([7097f02](https://github.com/pataruco/el-guacal/commit/7097f02c643be57acc50afc3e042cb389fe7dc9f))
+* map search radius to Google Maps zoom levels ([1c3f568](https://github.com/pataruco/el-guacal/commit/1c3f568a53457b60b05b8ecd662460674da88def))
+* render a map ([5608d69](https://github.com/pataruco/el-guacal/commit/5608d69cdddab4e030c928e4b1c478f5ab473e32))
+* render google map ([0910b9c](https://github.com/pataruco/el-guacal/commit/0910b9c1fb2e0059a60a65e174f20cfba24817cc))
+* render store component ([ef067bb](https://github.com/pataruco/el-guacal/commit/ef067bb3ba604118439114f2f9e6022fae9b5dc4))
+
 ## 1.0.0 (2026-02-18)
 
 
