@@ -92,7 +92,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          # ref: ${{ github.event.inputs.tag }}
+          ref: ${{ github.event.inputs.tag }}
 
       - name: Check jobs for errors
         uses: actions/github-script@v8
