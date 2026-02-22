@@ -19,6 +19,11 @@ impl Telemetry {
     }
 }
 
+/// Initializes OpenTelemetry for tracing and logging.
+///
+/// # Panics
+///
+/// This function will panic if the OTLP exporter cannot be created.
 pub fn init_telemetry() -> Telemetry {
     global::set_text_map_propagator(TraceContextPropagator::new());
 
