@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/pataruco/el-guacal/compare/web-v1.1.1...web-v1.2.0) (2026-02-22)
+
+
+### Features
+
+* add firebase deployment workflow for web app ([56ae226](https://github.com/pataruco/el-guacal/commit/56ae226fb14f26829680c020ab50311be9ee1a49))
+* add firebase deployment workflow for web app ([263137c](https://github.com/pataruco/el-guacal/commit/263137c6812d372b9062d75923319ecee5372c04))
+* add firebase deployment workflow for web app ([587c66f](https://github.com/pataruco/el-guacal/commit/587c66fa5e0ac4e3cabbd3e1d94a38502c421360))
+* add firebase deployment workflow for web app ([3a2fbc8](https://github.com/pataruco/el-guacal/commit/3a2fbc8b91dbbd1b7d15bd7419000a753b1fba17))
+
+
+### Bug Fixes
+
+* **server:** conditionally initialize OTLP telemetry ([07179aa](https://github.com/pataruco/el-guacal/commit/07179aa23465423760458e9a62e43a4c508ebdbf))
+* **server:** conditionally initialize OTLP telemetry ([74f779c](https://github.com/pataruco/el-guacal/commit/74f779c2cde5ebb9acabd5bf327989fbc5ff1ea2))
+
 ## [1.1.1](https://github.com/pataruco/el-guacal/compare/web-v1.1.0...web-v1.1.1) (2026-02-22)
 
 
