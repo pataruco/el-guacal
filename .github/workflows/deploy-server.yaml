@@ -1,5 +1,5 @@
 name: Deploy server to production
-run-name: ${{ github.actor }} is deploying to GCloud Run with tag ${{ github.event.inputs.tag }}
+run-name: ${{ github.actor }} is deploying to Google Cloud Run with tag ${{ github.event.inputs.tag }}
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   integration-tests:
-    name: Integration tests
+    name: 🧪 Integration tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -63,7 +63,7 @@ jobs:
           pnpm exec moon run server:integration-test
 
   build-and-deploy:
-    name: Build & Deploy
+    name: 📦 Build and deploy
     runs-on: ubuntu-latest
     env:
       IMAGE_PATH: europe-west2-docker.pkg.dev/el-guacal/el-guacal-repo/server:${{ inputs.tag }}
@@ -112,6 +112,8 @@ jobs:
           service: el-guacal-server
           region: europe-west2
           image: ${{ env.IMAGE_PATH }}
+          env_vars: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
 
   ci-validation:
     name: CI validation

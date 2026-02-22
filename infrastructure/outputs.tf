@@ -13,6 +13,12 @@ output "firebase_hosting_url" {
   value       = "https://${google_firebase_hosting_site.default.site_id}.web.app"
 }
 
+output "database_url" {
+  description = "The PostgreSQL connection string for the Cloud Run service"
+  value       = "postgresql://${google_sql_user.default.name}:${var.db_password}@/productsdb?host=/cloudsql/${google_sql_database_instance.default.connection_name}"
+  sensitive   = true
+}
+
 output "wif_provider_name" {
   description = "The Workload Identity Provider string for GitHub Actions"
   value       = google_iam_workload_identity_pool_provider.github_provider.name
