@@ -82,15 +82,22 @@ resource "google_cloud_run_v2_service" "api" {
       }
 
       startup_probe {
-        http_get {
-          path = "/health"
+        tcp_socket {
+          port = 8080
         }
+        initial_delay_seconds = 10
+        timeout_seconds       = 5
+        period_seconds        = 10
+        failure_threshold     = 5
       }
 
       liveness_probe {
         http_get {
-          path = "/health"
+          path = "/graphql"
         }
+        timeout_seconds   = 5
+        period_seconds    = 15
+        failure_threshold = 3
       }
     }
 
