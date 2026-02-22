@@ -7,14 +7,13 @@ export type GetStoresNearQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetStoresNearQuery = { __typename?: 'Query', storesNear: Array<{ __typename?: 'Store', name: string, storeId: any, location: { __typename?: 'Location', lat: number, lng: number }, products: Array<{ __typename?: 'Product', name: string }> }> };
+export type GetStoresNearQuery = { __typename?: 'Query', storesNear: Array<{ __typename?: 'Store', name: string, location: { __typename?: 'Location', lat: number, lng: number }, products: Array<{ __typename?: 'Product', name: string }> }> };
 
 
 export const GetStoresNearDocument = `
     query GetStoresNear($location: LocationInput!, $radius: Radius!) {
   storesNear(location: $location, radius: $radius) {
     name
-    storeId
     location {
       lat
       lng
