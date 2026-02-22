@@ -8,7 +8,9 @@ resource "google_project_service" "apis" {
     "firebase.googleapis.com",
     "firebasehosting.googleapis.com",
     "cloudresourcemanager.googleapis.com",
-    "artifactregistry.googleapis.com"
+    "artifactregistry.googleapis.com",
+    "iamcredentials.googleapis.com",
+    "iam.googleapis.com"
   ])
   project            = var.project_id
   service            = each.key
@@ -117,4 +119,66 @@ resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = google_firebase_project.default.project
   site_id  = var.project_id
+}
+
+# ---------------------------------------------------------
+# 6. Service Account for GitHub Actions
+# ---------------------------------------------------------
+resource "google_service_account" "github_deployer" {
+  account_id   = "github-actions-deployer"
+  display_name = "GitHub Actions Deployer"
+  depends_on   = [google_project_service.apis]
+}
+
+# Grant permissions to deploy to Cloud Run and Push to Artifact Registry
+resource "google_project_iam_member" "artifact_registry_writer" {
+  project = var.project_id
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.github_deployer.email}"
+}
+
+resource "google_project_iam_member" "cloud_run_developer" {
+  project = var.project_id
+  role    = "roles/run.developer"
+  member  = "serviceAccount:${google_service_account.github_deployer.email}"
+}
+
+resource "google_project_iam_member" "service_account_user" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.github_deployer.email}"
+}
+
+# ---------------------------------------------------------
+# 7. Workload Identity Federation
+# ---------------------------------------------------------
+resource "google_iam_workload_identity_pool" "github_pool" {
+  workload_identity_pool_id = "github-pool"
+  display_name              = "GitHub Actions Pool"
+  depends_on                = [google_project_service.apis]
+}
+
+resource "google_iam_workload_identity_pool_provider" "github_provider" {
+  workload_identity_pool_id          = google_iam_workload_identity_pool.github_pool.workload_identity_pool_id
+  workload_identity_pool_provider_id = "github-provider"
+  display_name                       = "GitHub OIDC Provider"
+
+  attribute_mapping = {
+    "google.subject"       = "assertion.sub"
+    "attribute.actor"      = "assertion.actor"
+    "attribute.repository" = "assertion.repository"
+  }
+
+  attribute_condition = "assertion.repository == '${var.github_repo}'"
+
+  oidc {
+    issuer_uri = "https://token.actions.githubusercontent.com"
+  }
+}
+
+# Bind the specific GitHub repository to the Service Account
+resource "google_service_account_iam_member" "github_impersonation" {
+  service_account_id = google_service_account.github_deployer.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/${var.github_repo}"
 }

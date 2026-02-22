@@ -1,5 +1,5 @@
-name: Deploy website to production
-run-name: ${{ github.actor }} is deploying to vercel production
+name: Deploy server to production
+run-name: ${{ github.actor }} is deploying to GCloud Run with tag ${{ github.event.inputs.tag }}
 
 on:
   workflow_dispatch:
@@ -8,14 +8,14 @@ on:
         description: "Select the server tag to deploy to production"
         required: true
         type: string
-        default: "server: v0.1.0"
+        default: "server-v0.1.0"
 
 concurrency:
   cancel-in-progress: true
-  group: '${{ github.workflow }} @ ${{ github.ref }}'
+  group: "${{ github.workflow }} @ ${{ github.ref }}"
 
 jobs:
-   integration-tests:
+  integration-tests:
     name: Integration tests
     runs-on: ubuntu-latest
     permissions:
@@ -62,21 +62,72 @@ jobs:
         run: |
           pnpm exec moon run server:integration-test
 
-    ci-validation:
-      name: CI validation
-      needs: [integration-tests]
-      if: ${{ always() }}
-      runs-on: ubuntu-latest
-      permissions:
-        contents: read
-      steps:
-        - name: Checkout 🛎️
-          uses: actions/checkout@v6
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_PATH: europe-west2-docker.pkg.dev/el-guacal/el-guacal-repo/server:${{ inputs.tag }}
 
-        - name: Check jobs for errors
-          uses: actions/github-script@v8
-          with:
-            script: |
-              const { default: checkJobsForErrors } = await import('${{ github.workspace }}/.github/scripts/check-for-errors.mjs');
-              const jobs = ${{ toJSON(needs) }};
-              checkJobsForErrors({ core, jobs });
+    # Required permissions for Workload Identity Federation
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # - name: checkout tag
+      #   run: git checkout ${{ github.event.inputs.tag }}
+
+      # Authenticate to Google Cloud using WIF
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      # Set up the gcloud CLI
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Configure Docker to push to your Artifact Registry
+      - name: Configure Docker Auth
+        run: gcloud auth configure-docker europe-west2-docker.pkg.dev --quiet
+
+      # Build and Push the Docker image
+      - name: Build and Push Docker Image
+        run: |
+          # Build from the root of the repository so the Dockerfile can access the whole workspace
+          docker build -t $IMAGE_PATH -f apps/server/Dockerfile .
+          docker push $IMAGE_PATH
+
+      # Deploy the newly built image to Cloud Run
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: el-guacal-server
+          region: europe-west2
+          image: ${{ env.IMAGE_PATH }}
+
+  ci-validation:
+    name: CI validation
+    needs: [integration-tests, build-and-deploy]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+
+      - name: Check jobs for errors
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { default: checkJobsForErrors } = await import('${{ github.workspace }}/.github/scripts/check-for-errors.mjs');
+            const jobs = ${{ toJSON(needs) }};
+            checkJobsForErrors({ core, jobs });
