@@ -8,7 +8,6 @@ use async_graphql::{EmptyMutation, EmptySubscription, Schema};
 use async_graphql_axum::GraphQL;
 use axum::{
     Router,
-    http::StatusCode,
     response::{Html, IntoResponse},
     routing::get,
 };
@@ -27,20 +26,12 @@ pub fn create_schema(pool: PgPool) -> AppSchema {
 }
 
 pub fn create_router(schema: AppSchema) -> Router {
-    let api_routes = Router::new()
+    Router::new()
         .route(
             "/graphql",
             get(graphql_handler).post_service(GraphQL::new(schema)),
         )
-        .layer(TraceLayer::new_for_http());
-
-    Router::new()
-        .merge(api_routes)
-        .route("/health", get(health_handler))
-}
-
-async fn health_handler() -> impl IntoResponse {
-    (StatusCode::OK, "OK")
+        .layer(TraceLayer::new_for_http())
 }
 
 async fn graphql_handler() -> impl IntoResponse {
@@ -49,18 +40,4 @@ async fn graphql_handler() -> impl IntoResponse {
             .endpoint("/graphql")
             .finish(),
     )
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use axum::http::StatusCode;
-
-    #[tokio::test]
-    async fn test_health_handler() {
-        let response = health_handler().await.into_response();
-        assert_eq!(response.status(), StatusCode::OK);
-        let body = axum::body::to_bytes(response.into_body(), 100).await.unwrap();
-        assert_eq!(body, "OK");
-    }
 }

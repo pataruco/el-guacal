@@ -31,56 +31,66 @@ impl Telemetry {
 pub fn init_telemetry() -> Telemetry {
     global::set_text_map_propagator(TraceContextPropagator::new());
 
+    let otel_endpoint = std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT").ok();
+
     let resource = Resource::builder()
         .with_attributes([KeyValue::new("service.name", "El guacal server")])
         .build();
 
     // Attempt to set up OTLP tracing
-    let (tracer_provider, telemetry_layer) = match opentelemetry_otlp::SpanExporter::builder()
-        .with_tonic()
-        .build()
-    {
-        Ok(otlp_exporter) => {
-            let tp = SdkTracerProvider::builder()
-                .with_batch_exporter(otlp_exporter)
-                .with_resource(resource.clone())
-                .build();
+    let (tracer_provider, telemetry_layer) = if otel_endpoint.is_some() {
+        match opentelemetry_otlp::SpanExporter::builder()
+            .with_tonic()
+            .build()
+        {
+            Ok(otlp_exporter) => {
+                let tp = SdkTracerProvider::builder()
+                    .with_batch_exporter(otlp_exporter)
+                    .with_resource(resource.clone())
+                    .build();
 
-            global::set_tracer_provider(tp.clone());
-            let tracer = tp.tracer("el-guacal-server");
-            let layer = tracing_opentelemetry::layer().with_tracer(tracer);
-            (Some(tp), Some(layer))
+                global::set_tracer_provider(tp.clone());
+                let tracer = tp.tracer("el-guacal-server");
+                let layer = tracing_opentelemetry::layer().with_tracer(tracer);
+                (Some(tp), Some(layer))
+            }
+            Err(err) => {
+                eprintln!("OTLP span exporter unavailable, skipping: {err}");
+                (None, None)
+            }
         }
-        Err(err) => {
-            eprintln!("OTLP span exporter unavailable, skipping: {err}");
-            (None, None)
-        }
+    } else {
+        (None, None)
     };
 
     // Attempt to set up OTLP logging
-    let (logger_provider, otel_log_layer) = match opentelemetry_otlp::LogExporter::builder()
-        .with_tonic()
-        .build()
-    {
-        Ok(log_exporter) => {
-            let lp = SdkLoggerProvider::builder()
-                .with_batch_exporter(log_exporter)
-                .with_resource(resource)
-                .build();
+    let (logger_provider, otel_log_layer) = if otel_endpoint.is_some() {
+        match opentelemetry_otlp::LogExporter::builder()
+            .with_tonic()
+            .build()
+        {
+            Ok(log_exporter) => {
+                let lp = SdkLoggerProvider::builder()
+                    .with_batch_exporter(log_exporter)
+                    .with_resource(resource)
+                    .build();
 
-            // OpenTelemetryTracingBridge requires a 'static reference to the provider.
-            // We leak the provider to satisfy this requirement.
-            let leaked_logger_provider: &'static SdkLoggerProvider =
-                Box::leak(Box::new(lp.clone()));
-            let layer = opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge::new(
-                leaked_logger_provider,
-            );
-            (Some(lp), Some(layer))
+                // OpenTelemetryTracingBridge requires a 'static reference to the provider.
+                // We leak the provider to satisfy this requirement.
+                let leaked_logger_provider: &'static SdkLoggerProvider =
+                    Box::leak(Box::new(lp.clone()));
+                let layer = opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge::new(
+                    leaked_logger_provider,
+                );
+                (Some(lp), Some(layer))
+            }
+            Err(err) => {
+                eprintln!("OTLP log exporter unavailable, skipping: {err}");
+                (None, None)
+            }
         }
-        Err(err) => {
-            eprintln!("OTLP log exporter unavailable, skipping: {err}");
-            (None, None)
-        }
+    } else {
+        (None, None)
     };
 
     // Stdout JSON layer (always active)

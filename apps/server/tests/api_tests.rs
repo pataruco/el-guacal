@@ -126,35 +126,3 @@ async fn test_graphql_store_products() {
     );
     assert_eq!(products[0]["name"], "Harina P.A.N.");
 }
-
-#[tokio::test]
-#[ignore = "integration tests"]
-async fn test_health() {
-    let config = Config::new().expect("Failed to load config");
-    let pool = PgPoolOptions::new()
-        .max_connections(1)
-        .connect(&config.database_url)
-        .await
-        .expect("Failed to create pool");
-
-    let schema = create_schema(pool);
-    let app = create_router(schema);
-
-    let response = app
-        .oneshot(
-            Request::builder()
-                .method("GET")
-                .uri("/health")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::OK);
-
-    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    assert_eq!(body, "OK");
-}

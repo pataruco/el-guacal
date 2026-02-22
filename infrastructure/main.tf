@@ -80,18 +80,6 @@ resource "google_cloud_run_v2_service" "api" {
         name       = "cloudsql"
         mount_path = "/cloudsql"
       }
-
-      startup_probe {
-        http_get {
-          path = "/health"
-        }
-      }
-
-      liveness_probe {
-        http_get {
-          path = "/health"
-        }
-      }
     }
 
     volumes {
