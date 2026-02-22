@@ -4,10 +4,7 @@ import { createAppSlice } from '../../createAppSlice';
 const LONDON = { lat: 51.51044, lng: -0.11564 };
 
 export type MapSliceState = {
-  center: {
-    lat: number;
-    lng: number;
-  };
+  center: google.maps.LatLngLiteral;
   status: 'idle' | 'loading' | 'failed' | 'success';
   zoom: number;
 };

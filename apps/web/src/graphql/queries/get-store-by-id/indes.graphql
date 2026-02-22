@@ -1,0 +1,11 @@
+query GetStoreById($storeId: UUID!) {
+	getStoreById(id: $storeId) {
+		name
+		storeId
+		address
+		updatedAt
+		products {
+			name
+		}
+	}
+}
