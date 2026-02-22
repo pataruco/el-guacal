@@ -149,6 +149,12 @@ resource "google_project_iam_member" "service_account_user" {
   member  = "serviceAccount:${google_service_account.github_deployer.email}"
 }
 
+resource "google_project_iam_member" "firebase_admin" {
+  project = var.project_id
+  role    = "roles/firebasehosting.admin"
+  member  = "serviceAccount:${google_service_account.github_deployer.email}"
+}
+
 # ---------------------------------------------------------
 # 7. Workload Identity Federation
 # ---------------------------------------------------------
