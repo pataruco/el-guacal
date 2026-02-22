@@ -1,5 +1,6 @@
 import Footer from '../footer';
 import Header from '../header';
+import styles from './index.module.scss';
 
 interface PageProps {
   children: React.ReactNode;
@@ -10,7 +11,9 @@ const Page = ({ children, className }: PageProps) => {
   return (
     <>
       <Header />
-      <main className={className ? className : ''}>{children}</main>
+      <main className={className ? `${className} ${styles.page}` : styles.page}>
+        {children}
+      </main>
       <Footer />
     </>
   );

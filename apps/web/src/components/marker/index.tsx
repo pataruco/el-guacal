@@ -24,7 +24,7 @@ const Marker: React.FC<MarkerProps> = ({ id, position }) => {
     <AdvancedMarker
       key={id}
       position={position}
-      collisionBehavior={CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL}
+      collisionBehavior={CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY}
       clickable
       onClick={handleOnClick}
     >

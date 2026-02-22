@@ -26,7 +26,7 @@ const MapComponent = () => {
   const skip = roundedZoom < 11 || roundedZoom > 22;
   const radius = skip ? 'ZOOM_11' : (`ZOOM_${roundedZoom}` as Radius);
 
-  const { data, isLoading, error } = useGetStoresNearQuery(
+  const { data, isLoading } = useGetStoresNearQuery(
     {
       location: center,
       radius,

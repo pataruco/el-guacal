@@ -6,7 +6,7 @@ export type GetStoreByIdQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetStoreByIdQuery = { __typename?: 'Query', getStoreById?: { __typename?: 'Store', name: string, storeId: any, address: string, updatedAt: any, products: Array<{ __typename?: 'Product', name: string }> } | null };
+export type GetStoreByIdQuery = { __typename?: 'Query', getStoreById?: { __typename?: 'Store', name: string, storeId: any, address: string, updatedAt: any, location: { __typename?: 'Location', lat: number, lng: number }, products: Array<{ __typename?: 'Product', name: string, productId: any }> } | null };
 
 
 export const GetStoreByIdDocument = `
@@ -16,8 +16,13 @@ export const GetStoreByIdDocument = `
     storeId
     address
     updatedAt
+    location {
+      lat
+      lng
+    }
     products {
       name
+      productId
     }
   }
 }
