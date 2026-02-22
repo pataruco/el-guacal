@@ -1,6 +1,7 @@
 pub mod api;
 pub mod config;
 pub mod model;
+pub mod telemetry;
 
 use api::queries::Query;
 use async_graphql::{EmptyMutation, EmptySubscription, Schema};
@@ -11,6 +12,7 @@ use axum::{
     routing::get,
 };
 use sqlx::PgPool;
+use tower_http::trace::TraceLayer;
 
 pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
 
@@ -18,14 +20,17 @@ pub type AppSchema = Schema<Query, EmptyMutation, EmptySubscription>;
 pub fn create_schema(pool: PgPool) -> AppSchema {
     Schema::build(Query, EmptyMutation, EmptySubscription)
         .data(pool)
+        .extension(async_graphql::extensions::Tracing)
         .finish()
 }
 
 pub fn create_router(schema: AppSchema) -> Router {
-    Router::new().route(
-        "/graphql",
-        get(graphql_handler).post_service(GraphQL::new(schema)),
-    )
+    Router::new()
+        .route(
+            "/graphql",
+            get(graphql_handler).post_service(GraphQL::new(schema)),
+        )
+        .layer(TraceLayer::new_for_http())
 }
 
 async fn graphql_handler() -> impl IntoResponse {
