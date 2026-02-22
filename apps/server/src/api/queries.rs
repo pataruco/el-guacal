@@ -119,45 +119,4 @@ impl Query {
 
         Ok(stores)
     }
-
-    async fn get_store_by_id(
-        &self,
-        ctx: &Context<'_>,
-        id: Uuid,
-    ) -> async_graphql::Result<Option<Store>> {
-        let pool = ctx.data::<PgPool>()?;
-
-        let row = sqlx::query(
-            r"
-            SELECT
-                store_id,
-                name,
-                address,
-                ST_Y(location::geometry) as lat,
-                ST_X(location::geometry) as lng,
-                created_at,
-                updated_at
-            FROM stores
-            WHERE store_id = $1
-            ",
-        )
-        .bind(id)
-        .fetch_optional(pool)
-        .await?;
-
-        Ok(row.map(|row| {
-            use sqlx::Row;
-            Store {
-                store_id: row.get::<Uuid, _>("store_id"),
-                name: row.get::<String, _>("name"),
-                address: row.get::<String, _>("address"),
-                location: Location {
-                    lat: row.get::<f64, _>("lat"),
-                    lng: row.get::<f64, _>("lng"),
-                },
-                created_at: row.get::<DateTime<Utc>, _>("created_at"),
-                updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
-            }
-        }))
-    }
 }

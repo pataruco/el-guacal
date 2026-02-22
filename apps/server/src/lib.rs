@@ -21,6 +21,7 @@ pub fn create_schema(pool: PgPool) -> AppSchema {
     Schema::build(Query, EmptyMutation, EmptySubscription)
         .data(pool)
         .extension(async_graphql::extensions::Tracing)
+        .extension(async_graphql::extensions::Logger)
         .finish()
 }
 

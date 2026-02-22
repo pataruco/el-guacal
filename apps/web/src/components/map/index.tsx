@@ -2,6 +2,7 @@ import {
   APIProvider,
   Map as GoogleMap,
   type MapCameraChangedEvent,
+  Marker,
 } from '@vis.gl/react-google-maps';
 import { useGetStoresNearQuery } from '@/graphql/queries/get-stores-near/index.generated';
 import type { Radius } from '../../graphql/types';
@@ -12,11 +13,9 @@ import {
   setZoom,
 } from '../../store/features/map/slice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import CustomMarker from '../marker';
 import styles from './index.module.scss';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-const GOOGLE_MAPS_ID = import.meta.env.VITE_GOOGLE_MAPS_ID;
 
 const MapComponent = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +25,7 @@ const MapComponent = () => {
   const skip = roundedZoom < 11 || roundedZoom > 22;
   const radius = skip ? 'ZOOM_11' : (`ZOOM_${roundedZoom}` as Radius);
 
-  const { data, isLoading } = useGetStoresNearQuery(
+  const { data, isLoading, error } = useGetStoresNearQuery(
     {
       location: center,
       radius,
@@ -52,15 +51,12 @@ const MapComponent = () => {
           center={center}
           defaultCenter={center}
           onCameraChanged={handleOnCameraChanged}
-          mapId={GOOGLE_MAPS_ID}
-          disableDefaultUI
-          reuseMaps
         >
           {data?.storesNear.map((store) => (
-            <CustomMarker
-              key={store.storeId}
-              id={store.storeId}
+            <Marker
+              key={store.name}
               position={store.location}
+              title={store.name}
             />
           ))}
         </GoogleMap>

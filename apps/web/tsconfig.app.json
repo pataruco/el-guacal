@@ -24,7 +24,7 @@
     "strict": true,
     "target": "ES2022",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "types": ["vite/client", "vitest/globals", "@types/google.maps"],
+    "types": ["vite/client", "vitest/globals"],
     "useDefineForClassFields": true,
     "verbatimModuleSyntax": true
   },
