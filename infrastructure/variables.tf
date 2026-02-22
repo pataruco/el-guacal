@@ -14,3 +14,9 @@ variable "db_password" {
   description = "The database password for the 'pataruco' user"
   sensitive   = true
 }
+
+variable "github_repo" {
+  type        = string
+  description = "The GitHub repository in org/repo format (e.g., pataruco/el-guacal)"
+  default     = "pataruco/el-guacal"
+}
