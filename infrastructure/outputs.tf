@@ -15,7 +15,7 @@ output "firebase_hosting_url" {
 
 output "database_url" {
   description = "The PostgreSQL connection string for the Cloud Run service"
-  value       = "postgresql://${google_sql_user.default.name}:${var.db_password}@/productsdb?host=/cloudsql/${google_sql_database_instance.default.connection_name}"
+  value       = "postgresql://${google_sql_user.default.name}:${urlencode(var.db_password)}@localhost/productsdb?host=/cloudsql/${google_sql_database_instance.default.connection_name}"
   sensitive   = true
 }
 

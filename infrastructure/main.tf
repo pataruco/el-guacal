@@ -73,7 +73,7 @@ resource "google_cloud_run_v2_service" "api" {
 
       env {
         name  = "DATABASE_URL"
-        value = "postgresql://${google_sql_user.default.name}:${var.db_password}@/productsdb?host=/cloudsql/${google_sql_database_instance.default.connection_name}"
+        value = "postgresql://${google_sql_user.default.name}:${urlencode(var.db_password)}@localhost/productsdb?host=/cloudsql/${google_sql_database_instance.default.connection_name}"
       }
 
       volume_mounts {
