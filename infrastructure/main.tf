@@ -50,7 +50,7 @@ resource "google_sql_database" "default" {
 }
 
 resource "google_sql_user" "default" {
-  name     = "pataruco"
+  name     = "el-guacal"
   instance = google_sql_database_instance.default.name
   password = var.db_password
 }
@@ -116,5 +116,5 @@ resource "google_firebase_project" "default" {
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = google_firebase_project.default.project
-  site_id  = "el-guacal-${var.project_id}"
+  site_id  = var.project_id
 }

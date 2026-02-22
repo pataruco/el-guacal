@@ -1,8 +1,9 @@
 terraform {
   backend "gcs" {
     # UPDATE THIS to the new globally unique bucket name you just created
-    bucket = "el-guacal-tf-state-YOUR_PROJECT_ID"
-    prefix = "terraform/state"
+    # bucket = "el-guacal-tf-state-YOUR_PROJECT_ID"
+    bucket = "pataruco"
+    prefix = "/el-guacal/terraform/state"
   }
 
   required_providers {
