@@ -12,3 +12,13 @@ output "firebase_hosting_url" {
   description = "The public URL of El Guacal Web App"
   value       = "https://${google_firebase_hosting_site.default.site_id}.web.app"
 }
+
+output "wif_provider_name" {
+  description = "The Workload Identity Provider string for GitHub Actions"
+  value       = google_iam_workload_identity_pool_provider.github_provider.name
+}
+
+output "wif_service_account_email" {
+  description = "The Service Account email for GitHub Actions to impersonate"
+  value       = google_service_account.github_deployer.email
+}
