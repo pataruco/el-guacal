@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.1](https://github.com/pataruco/el-guacal/compare/server-v0.2.0...server-v0.2.1) (2026-02-22)
+
+
+### Bug Fixes
+
+* conditional telemetry initialization ([02bdae0](https://github.com/pataruco/el-guacal/commit/02bdae014fe662d422d6458e114ed4032c8409a8))
+* **server:** conditionally initialize OTLP telemetry ([fca32e4](https://github.com/pataruco/el-guacal/commit/fca32e47880428297274a286689f5d7c59692a0d))
+* **server:** conditionally initialize OTLP telemetry ([99d2318](https://github.com/pataruco/el-guacal/commit/99d2318e5b9c0c1b617b6725b9814b7ce46dad61))
+* **server:** conditionally initialize OTLP telemetry ([a26acc9](https://github.com/pataruco/el-guacal/commit/a26acc9f3ac3212a302037b598bf407b901acece))
+
 ## [0.2.0](https://github.com/pataruco/el-guacal/compare/server-v0.1.0...server-v0.2.0) (2026-02-22)
 
 
