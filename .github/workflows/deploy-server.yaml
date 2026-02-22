@@ -106,15 +106,15 @@ jobs:
           docker push $IMAGE_PATH
 
       # Deploy the newly built image to Cloud Run
+      # Cloud SQL connection, DATABASE_URL, and volumes are already
+      # configured by Terraform on the el-guacal-api service.
+      # We only update the container image here.
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: el-guacal-server
+          service: el-guacal-api
           region: europe-west2
           image: ${{ env.IMAGE_PATH }}
-          env_vars: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-
   ci-validation:
     name: CI validation
     needs: [integration-tests, build-and-deploy]

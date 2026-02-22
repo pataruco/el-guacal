@@ -1,6 +1,7 @@
 use server::{config::Config, create_router, create_schema, telemetry};
 use sqlx::{ConnectOptions as _, postgres::PgPoolOptions};
 use std::str::FromStr as _;
+use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
@@ -19,13 +20,17 @@ async fn main() {
 
     connect_options = connect_options
         .log_statements(tracing::log::LevelFilter::Info)
-        .log_slow_statements(tracing::log::LevelFilter::Warn, std::time::Duration::from_secs(1));
+        .log_slow_statements(
+            tracing::log::LevelFilter::Warn,
+            std::time::Duration::from_secs(1),
+        );
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
+        .acquire_timeout(Duration::from_secs(10))
         .connect_with(connect_options)
         .await
-        .expect("Failed to create pool");
+        .expect("Failed to create pool — is DATABASE_URL reachable from this environment?");
 
     sqlx::migrate!()
         .run(&pool)

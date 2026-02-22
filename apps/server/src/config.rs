@@ -3,7 +3,7 @@ use serde::Deserialize;
 use std::env;
 
 const fn default_port() -> u16 {
-    8000
+    8080
 }
 
 fn default_database_url() -> String {
