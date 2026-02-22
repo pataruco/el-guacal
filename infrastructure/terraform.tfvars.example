@@ -1,0 +1,8 @@
+# Google Cloud Project ID (required)
+project_id = "your-gcp-project-id"
+
+# GCP region to deploy resources in (optional, defaults to europe-west2)
+# region = "europe-west2"
+
+# Database password for the 'pataruco' user (required, sensitive)
+db_password = "your-secure-database-password"
