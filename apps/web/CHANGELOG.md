@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/pataruco/el-guacal/compare/web-v1.2.1...web-v1.3.0) (2026-02-23)
+
+
+### Features
+
+* render store ([7a41898](https://github.com/pataruco/el-guacal/commit/7a418985f4b640b69916a87291aa07a99a25c4f0))
+* render store ([57beca9](https://github.com/pataruco/el-guacal/commit/57beca93f6a7a2284b6105cb26936f3dc4415736))
+
+
+### Bug Fixes
+
+* add CORS support to GraphQL server ([714d895](https://github.com/pataruco/el-guacal/commit/714d895bcda39f8bf551b815d4c338eecdc43012))
+
 ## [1.2.1](https://github.com/pataruco/el-guacal/compare/web-v1.2.0...web-v1.2.1) (2026-02-23)
 
 

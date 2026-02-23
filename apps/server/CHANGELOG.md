@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/pataruco/el-guacal/compare/server-v0.3.1...server-v0.3.2) (2026-02-23)
+
+
+### Bug Fixes
+
+* add CORS support to GraphQL server ([714d895](https://github.com/pataruco/el-guacal/commit/714d895bcda39f8bf551b815d4c338eecdc43012))
+
 ## [0.3.1](https://github.com/pataruco/el-guacal/compare/server-v0.3.0...server-v0.3.1) (2026-02-23)
 
 
