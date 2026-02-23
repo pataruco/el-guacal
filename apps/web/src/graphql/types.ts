@@ -38,7 +38,13 @@ export type Product = {
 
 export type Query = {
   __typename?: 'Query';
+  getStoreById?: Maybe<Store>;
   storesNear: Array<Store>;
+};
+
+
+export type QueryGetStoreByIdArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
