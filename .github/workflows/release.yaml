@@ -14,6 +14,10 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
