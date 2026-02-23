@@ -37,8 +37,14 @@ async fn main() {
         .await
         .expect("Failed to run migrations");
 
+    let allowed_origins: Vec<axum::http::HeaderValue> = config
+        .cors_allowed_origins
+        .iter()
+        .map(|origin| origin.parse().expect("Invalid CORS origin"))
+        .collect();
+
     let schema = create_schema(pool);
-    let router = create_router(schema);
+    let router = create_router(schema, allowed_origins);
 
     println!("Server running on http://0.0.0.0:{}/graphql", config.port);
 
