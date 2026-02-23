@@ -1,6 +1,7 @@
 query GetStoresNear($location: LocationInput!, $radius: Radius!) {
   storesNear(location: $location, radius: $radius) {
     name
+    storeId
     location {
       lat
       lng

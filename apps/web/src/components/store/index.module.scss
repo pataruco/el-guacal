@@ -1,0 +1,11 @@
+.store {
+  position: absolute;
+  inset: auto 0 0;
+  background-color: white;
+
+  &__button {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}

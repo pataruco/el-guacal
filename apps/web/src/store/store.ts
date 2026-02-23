@@ -5,6 +5,7 @@ import { counterSlice } from './features/counter/counterSlice';
 import { gualcalGraphqlApiSlice } from './features/guacal-api/base';
 import { mapSlice } from './features/map/slice';
 import { quotesApiSlice } from './features/quotes/quotesApiSlice';
+import { storeSlice } from './features/stores/slice';
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -13,6 +14,7 @@ const rootReducer = combineSlices(
   quotesApiSlice,
   mapSlice,
   gualcalGraphqlApiSlice,
+  storeSlice,
 );
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
