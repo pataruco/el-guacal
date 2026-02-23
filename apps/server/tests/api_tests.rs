@@ -19,8 +19,14 @@ async fn test_graphql_stores_near() {
         .await
         .expect("Failed to create pool");
 
+    let allowed_origins = config
+        .cors_allowed_origins
+        .iter()
+        .map(|origin| origin.parse().expect("Invalid CORS origin"))
+        .collect();
+
     let schema = create_schema(pool);
-    let app = create_router(schema);
+    let app = create_router(schema, allowed_origins);
 
     let query = r"
         query {
@@ -74,8 +80,14 @@ async fn test_graphql_store_products() {
         .await
         .expect("Failed to create pool");
 
+    let allowed_origins = config
+        .cors_allowed_origins
+        .iter()
+        .map(|origin| origin.parse().expect("Invalid CORS origin"))
+        .collect();
+
     let schema = create_schema(pool);
-    let app = create_router(schema);
+    let app = create_router(schema, allowed_origins);
 
     let query = r"
         query {
