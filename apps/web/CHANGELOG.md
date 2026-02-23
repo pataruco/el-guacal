@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/pataruco/el-guacal/compare/web-v1.2.0...web-v1.2.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* add CORS support to GraphQL server ([0984aa0](https://github.com/pataruco/el-guacal/commit/0984aa0d5b43b80bc02a223e0cc5e76a65dbc7fc))
+
 ## [1.2.0](https://github.com/pataruco/el-guacal/compare/web-v1.1.1...web-v1.2.0) (2026-02-22)
 
 
