@@ -76,6 +76,11 @@ resource "google_cloud_run_v2_service" "api" {
         value = "postgresql://${google_sql_user.default.name}:${urlencode(var.db_password)}@localhost/productsdb?host=/cloudsql/${google_sql_database_instance.default.connection_name}"
       }
 
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+
       volume_mounts {
         name       = "cloudsql"
         mount_path = "/cloudsql"

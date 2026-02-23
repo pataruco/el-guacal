@@ -5,7 +5,7 @@ use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
-    let telemetry = telemetry::init_telemetry();
+    telemetry::init_telemetry();
 
     let config = match Config::new() {
         Ok(config) => config,
@@ -44,7 +44,7 @@ async fn main() {
         .collect();
 
     let schema = create_schema(pool);
-    let router = create_router(schema, allowed_origins);
+    let router = create_router(schema, allowed_origins, config.gcp_project_id);
 
     println!("Server running on http://0.0.0.0:{}/graphql", config.port);
 
@@ -55,8 +55,6 @@ async fn main() {
         .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
-
-    telemetry.shutdown();
 }
 
 async fn shutdown_signal() {

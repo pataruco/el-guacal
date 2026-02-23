@@ -26,7 +26,7 @@ async fn test_graphql_stores_near() {
         .collect();
 
     let schema = create_schema(pool);
-    let app = create_router(schema, allowed_origins);
+    let app = create_router(schema, allowed_origins, config.gcp_project_id);
 
     let query = r"
         query {
@@ -87,7 +87,7 @@ async fn test_graphql_store_products() {
         .collect();
 
     let schema = create_schema(pool);
-    let app = create_router(schema, allowed_origins);
+    let app = create_router(schema, allowed_origins, config.gcp_project_id);
 
     let query = r"
         query {

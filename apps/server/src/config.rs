@@ -16,6 +16,7 @@ pub struct Config {
     pub port: u16,
     pub database_url: String,
     pub cors_allowed_origins: Vec<String>,
+    pub gcp_project_id: Option<String>,
 }
 
 impl Config {
@@ -41,6 +42,7 @@ impl Config {
             port,
             database_url: env::var("DATABASE_URL").unwrap_or_else(|_| default_database_url()),
             cors_allowed_origins,
+            gcp_project_id: env::var("GCP_PROJECT_ID").ok(),
         };
 
         Ok(config)
