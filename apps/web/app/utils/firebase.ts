@@ -1,0 +1,15 @@
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+// TODO: Replace with your actual Firebase config
+const firebaseConfig = {
+  apiKey: "PLACEHOLDER",
+  authDomain: "el-guacal.firebaseapp.com",
+  projectId: "el-guacal",
+  storageBucket: "el-guacal.firebasestorage.app",
+  messagingSenderId: "PLACEHOLDER",
+  appId: "PLACEHOLDER"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
