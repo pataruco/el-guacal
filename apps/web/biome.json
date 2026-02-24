@@ -18,8 +18,8 @@
       "!/node_modules",
       "!*.yaml",
       "!*.yml",
-      "!src/graphql/**/*.generated.ts",
-      "!src/graphql/types.ts"
+      "!app/graphql/**/*.generated.ts",
+      "!app/graphql/types.ts"
     ]
   },
   "formatter": {
