@@ -1,19 +1,19 @@
+import { Provider } from 'react-redux';
 import {
   Links,
   Meta,
+  type MetaFunction,
   Outlet,
   Scripts,
   ScrollRestoration,
-  type MetaFunction,
-} from "react-router";
-import { Provider } from 'react-redux';
+} from 'react-router';
 import { store } from './store/store';
 import './styles/index.scss';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "El Guacal" },
-    { name: "description", content: "El Guacal - Store Finder" },
+    { title: 'El Guacal' },
+    { content: 'El Guacal - Store Finder', name: 'description' },
   ];
 };
 
@@ -27,9 +27,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Provider store={store}>
-          {children}
-        </Provider>
+        <Provider store={store}>{children}</Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
