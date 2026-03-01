@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.4.0](https://github.com/pataruco/el-guacal/compare/web-v1.3.0...web-v1.4.0) (2026-03-01)
+
+
+### Features
+
+* **web:** implement routing and ssg ([79be1aa](https://github.com/pataruco/el-guacal/commit/79be1aa4ab1aa9e3f4f394b0bcf5e06be34a4654))
+* **web:** implement routing and SSG using React Router v7 ([226b8a5](https://github.com/pataruco/el-guacal/commit/226b8a519fd3f3e14b6e22ca7b72cca9f5828aad))
+* **web:** implement routing and SSG using React Router v7 ([708e59a](https://github.com/pataruco/el-guacal/commit/708e59ad204c0eb5ff3154d9573fb0a7e24de1b8))
+* **web:** implement routing and SSG using React Router v7 ([56e1a9e](https://github.com/pataruco/el-guacal/commit/56e1a9ef03c1f51b035c45e7520af18b6f55bfad))
+* **web:** implement routing and SSG using React Router v7 ([dcc34e5](https://github.com/pataruco/el-guacal/commit/dcc34e5f4966ef1c0ee2c4564864acb62db2158a))
+
+
+### Bug Fixes
+
+* style ([33aff36](https://github.com/pataruco/el-guacal/commit/33aff3684edcc6d832ff3157ae1c49b9f5243545))
+
 ## [1.3.0](https://github.com/pataruco/el-guacal/compare/web-v1.2.1...web-v1.3.0) (2026-02-23)
 
 

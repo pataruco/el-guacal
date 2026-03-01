@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/pataruco/el-guacal/compare/server-v0.3.2...server-v0.4.0) (2026-03-01)
+
+
+### Features
+
+* **web:** implement routing and SSG using React Router v7 ([226b8a5](https://github.com/pataruco/el-guacal/commit/226b8a519fd3f3e14b6e22ca7b72cca9f5828aad))
+* **web:** implement routing and SSG using React Router v7 ([708e59a](https://github.com/pataruco/el-guacal/commit/708e59ad204c0eb5ff3154d9573fb0a7e24de1b8))
+
 ## [0.3.2](https://github.com/pataruco/el-guacal/compare/server-v0.3.1...server-v0.3.2) (2026-02-23)
 
 
