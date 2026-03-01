@@ -1,7 +1,6 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { authSlice } from './features/auth/authSlice';
 import { counterSlice } from './features/counter/counterSlice';
 import { gualcalGraphqlApiSlice } from './features/guacal-api/base';
 import { mapSlice } from './features/map/slice';
@@ -11,7 +10,6 @@ import { storeSlice } from './features/stores/slice';
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
 const rootReducer = combineSlices(
-  authSlice,
   counterSlice,
   quotesApiSlice,
   mapSlice,

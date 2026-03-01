@@ -5,8 +5,7 @@ use chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-#[derive(Default)]
-pub struct StoreQuery;
+pub struct Query;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Radius {
@@ -66,7 +65,7 @@ pub struct LocationInput {
 }
 
 #[Object]
-impl StoreQuery {
+impl Query {
     async fn stores_near(
         &self,
         ctx: &Context<'_>,
