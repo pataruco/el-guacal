@@ -12,8 +12,31 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /**
+   * Implement the DateTime<Utc> scalar
+   *
+   * The input/output is a string in RFC3339 format.
+   */
   DateTime: { input: any; output: any; }
+  /**
+   * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
+   * Strings within GraphQL. UUIDs are used to assign unique identifiers to
+   * entities without requiring a central allocating authority.
+   *
+   * # References
+   *
+   * * [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
+   * * [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
+   */
   UUID: { input: any; output: any; }
+};
+
+export type CreateStoreInput = {
+  address: Scalars['String']['input'];
+  lat: Scalars['Float']['input'];
+  lng: Scalars['Float']['input'];
+  name: Scalars['String']['input'];
+  productIds: Array<Scalars['UUID']['input']>;
 };
 
 export type Location = {
@@ -25,6 +48,28 @@ export type Location = {
 export type LocationInput = {
   lat: Scalars['Float']['input'];
   lng: Scalars['Float']['input'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createStore: Store;
+  deleteStore: Scalars['Boolean']['output'];
+  updateStore: Store;
+};
+
+
+export type MutationCreateStoreArgs = {
+  input: CreateStoreInput;
+};
+
+
+export type MutationDeleteStoreArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
+export type MutationUpdateStoreArgs = {
+  input: UpdateStoreInput;
 };
 
 export type Product = {
@@ -76,4 +121,13 @@ export type Store = {
   products: Array<Product>;
   storeId: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type UpdateStoreInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  lat?: InputMaybe<Scalars['Float']['input']>;
+  lng?: InputMaybe<Scalars['Float']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  productIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  storeId: Scalars['UUID']['input'];
 };

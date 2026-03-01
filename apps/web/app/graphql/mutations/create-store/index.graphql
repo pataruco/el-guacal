@@ -1,0 +1,11 @@
+mutation CreateStore($input: CreateStoreInput!) {
+  createStore(input: $input) {
+    storeId
+    name
+    address
+    location {
+      lat
+      lng
+    }
+  }
+}

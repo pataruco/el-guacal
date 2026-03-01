@@ -5,11 +5,13 @@ import { createAppSlice } from '@/store/createAppSlice';
 export type StoreState = {
   storeId: string;
   show: boolean;
+  isCreating: boolean;
   store: Omit<Store, '__typename'>;
 };
 
 const initialState: StoreState = {
   show: false,
+  isCreating: false,
   store: {
     address: '',
     createdAt: '',
@@ -29,6 +31,9 @@ export const storeSlice = createAppSlice({
     setShowStore: (state, action: PayloadAction<StoreState['show']>) => {
       state.show = action.payload;
     },
+    setIsCreating: (state, action: PayloadAction<StoreState['isCreating']>) => {
+      state.isCreating = action.payload;
+    },
     setStore: (state, action: PayloadAction<StoreState['store']>) => {
       state.store = action.payload;
     },
@@ -45,6 +50,6 @@ export const storeSlice = createAppSlice({
   },
 });
 
-export const { setStore, setShowStore, setStoreId } = storeSlice.actions;
+export const { setStore, setShowStore, setStoreId, setIsCreating } = storeSlice.actions;
 
 export const { selectStoreState } = storeSlice.selectors;
