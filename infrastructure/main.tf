@@ -10,13 +10,13 @@ resource "google_project_service" "apis" {
     "cloudresourcemanager.googleapis.com",
     "artifactregistry.googleapis.com",
     "iamcredentials.googleapis.com",
-    "iam.googleapis.com"
+    "iam.googleapis.com",
+    "identitytoolkit.googleapis.com"
   ])
   project            = var.project_id
   service            = each.key
   disable_on_destroy = false
 }
-
 # ---------------------------------------------------------
 # 2. Artifact Registry
 # ---------------------------------------------------------
@@ -192,4 +192,36 @@ resource "google_service_account_iam_member" "github_impersonation" {
   service_account_id = google_service_account.github_deployer.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/${var.github_repo}"
+}
+
+# ---------------------------------------------------------
+# 8. Firebase Authentication & Web App
+# ---------------------------------------------------------
+# Enable the Identity Platform (Backend for Firebase Auth)
+resource "google_identity_platform_config" "auth" {
+  provider   = google-beta
+  project    = var.project_id
+  depends_on = [google_project_service.apis]
+
+  # Optional: Configure authorized domains for OAuth redirects
+  authorized_domains = [
+    "localhost",
+    "${var.project_id}.firebaseapp.com",
+    "${var.project_id}.web.app",
+  ]
+}
+
+# Register the React Application with Firebase
+resource "google_firebase_web_app" "web" {
+  provider     = google-beta
+  project      = var.project_id
+  display_name = "El Guacal"
+  # Wait for the project to be initialized
+  depends_on = [google_firebase_project.default]
+}
+
+# Fetch the generated config (API Key, App ID, etc.) so we can output it
+data "google_firebase_web_app_config" "web" {
+  provider   = google-beta
+  web_app_id = google_firebase_web_app.web.app_id
 }

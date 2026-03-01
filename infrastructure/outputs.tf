@@ -28,3 +28,17 @@ output "wif_service_account_email" {
   description = "The Service Account email for GitHub Actions to impersonate"
   value       = google_service_account.github_deployer.email
 }
+
+
+output "firebase_web_config" {
+  description = "Configuration settings for the React App (.env)"
+  sensitive   = true
+  value = {
+    apiKey            = data.google_firebase_web_app_config.web.api_key
+    authDomain        = data.google_firebase_web_app_config.web.auth_domain
+    projectId         = var.project_id
+    storageBucket     = data.google_firebase_web_app_config.web.storage_bucket
+    messagingSenderId = data.google_firebase_web_app_config.web.messaging_sender_id
+    appId             = google_firebase_web_app.web.app_id
+  }
+}
