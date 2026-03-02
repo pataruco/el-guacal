@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@base-ui/react": "^1.2.0",
     "@react-router/node": "^7.13.1",
     "@reduxjs/toolkit": "^2.6.1",
     "@rtk-query/graphql-request-base-query": "^2.3.2",
