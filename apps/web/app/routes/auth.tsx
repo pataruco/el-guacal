@@ -1,63 +1,64 @@
-import { EmailAuthProvider, GoogleAuthProvider } from 'firebase/auth';
+import {
+  FacebookAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithRedirect,
+  TwitterAuthProvider,
+} from 'firebase/auth';
+import type { AuthProvider } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
+import styles from './auth.module.scss';
+
+const providers: { name: string; provider: AuthProvider; className: string }[] = [
+  { name: 'Google', provider: new GoogleAuthProvider(), className: styles.google },
+  { name: 'Facebook', provider: new FacebookAuthProvider(), className: styles.facebook },
+  { name: 'Apple', provider: new OAuthProvider('apple.com'), className: styles.apple },
+  { name: 'GitHub', provider: new GithubAuthProvider(), className: styles.github },
+  { name: 'Microsoft', provider: new OAuthProvider('microsoft.com'), className: styles.microsoft },
+  { name: 'X (Twitter)', provider: new TwitterAuthProvider(), className: styles.twitter },
+];
 
 const AuthPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAppSelector(selectAuth);
-  const [firebaseui, setFirebaseui] = useState<
-    typeof import('firebaseui') | null
-  >(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      Promise.all([
-        import('firebaseui'),
-        import('firebaseui/dist/firebaseui.css?url'),
-      ]).then(([module, css]) => {
-        setFirebaseui(module.default || module);
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = css.default;
-        document.head.appendChild(link);
-      });
-    }
-  }, []);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
-      return;
     }
+  }, [isAuthenticated, navigate]);
 
-    if (!firebaseui || typeof window === 'undefined') return;
-
-    const AuthUI = firebaseui.auth.AuthUI;
-    const ui = AuthUI.getInstance() || new AuthUI(auth);
-
-    ui.start('#firebaseui-auth-container', {
-      callbacks: {
-        signInSuccessWithAuthResult: () => {
-          // Returning false to prevent redirect by FirebaseUI
-          // our listener in root.tsx will handle navigation if needed
-          return false;
-        },
-      },
-      signInOptions: [
-        GoogleAuthProvider.PROVIDER_ID,
-        EmailAuthProvider.PROVIDER_ID,
-      ],
-      signInSuccessUrl: '/',
-    });
-  }, [isAuthenticated, navigate, firebaseui]);
+  const handleSignIn = async (provider: AuthProvider) => {
+    try {
+      setError(null);
+      await signInWithRedirect(auth, provider);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Sign in failed');
+    }
+  };
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1>Login / Sign Up</h1>
-      <div id="firebaseui-auth-container" />
+    <div className={styles.container}>
+      <h1 className={styles.title}>Sign In</h1>
+      <div className={styles.providers}>
+        {providers.map(({ name, provider, className }) => (
+          <button
+            key={name}
+            type="button"
+            className={`${styles.providerBtn} ${className}`}
+            onClick={() => handleSignIn(provider)}
+          >
+            Sign in with {name}
+          </button>
+        ))}
+      </div>
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 };
