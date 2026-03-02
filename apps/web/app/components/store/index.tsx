@@ -15,8 +15,6 @@ const Store: React.FC = () => {
 
   const { data, isLoading, isError } = useGetStoreByIdQuery({ storeId });
 
-  console.log(data);
-
   if (!show || isError || isLoading || !data) return null;
 
   const store = data.getStoreById;
@@ -24,8 +22,6 @@ const Store: React.FC = () => {
   if (!store) return null;
 
   const { name, address, products, updatedAt, location } = store;
-
-  console.log({ products });
 
   return (
     <section className={styles.store}>
