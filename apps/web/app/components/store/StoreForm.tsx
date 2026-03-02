@@ -1,27 +1,29 @@
+import { Combobox } from '@base-ui/react/combobox';
 import {
   APIProvider,
   Map as GoogleMap,
   type MapCameraChangedEvent,
 } from '@vis.gl/react-google-maps';
 import { Field, type FieldProps, Form, Formik } from 'formik';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+
 import { useAllProductsQuery } from '@/graphql/queries/all-products/index.generated';
 import { selectMap, setCenter } from '@/store/features/map/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { Combobox } from '@base-ui/react/combobox';
+
 import styles from './StoreForm.module.scss';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const GOOGLE_MAPS_ID = import.meta.env.VITE_GOOGLE_MAPS_ID;
 
 const storeSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
   address: z.string().min(1, 'Address is required'),
   lat: z.number(),
   lng: z.number(),
+  name: z.string().min(1, 'Name is required'),
   productIds: z.array(z.string()).min(1, 'Select at least one product'),
 });
 
@@ -42,12 +44,14 @@ const StoreForm: React.FC<StoreFormProps> = ({
   const dispatch = useAppDispatch();
   const { center } = useAppSelector(selectMap);
   const { data: productsData } = useAllProductsQuery();
+  const [searchValue, setSearchValue] = useState('');
+  const comboboxId = useId();
 
   const defaultValues: StoreFormValues = initialValues || {
-    name: '',
     address: '',
     lat: center.lat,
     lng: center.lng,
+    name: '',
     productIds: [],
   };
 
@@ -64,7 +68,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
           <Form className={styles.form}>
             <div className={styles.field}>
               <label htmlFor="name">Store Name</label>
-              <Field name="name" placeholder="Store Name" />
+              <Field id="name" name="name" placeholder="Store Name" />
               {errors.name && touched.name && (
                 <div className={styles.error}>{errors.name}</div>
               )}
@@ -72,14 +76,14 @@ const StoreForm: React.FC<StoreFormProps> = ({
 
             <div className={styles.field}>
               <label htmlFor="address">Address</label>
-              <Field name="address" placeholder="Address" />
+              <Field id="address" name="address" placeholder="Address" />
               {errors.address && touched.address && (
                 <div className={styles.error}>{errors.address}</div>
               )}
             </div>
 
             <div className={styles.mapField}>
-              <label>Location</label>
+              <p className={styles.label}>Location</p>
               <div className={styles.mapWrapper}>
                 <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
                   <GoogleMap
@@ -103,17 +107,17 @@ const StoreForm: React.FC<StoreFormProps> = ({
             </div>
 
             <div className={styles.field}>
-              <label>Products</label>
+              <label htmlFor={comboboxId}>Products</label>
               <Field name="productIds">
                 {({ field, form }: FieldProps) => {
-                  const [searchValue, setSearchValue] = useState('');
                   const selectedIds = field.value as string[];
-                  const selectedProducts = productsData?.allProducts.filter((p) =>
-                    selectedIds.includes(p.productId),
+                  const selectedProducts = productsData?.allProducts.filter(
+                    (p) => selectedIds.includes(p.productId),
                   );
 
-                  const filteredProducts = productsData?.allProducts.filter((p) =>
-                    p.name.toLowerCase().includes(searchValue.toLowerCase()),
+                  const filteredProducts = productsData?.allProducts.filter(
+                    (p) =>
+                      p.name.toLowerCase().includes(searchValue.toLowerCase()),
                   );
 
                   return (
@@ -128,6 +132,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                       >
                         <Combobox.Control className={styles.comboboxControl}>
                           <Combobox.Input
+                            id={comboboxId}
                             className={styles.comboboxInput}
                             placeholder="Search products..."
                           />
