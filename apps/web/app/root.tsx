@@ -1,3 +1,5 @@
+import { onIdTokenChanged } from 'firebase/auth';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
   Links,
@@ -7,8 +9,6 @@ import {
   Scripts,
   ScrollRestoration,
 } from 'react-router';
-import { onIdTokenChanged } from 'firebase/auth';
-import { useEffect } from 'react';
 import { clearAuth, setAuth } from './store/features/auth/slice';
 import { useAppDispatch } from './store/hooks';
 import { store } from './store/store';

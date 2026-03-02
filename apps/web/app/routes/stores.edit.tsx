@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
-import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
-import { useAppSelector } from '@/store/hooks';
+import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
+import { useAppSelector } from '@/store/hooks';
 
 const EditStorePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,10 +29,16 @@ const EditStorePage = () => {
     lat: store.location.lat,
     lng: store.location.lng,
     name: store.name,
-    productIds: store.products.map(p => p.productId),
+    productIds: store.products.map((p) => p.productId),
   };
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: {
+    address: string;
+    lat: number;
+    lng: number;
+    name: string;
+    productIds: string[];
+  }) => {
     try {
       await updateStore({
         input: {

@@ -1,12 +1,12 @@
 import {
-  GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   getRedirectResult,
   signInWithEmailAndPassword,
   signInWithRedirect,
 } from 'firebase/auth';
-import type { AuthProvider } from 'firebase/auth';
 import { type FormEvent, useEffect, useState } from 'react';
+// eslint-disable-next-line deprecation/deprecation
 import { useNavigate } from 'react-router';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';

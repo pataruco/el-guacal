@@ -11,4 +11,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = typeof window !== 'undefined' ? getAuth(app) : ({} as any);
+export const auth =
+  typeof window !== 'undefined'
+    ? getAuth(app)
+    : ({} as ReturnType<typeof getAuth>);

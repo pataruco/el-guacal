@@ -1,9 +1,9 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
 import { useCreateStoreMutation } from '@/graphql/mutations/create-store/index.generated';
-import { useAppSelector } from '@/store/hooks';
 import { selectAuth } from '@/store/features/auth/slice';
-import { useEffect } from 'react';
+import { useAppSelector } from '@/store/hooks';
 
 const NewStorePage = () => {
   const navigate = useNavigate();
@@ -16,15 +16,19 @@ const NewStorePage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: {
+    address: string;
+    lat: number;
+    lng: number;
+    name: string;
+    productIds: string[];
+  }) => {
     try {
       await createStore({
         input: {
           address: values.address,
-          location: {
-            lat: values.lat,
-            lng: values.lng,
-          },
+          lat: values.lat,
+          lng: values.lng,
           name: values.name,
           productIds: values.productIds,
         },
@@ -37,12 +41,7 @@ const NewStorePage = () => {
 
   if (!isAuthenticated) return null;
 
-  return (
-    <StoreForm
-      title="Add New Store"
-      onSubmit={handleSubmit}
-    />
-  );
+  return <StoreForm title="Add New Store" onSubmit={handleSubmit} />;
 };
 
 export default NewStorePage;
