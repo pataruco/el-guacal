@@ -9,12 +9,6 @@
   margin-bottom: 1.5rem;
 }
 
-.providers {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
 .providerBtn {
   display: flex;
   align-items: center;
@@ -44,28 +38,89 @@
   background: #4285f4;
 }
 
-.facebook {
-  background: #1877f2;
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: #666;
+  font-size: 0.875rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+  }
 }
 
-.apple {
-  background: #000000;
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
 }
 
-.github {
-  background: #24292e;
+.label {
+  font-weight: bold;
 }
 
-.microsoft {
-  background: #2f2f2f;
+.input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
 }
 
-.twitter {
-  background: #1da1f2;
+.submitBtn {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    background: #0056b3;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .error {
   color: red;
   font-size: 0.8rem;
   margin-top: 1rem;
+}
+
+.toggle {
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  padding: 0;
 }

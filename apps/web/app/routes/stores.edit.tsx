@@ -37,10 +37,8 @@ const EditStorePage = () => {
       await updateStore({
         input: {
           address: values.address,
-          location: {
-            lat: values.lat,
-            lng: values.lng,
-          },
+          lat: values.lat,
+          lng: values.lng,
           name: values.name,
           productIds: values.productIds,
           storeId: id as string,

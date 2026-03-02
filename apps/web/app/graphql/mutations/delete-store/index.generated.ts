@@ -25,3 +25,4 @@ const injectedRtkApi = gualcalGraphqlApiSlice.injectEndpoints({
 
 export { injectedRtkApi as api };
 export const { useDeleteStoreMutation } = injectedRtkApi;
+
