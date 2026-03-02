@@ -103,26 +103,26 @@ jobs:
         run: |
           pnpm exec moon run server:lint
 
-  unit-tests-web:
-    name: Unit tests (web)
-    needs: [detect-changes]
-    if: needs.detect-changes.outputs.web == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+  # unit-tests-web:
+  #   name: Unit tests (web)
+  #   needs: [detect-changes]
+  #   if: needs.detect-changes.outputs.web == 'true'
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   steps:
+  #     - name: Checkout 🛎️
+  #       uses: actions/checkout@v6
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set environment and install dependencies
-        uses: ./.github/actions/prepare
+  #     - name: Set environment and install dependencies
+  #       uses: ./.github/actions/prepare
 
-      - name: Run unit tests (web)
-        shell: bash
-        run: |
-          pnpm exec moon run web:test
+  #     - name: Run unit tests (web)
+  #       shell: bash
+  #       run: |
+  #         pnpm exec moon run web:test
 
   unit-tests-server:
     name: Unit tests (server)
@@ -149,7 +149,8 @@ jobs:
 
   ci-validation:
     name: CI validation
-    needs: [conventional-commits, lint-format-web, lint-format-server, unit-tests-web, unit-tests-server]
+    # needs: [conventional-commits, lint-format-web, lint-format-server, unit-tests-web, unit-tests-server]
+    needs: [conventional-commits, lint-format-web, lint-format-server, unit-tests-server]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:

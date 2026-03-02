@@ -12,7 +12,6 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_STORAGE_BUCKET: string;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: been used in the app
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }

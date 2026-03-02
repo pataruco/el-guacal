@@ -15,7 +15,6 @@ interface MarkerProps {
 const Marker: React.FC<MarkerProps> = ({ id, position }) => {
   const dispatch = useAppDispatch();
   const handleOnClick = (_event: google.maps.MapMouseEvent) => {
-    console.log({ id });
     dispatch(setStoreId(id));
     dispatch(setShowStore(true));
   };

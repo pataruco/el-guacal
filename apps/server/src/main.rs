@@ -1,4 +1,4 @@
-use server::{config::Config, create_router, create_schema, telemetry};
+use server::{auth::FirebaseVerifier, config::Config, create_router, create_schema, telemetry};
 use sqlx::{ConnectOptions as _, postgres::PgPoolOptions};
 use std::str::FromStr as _;
 use std::time::Duration;
@@ -43,8 +43,15 @@ async fn main() {
         .map(|origin| origin.parse().expect("Invalid CORS origin"))
         .collect();
 
-    let schema = create_schema(pool);
-    let router = create_router(schema, allowed_origins, config.gcp_project_id);
+    let firebase_verifier = config.gcp_project_id.clone().map(FirebaseVerifier::new);
+    let verifier_arc = firebase_verifier.as_ref().map(|_| {
+        std::sync::Arc::new(FirebaseVerifier::new(
+            config.gcp_project_id.clone().unwrap(),
+        ))
+    });
+
+    let schema = create_schema(pool, firebase_verifier);
+    let router = create_router(schema, allowed_origins, config.gcp_project_id, verifier_arc);
 
     println!("Server running on http://0.0.0.0:{}/graphql", config.port);
 

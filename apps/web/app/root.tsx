@@ -1,7 +1,6 @@
 import { Provider } from 'react-redux';
 import {
   Links,
-  type LinksFunction,
   Meta,
   type MetaFunction,
   Outlet,
@@ -10,10 +9,6 @@ import {
 } from 'react-router';
 import { store } from './store/store';
 import './styles/index.scss';
-
-export const links: LinksFunction = () => [
-  { href: '/favicon.svg', rel: 'icon', type: 'image/svg+xml' },
-];
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,6 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/vite.svg" type="image/svg+xml" />
         <Meta />
         <Links />
       </head>

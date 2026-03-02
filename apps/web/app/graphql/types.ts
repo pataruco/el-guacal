@@ -16,6 +16,14 @@ export type Scalars = {
   UUID: { input: any; output: any; }
 };
 
+export type CreateStoreInput = {
+  address: Scalars['String']['input'];
+  lat: Scalars['Float']['input'];
+  lng: Scalars['Float']['input'];
+  name: Scalars['String']['input'];
+  productIds: Array<Scalars['UUID']['input']>;
+};
+
 export type Location = {
   __typename?: 'Location';
   lat: Scalars['Float']['output'];
@@ -25,6 +33,28 @@ export type Location = {
 export type LocationInput = {
   lat: Scalars['Float']['input'];
   lng: Scalars['Float']['input'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createStore: Store;
+  deleteStore: Scalars['Boolean']['output'];
+  updateStore: Store;
+};
+
+
+export type MutationCreateStoreArgs = {
+  input: CreateStoreInput;
+};
+
+
+export type MutationDeleteStoreArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
+export type MutationUpdateStoreArgs = {
+  input: UpdateStoreInput;
 };
 
 export type Product = {
@@ -76,4 +106,13 @@ export type Store = {
   products: Array<Product>;
   storeId: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type UpdateStoreInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  lat?: InputMaybe<Scalars['Float']['input']>;
+  lng?: InputMaybe<Scalars['Float']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  productIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  storeId: Scalars['UUID']['input'];
 };

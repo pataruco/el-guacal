@@ -1,0 +1,11 @@
+mutation UpdateStore($input: UpdateStoreInput!) {
+  updateStore(input: $input) {
+    storeId
+    name
+    address
+    location {
+      lat
+      lng
+    }
+  }
+}
