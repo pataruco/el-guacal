@@ -1,0 +1,71 @@
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+}
+
+.providers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.providerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.google {
+  background: #4285f4;
+}
+
+.facebook {
+  background: #1877f2;
+}
+
+.apple {
+  background: #000000;
+}
+
+.github {
+  background: #24292e;
+}
+
+.microsoft {
+  background: #2f2f2f;
+}
+
+.twitter {
+  background: #1da1f2;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}
