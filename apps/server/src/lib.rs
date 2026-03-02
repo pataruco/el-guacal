@@ -5,8 +5,8 @@ pub mod model;
 pub mod telemetry;
 
 use api::{Mutation, Query};
-use auth::FirebaseVerifier;
 use async_graphql::{EmptySubscription, Schema};
+use auth::FirebaseVerifier;
 use axum::{
     Router,
     http::{HeaderValue, Method},
@@ -20,8 +20,8 @@ pub type AppSchema = Schema<Query, Mutation, EmptySubscription>;
 
 #[must_use]
 pub fn create_schema(pool: PgPool, firebase_verifier: Option<FirebaseVerifier>) -> AppSchema {
-    let mut builder = Schema::build(Query::default(), Mutation::default(), EmptySubscription)
-        .data(pool);
+    let mut builder =
+        Schema::build(Query::default(), Mutation::default(), EmptySubscription).data(pool);
 
     if let Some(verifier) = firebase_verifier {
         builder = builder.data(verifier);
@@ -41,7 +41,10 @@ pub fn create_router(
 ) -> Router {
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST])
-        .allow_headers([axum::http::header::CONTENT_TYPE, axum::http::header::AUTHORIZATION])
+        .allow_headers([
+            axum::http::header::CONTENT_TYPE,
+            axum::http::header::AUTHORIZATION,
+        ])
         .allow_origin(allowed_origins);
 
     Router::new()
@@ -52,20 +55,16 @@ pub fn create_router(
                       headers: axum::http::HeaderMap,
                       req: async_graphql_axum::GraphQLRequest| {
                     let mut req = req.into_inner();
-                    let verifier = verifier.clone();
                     let schema = schema.clone();
                     async move {
-                        if let Some(verifier) = verifier.as_ref() {
-                            if let Some(auth_header) = headers.get(axum::http::header::AUTHORIZATION) {
-                                if let Ok(auth_str) = auth_header.to_str() {
-                                    if auth_str.starts_with("Bearer ") {
-                                        let token = &auth_str[7..];
-                                        if let Ok(user) = verifier.verify_token(token).await {
-                                            req = req.data(user);
-                                        }
-                                    }
-                                }
-                            }
+                        if let Some(verifier) = verifier.as_ref()
+                            && let Some(auth_header) =
+                                headers.get(axum::http::header::AUTHORIZATION)
+                            && let Ok(auth_str) = auth_header.to_str()
+                            && let Some(token) = auth_str.strip_prefix("Bearer ")
+                            && let Ok(user) = verifier.verify_token(token).await
+                        {
+                            req = req.data(user);
                         }
                         async_graphql_axum::GraphQLResponse::from(schema.execute(req).await)
                     }
@@ -73,8 +72,8 @@ pub fn create_router(
             ),
         )
         .with_state(firebase_verifier)
-        .layer(
-            TraceLayer::new_for_http().make_span_with(move |request: &axum::http::Request<_>| {
+        .layer(TraceLayer::new_for_http().make_span_with(
+            move |request: &axum::http::Request<_>| {
                 let trace_context = request
                     .headers()
                     .get("x-cloud-trace-context")
@@ -98,8 +97,8 @@ pub fn create_router(
                     uri = %request.uri(),
                     "logging.googleapis.com/trace" = %gcp_trace,
                 )
-            }),
-        )
+            },
+        ))
         .layer(cors)
 }
 

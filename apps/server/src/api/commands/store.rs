@@ -3,7 +3,7 @@ use crate::model::location::Location;
 use crate::model::store::Store;
 use async_graphql::{Context, InputObject, Object};
 use chrono::{DateTime, Utc};
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 use uuid::Uuid;
 
 #[derive(Default)]
@@ -57,7 +57,6 @@ impl StoreCommand {
         .fetch_one(&mut *tx)
         .await?;
 
-        use sqlx::Row;
         let store = Store {
             store_id: row.get::<Uuid, _>("store_id"),
             name: row.get::<String, _>("name"),
@@ -71,13 +70,11 @@ impl StoreCommand {
         };
 
         for product_id in input.product_ids {
-            sqlx::query(
-                "INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)",
-            )
-            .bind(store.store_id)
-            .bind(product_id)
-            .execute(&mut *tx)
-            .await?;
+            sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
+                .bind(store.store_id)
+                .bind(product_id)
+                .execute(&mut *tx)
+                .await?;
         }
 
         tx.commit().await?;
@@ -131,13 +128,11 @@ impl StoreCommand {
                 .await?;
 
             for product_id in product_ids {
-                sqlx::query(
-                    "INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)",
-                )
-                .bind(input.store_id)
-                .bind(product_id)
-                .execute(&mut *tx)
-                .await?;
+                sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
+                    .bind(input.store_id)
+                    .bind(product_id)
+                    .execute(&mut *tx)
+                    .await?;
             }
         }
 
@@ -152,7 +147,6 @@ impl StoreCommand {
         .fetch_one(&mut *tx)
         .await?;
 
-        use sqlx::Row;
         let store = Store {
             store_id: row.get::<Uuid, _>("store_id"),
             name: row.get::<String, _>("name"),
