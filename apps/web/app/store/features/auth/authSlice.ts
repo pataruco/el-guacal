@@ -12,20 +12,15 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
-  token: null,
   loading: true,
+  token: null,
+  user: null,
 };
 
 export const authSlice = createSlice({
-  name: 'auth',
   initialState,
+  name: 'auth',
   reducers: {
-    setUser: (state, action: PayloadAction<{ user: AuthState['user']; token: string | null }>) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.loading = false;
-    },
     clearUser: (state) => {
       state.user = null;
       state.token = null;
@@ -33,6 +28,14 @@ export const authSlice = createSlice({
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
+    },
+    setUser: (
+      state,
+      action: PayloadAction<{ user: AuthState['user']; token: string | null }>,
+    ) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.loading = false;
     },
   },
 });
