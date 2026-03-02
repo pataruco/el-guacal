@@ -8,13 +8,14 @@ import { auth } from '@/utils/firebase';
 const AuthPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAppSelector(selectAuth);
-  const [firebaseui, setFirebaseui] = useState<any>(null);
+  const [firebaseui, setFirebaseui] = useState<
+    typeof import('firebaseui') | null
+  >(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       Promise.all([
         import('firebaseui'),
-        // @ts-expect-error
         import('firebaseui/dist/firebaseui.css?url'),
       ]).then(([module, css]) => {
         setFirebaseui(module.default || module);
@@ -34,8 +35,8 @@ const AuthPage = () => {
 
     if (!firebaseui || typeof window === 'undefined') return;
 
-    const ui =
-      firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+    const AuthUI = firebaseui.auth.AuthUI;
+    const ui = AuthUI.getInstance() || new AuthUI(auth);
 
     ui.start('#firebaseui-auth-container', {
       callbacks: {
@@ -51,7 +52,7 @@ const AuthPage = () => {
       ],
       signInSuccessUrl: '/',
     });
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, firebaseui]);
 
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
