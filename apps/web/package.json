@@ -6,6 +6,7 @@
     "@rtk-query/graphql-request-base-query": "^2.3.2",
     "@vis.gl/react-google-maps": "^1.7.1",
     "firebase": "^12.9.0",
+    "firebaseui": "^6.1.0",
     "formik": "^2.4.9",
     "graphql": "^16.12.0",
     "graphql-request": "^7.4.0",
@@ -15,7 +16,8 @@
     "react-redux": "^9.2.0",
     "react-router": "^7.13.1",
     "yup": "^1.7.1",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "zod-formik-adapter": "^2.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",

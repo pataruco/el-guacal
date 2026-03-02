@@ -12,7 +12,22 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /**
+   * Implement the DateTime<Utc> scalar
+   *
+   * The input/output is a string in RFC3339 format.
+   */
   DateTime: { input: any; output: any; }
+  /**
+   * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
+   * Strings within GraphQL. UUIDs are used to assign unique identifiers to
+   * entities without requiring a central allocating authority.
+   *
+   * # References
+   *
+   * * [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
+   * * [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
+   */
   UUID: { input: any; output: any; }
 };
 
@@ -68,6 +83,7 @@ export type Product = {
 
 export type Query = {
   __typename?: 'Query';
+  allProducts: Array<Product>;
   getStoreById?: Maybe<Store>;
   storesNear: Array<Store>;
 };

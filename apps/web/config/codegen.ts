@@ -1,8 +1,5 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
-const GUACAL_GRAPHQL_API =
-  process.env.VITE_GUACAL_GRAPHQL_API ?? 'http://0.0.0.0:8080/graphql';
-
 const config: CodegenConfig = {
   documents: './app/**/*.graphql',
   generates: {
@@ -30,7 +27,7 @@ const config: CodegenConfig = {
       plugins: ['typescript'],
     },
   },
-  schema: GUACAL_GRAPHQL_API,
+  schema: '../server/schema.graphql',
 };
 
 export default config;

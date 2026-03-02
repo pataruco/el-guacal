@@ -130,7 +130,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                         onInputValueChange={setSearchValue}
                         multiple
                       >
-                        <Combobox.Control className={styles.comboboxControl}>
+                        <div className={styles.comboboxControl}>
                           <Combobox.Input
                             id={comboboxId}
                             className={styles.comboboxInput}
@@ -139,7 +139,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                           <Combobox.Trigger className={styles.comboboxTrigger}>
                             ▼
                           </Combobox.Trigger>
-                        </Combobox.Control>
+                        </div>
                         <Combobox.Portal>
                           <Combobox.Positioner
                             className={styles.selectPositioner}
@@ -151,9 +151,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                                   value={product.productId}
                                   className={styles.selectItem}
                                 >
-                                  <Combobox.ItemText>
-                                    {product.name}
-                                  </Combobox.ItemText>
+                                  {product.name}
                                   <Combobox.ItemIndicator>
                                     ✓
                                   </Combobox.ItemIndicator>
