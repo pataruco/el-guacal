@@ -48,3 +48,5 @@ export const storeSlice = createAppSlice({
 export const { setStore, setShowStore, setStoreId } = storeSlice.actions;
 
 export const { selectStoreState } = storeSlice.selectors;
+
+export default storeSlice.reducer;
