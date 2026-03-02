@@ -25,8 +25,8 @@ async fn test_graphql_stores_near() {
         .map(|origin| origin.parse().expect("Invalid CORS origin"))
         .collect();
 
-    let schema = create_schema(pool);
-    let app = create_router(schema, allowed_origins, config.gcp_project_id);
+    let schema = create_schema(pool, None);
+    let app = create_router(schema, allowed_origins, config.gcp_project_id, None);
 
     let query = r"
         query {
@@ -86,8 +86,8 @@ async fn test_graphql_store_products() {
         .map(|origin| origin.parse().expect("Invalid CORS origin"))
         .collect();
 
-    let schema = create_schema(pool);
-    let app = create_router(schema, allowed_origins, config.gcp_project_id);
+    let schema = create_schema(pool, None);
+    let app = create_router(schema, allowed_origins, config.gcp_project_id, None);
 
     let query = r"
         query {

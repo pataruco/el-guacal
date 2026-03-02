@@ -1,0 +1,3 @@
+mutation DeleteStore($id: UUID!) {
+  deleteStore(id: $id)
+}

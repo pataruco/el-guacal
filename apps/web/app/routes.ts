@@ -5,5 +5,4 @@ export default [
   route('about', 'routes/about.tsx'),
   route('auth/login', 'routes/auth.login.tsx'),
   route('auth/signup', 'routes/auth.signup.tsx'),
-  route('*', 'routes/$.tsx'),
 ] satisfies RouteConfig;

@@ -1,7 +1,6 @@
 import { Provider } from 'react-redux';
 import {
   Links,
-  type LinksFunction,
   Meta,
   type MetaFunction,
   Outlet,
@@ -10,10 +9,6 @@ import {
 } from 'react-router';
 import { store } from './store/store';
 import './styles/index.scss';
-
-export const links: LinksFunction = () => [
-  { href: '/favicon.svg', rel: 'icon', type: 'image/svg+xml' },
-];
 
 export const meta: MetaFunction = () => {
   return [
