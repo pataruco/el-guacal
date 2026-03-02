@@ -4,9 +4,9 @@ const GUACAL_GRAPHQL_API =
   process.env.VITE_GUACAL_GRAPHQL_API ?? 'http://0.0.0.0:8080/graphql';
 
 const config: CodegenConfig = {
-  documents: './src/**/*.graphql',
+  documents: './app/**/*.graphql',
   generates: {
-    './src/': {
+    './app/': {
       plugins: [
         'typescript-operations',
         {
@@ -23,7 +23,7 @@ const config: CodegenConfig = {
         extension: '.generated.ts',
       },
     },
-    './src/graphql/types.ts': {
+    './app/graphql/types.ts': {
       config: {
         enumsAsTypes: true,
       },
