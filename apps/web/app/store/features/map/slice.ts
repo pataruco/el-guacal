@@ -79,3 +79,5 @@ export const { selectCenter, selectStatus, selectZoom, selectMap } =
 
 export const { setStatus, setCenter, setZoom, getUserLocation } =
   mapSlice.actions;
+
+export default mapSlice.reducer;

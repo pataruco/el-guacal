@@ -138,3 +138,96 @@ async fn test_graphql_store_products() {
     );
     assert_eq!(products[0]["name"], "Harina P.A.N.");
 }
+
+#[tokio::test]
+#[ignore = "integration tests"]
+async fn test_graphql_store_mutations() {
+    let config = Config::new().expect("Failed to load config");
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .connect(&config.database_url)
+        .await
+        .expect("Failed to create pool");
+
+    let schema = create_schema(pool.clone(), None);
+
+    // Mock user
+    let user = server::auth::FirebaseUser {
+        uid: "test-user".to_string(),
+        email: Some("test@example.com".to_string()),
+    };
+
+    // 1. Create Store
+    // Get a product id first
+    let product_id: uuid::Uuid = sqlx::query_scalar("SELECT product_id FROM products LIMIT 1")
+        .fetch_one(&pool)
+        .await
+        .expect("Failed to fetch product_id");
+
+    let create_mutation = format!(
+        r#"
+        mutation {{
+            createStore(input: {{
+                name: "New Store",
+                address: "New Address",
+                lat: 1.23,
+                lng: 4.56,
+                productIds: ["{}"]
+            }}) {{
+                storeId
+                name
+                address
+            }}
+        }}
+    "#,
+        product_id
+    );
+
+    let request = async_graphql::Request::new(create_mutation).data(user.clone());
+    let response = schema.execute(request).await;
+
+    assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
+    let data = response.data.into_json().unwrap();
+    let store_id = data["createStore"]["storeId"]
+        .as_str()
+        .expect("storeId should be a string")
+        .to_string();
+    assert_eq!(data["createStore"]["name"], "New Store");
+
+    // 2. Update Store
+    let update_mutation = format!(
+        r#"
+        mutation {{
+            updateStore(input: {{
+                storeId: "{}",
+                name: "Updated Store"
+            }}) {{
+                name
+            }}
+        }}
+    "#,
+        store_id
+    );
+
+    let request = async_graphql::Request::new(update_mutation).data(user.clone());
+    let response = schema.execute(request).await;
+    assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
+    let data = response.data.into_json().unwrap();
+    assert_eq!(data["updateStore"]["name"], "Updated Store");
+
+    // 3. Delete Store
+    let delete_mutation = format!(
+        r#"
+        mutation {{
+            deleteStore(id: "{}")
+        }}
+    "#,
+        store_id
+    );
+
+    let request = async_graphql::Request::new(delete_mutation).data(user);
+    let response = schema.execute(request).await;
+    assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
+    let data = response.data.into_json().unwrap();
+    assert!(data["deleteStore"].as_bool().unwrap());
+}
