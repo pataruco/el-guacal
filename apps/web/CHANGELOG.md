@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.1](https://github.com/pataruco/el-guacal/compare/web-v1.5.0...web-v1.5.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* trigger a web build ([de06a68](https://github.com/pataruco/el-guacal/commit/de06a68c742e0a9b96bc8d48d0d276be6e0a20bb))
+* trigger a web build ([4384082](https://github.com/pataruco/el-guacal/commit/4384082e8d85142b1e7c520fc0e95cdcd9a5b111))
+
 ## [1.5.0](https://github.com/pataruco/el-guacal/compare/web-v1.4.0...web-v1.5.0) (2026-03-03)
 
 
