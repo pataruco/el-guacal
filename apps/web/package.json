@@ -56,5 +56,5 @@
     "test": "vitest --config ./config/vitest.config.ts"
   },
   "type": "module",
-  "version": "1.5.4"
+  "version": "1.5.5"
 }
