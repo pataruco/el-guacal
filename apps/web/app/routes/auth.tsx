@@ -1,9 +1,8 @@
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  getRedirectResult,
   signInWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
 } from 'firebase/auth';
 import { type FormEvent, useEffect, useState } from 'react';
 // eslint-disable-next-line deprecation/deprecation
@@ -30,18 +29,11 @@ const AuthPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Complete the redirect sign-in flow when returning from a provider
-  useEffect(() => {
-    getRedirectResult(auth).catch((err) => {
-      setError(err instanceof Error ? err.message : 'Sign in failed');
-    });
-  }, []);
-
   const handleGoogleSignIn = async () => {
     try {
       setError(null);
       setLoading(true);
-      await signInWithRedirect(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider);
     } catch (err) {
       setLoading(false);
       setError(err instanceof Error ? err.message : 'Sign in failed');
