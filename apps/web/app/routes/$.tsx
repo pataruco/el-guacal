@@ -1,9 +1,8 @@
-import { data } from 'react-router';
-
-export function loader() {
-  return data(null, { status: 404 });
-}
-
 export default function CatchAll() {
-  return null;
+  return (
+    <div style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+      <h1>404</h1>
+      <p>Page not found</p>
+    </div>
+  );
 }
