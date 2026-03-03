@@ -67,15 +67,11 @@ export const mapSlice = createAppSlice({
     ),
   }),
   selectors: {
-    selectCenter: (state) => state.center,
     selectMap: (state) => state,
-    selectStatus: (state) => state.status,
-    selectZoom: (state) => state.zoom,
   },
 });
 
-export const { selectCenter, selectStatus, selectZoom, selectMap } =
-  mapSlice.selectors;
+export const { selectMap } = mapSlice.selectors;
 
 export const { setStatus, setCenter, setZoom, getUserLocation } =
   mapSlice.actions;
