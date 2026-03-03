@@ -3,6 +3,7 @@ import { combineSlices, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import authReducer from './features/auth/slice';
 import { gualcalGraphqlApiSlice } from './features/guacal-api/base';
+import './features/guacal-api/enhanced';
 import { mapSlice } from './features/map/slice';
 import { storeSlice } from './features/stores/slice';
 

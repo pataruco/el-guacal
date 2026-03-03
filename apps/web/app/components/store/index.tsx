@@ -31,7 +31,7 @@ const Store: React.FC = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this store?')) {
       try {
-        await deleteStore({ storeId: id }).unwrap();
+        await deleteStore({ id }).unwrap();
         handleOnClose();
       } catch (error) {
         console.error('Failed to delete store:', error);
