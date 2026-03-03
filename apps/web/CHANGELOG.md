@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.5](https://github.com/pataruco/el-guacal/compare/web-v1.5.4...web-v1.5.5) (2026-03-03)
+
+
+### Bug Fixes
+
+* auth to a popup ([d9c9340](https://github.com/pataruco/el-guacal/commit/d9c93404b4f22310ebdeb48a98db98da55f78276))
+
 ## [1.5.4](https://github.com/pataruco/el-guacal/compare/web-v1.5.3...web-v1.5.4) (2026-03-03)
 
 
