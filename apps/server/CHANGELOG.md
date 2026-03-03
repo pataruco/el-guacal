@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.0](https://github.com/pataruco/el-guacal/compare/server-v0.4.0...server-v0.5.0) (2026-03-03)
+
+
+### Features
+
+* add firebase auth and store management ([971dbe9](https://github.com/pataruco/el-guacal/commit/971dbe9646790acdbb5b1dfdba37742482146e1e))
+* add mutations ([2dec41a](https://github.com/pataruco/el-guacal/commit/2dec41a61e45ae82619893fb88094710d876226c))
+* implement Firebase Auth and protected store operations ([751afc2](https://github.com/pataruco/el-guacal/commit/751afc29974daa24850af8a8d57c71bf80d1023e))
+* implement Firebase Auth and protected store operations ([5776105](https://github.com/pataruco/el-guacal/commit/5776105920c3516df4aa8d7eaf9393ad6d35a2be))
+* implement Firebase Auth and protected store operations ([e65a845](https://github.com/pataruco/el-guacal/commit/e65a84560e224cdd00824bf50b5d478c20b9765e))
+* implement Firebase Auth and protected store operations ([b404f78](https://github.com/pataruco/el-guacal/commit/b404f78aa5e371b67d9e6160339b0308d3b1c31a))
+* implement firebase auth and store CUD UI ([5b86873](https://github.com/pataruco/el-guacal/commit/5b868735759e1f189306a73d10b3b9da3d3f0dc9))
+* implement firebase auth and store CUD UI ([5ce3d10](https://github.com/pataruco/el-guacal/commit/5ce3d10c14fe6fc1c92a2fb6ee3ec45a33f5e025))
+* implement firebase auth and store CUD UI ([40ea825](https://github.com/pataruco/el-guacal/commit/40ea825447e0515f256247b0a00f6a5f32a31595))
+* implement Firebase Auth and Store CUD UI ([f5cd92c](https://github.com/pataruco/el-guacal/commit/f5cd92c6c070748ff4ddd5bd8c5cd291588a2557))
+* write operations works ([5b6aded](https://github.com/pataruco/el-guacal/commit/5b6aded80fcbd863aac7bede98a6224b34256528))
+
 ## [0.4.0](https://github.com/pataruco/el-guacal/compare/server-v0.3.2...server-v0.4.0) (2026-03-01)
 
 

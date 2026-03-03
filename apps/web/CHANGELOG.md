@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.5.0](https://github.com/pataruco/el-guacal/compare/web-v1.4.0...web-v1.5.0) (2026-03-03)
+
+
+### Features
+
+* add auth page SCSS module ([979aa77](https://github.com/pataruco/el-guacal/commit/979aa77c57a89adccd1f664dfa8cc36448c3d133))
+* add firebase auth and store management ([971dbe9](https://github.com/pataruco/el-guacal/commit/971dbe9646790acdbb5b1dfdba37742482146e1e))
+* add mutations ([2dec41a](https://github.com/pataruco/el-guacal/commit/2dec41a61e45ae82619893fb88094710d876226c))
+* delete store ([a0697a4](https://github.com/pataruco/el-guacal/commit/a0697a433e49415e4d00f38b38b82e9e667346c9))
+* implement Firebase Auth and protected store operations ([751afc2](https://github.com/pataruco/el-guacal/commit/751afc29974daa24850af8a8d57c71bf80d1023e))
+* implement Firebase Auth and protected store operations ([5776105](https://github.com/pataruco/el-guacal/commit/5776105920c3516df4aa8d7eaf9393ad6d35a2be))
+* implement Firebase Auth and protected store operations ([e65a845](https://github.com/pataruco/el-guacal/commit/e65a84560e224cdd00824bf50b5d478c20b9765e))
+* implement Firebase Auth and protected store operations ([b404f78](https://github.com/pataruco/el-guacal/commit/b404f78aa5e371b67d9e6160339b0308d3b1c31a))
+* implement firebase auth and store CUD UI ([5b86873](https://github.com/pataruco/el-guacal/commit/5b868735759e1f189306a73d10b3b9da3d3f0dc9))
+* implement firebase auth and store CUD UI ([5ce3d10](https://github.com/pataruco/el-guacal/commit/5ce3d10c14fe6fc1c92a2fb6ee3ec45a33f5e025))
+* implement firebase auth and store CUD UI ([9722c03](https://github.com/pataruco/el-guacal/commit/9722c03c58d0b3126616d67143a4b2945c5d01bb))
+* implement firebase auth and store CUD UI ([40ea825](https://github.com/pataruco/el-guacal/commit/40ea825447e0515f256247b0a00f6a5f32a31595))
+* implement firebase auth and store CUD UI ([44499f1](https://github.com/pataruco/el-guacal/commit/44499f181bd7d81bcff859e351890b7db8dabbbd))
+* implement Firebase Auth and Store CUD UI ([f5cd92c](https://github.com/pataruco/el-guacal/commit/f5cd92c6c070748ff4ddd5bd8c5cd291588a2557))
+* replace FirebaseUI with modular provider buttons ([09870d2](https://github.com/pataruco/el-guacal/commit/09870d2c2f88a7daa8b94db0f904e3848c8e8d21))
+* set auth routes ([2a4f741](https://github.com/pataruco/el-guacal/commit/2a4f741c466c8903b6205f83d364f37b18db60f9))
+* write operations works ([5b6aded](https://github.com/pataruco/el-guacal/commit/5b6aded80fcbd863aac7bede98a6224b34256528))
+
+
+### Bug Fixes
+
+* add getRedirectResult and loading state to auth page ([35c06db](https://github.com/pataruco/el-guacal/commit/35c06dbe742a2f53cd88eb1564fb32c7134c4194))
+
 ## [1.4.0](https://github.com/pataruco/el-guacal/compare/web-v1.3.0...web-v1.4.0) (2026-03-01)
 
 
