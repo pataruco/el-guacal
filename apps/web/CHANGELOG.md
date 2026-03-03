@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.4](https://github.com/pataruco/el-guacal/compare/web-v1.5.3...web-v1.5.4) (2026-03-03)
+
+
+### Bug Fixes
+
+* auth ([22e01e4](https://github.com/pataruco/el-guacal/commit/22e01e437f99d9831a389bf42d145c1e79845467))
+* auth ([7463f09](https://github.com/pataruco/el-guacal/commit/7463f0965e1f903abb9f41fa292103232656b12b))
+
 ## [1.5.3](https://github.com/pataruco/el-guacal/compare/web-v1.5.2...web-v1.5.3) (2026-03-03)
 
 
