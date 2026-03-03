@@ -8,4 +8,36 @@
     right: 0;
     top: 0;
   }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    .editBtn,
+    .deleteBtn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-decoration: none;
+      color: inherit;
+      background: #f0f0f0;
+      cursor: pointer;
+      font-size: 0.875rem;
+
+      &:hover {
+        background: #e0e0e0;
+      }
+    }
+
+    .deleteBtn {
+      background: #ffebeb;
+      color: #d32f2f;
+      border-color: #ffcdd2;
+
+      &:hover {
+        background: #ffcdd2;
+      }
+    }
+  }
 }

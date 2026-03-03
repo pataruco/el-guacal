@@ -209,6 +209,13 @@ resource "google_identity_platform_config" "auth" {
     "${var.project_id}.firebaseapp.com",
     "${var.project_id}.web.app",
   ]
+
+  sign_in {
+    email {
+      enabled           = true
+      password_required = true
+    }
+  }
 }
 
 # Register the React Application with Firebase

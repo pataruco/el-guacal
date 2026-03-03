@@ -1,3 +1,5 @@
+import { onIdTokenChanged } from 'firebase/auth';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
   Links,
@@ -7,7 +9,10 @@ import {
   Scripts,
   ScrollRestoration,
 } from 'react-router';
+import { clearAuth, setAuth } from './store/features/auth/slice';
+import { useAppDispatch } from './store/hooks';
 import { store } from './store/store';
+import { auth } from './utils/firebase';
 import './styles/index.scss';
 
 export const meta: MetaFunction = () => {
@@ -37,5 +42,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+      if (user) {
+        const idToken = await user.getIdToken();
+        dispatch(
+          setAuth({
+            idToken,
+            user: {
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+              uid: user.uid,
+            },
+          }),
+        );
+      } else {
+        dispatch(clearAuth());
+      }
+    });
+
+    return () => unsubscribe();
+  }, [dispatch]);
+
   return <Outlet />;
 }

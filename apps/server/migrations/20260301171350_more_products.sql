@@ -9,6 +9,5 @@ INSERT INTO products (name, brand) VALUES
   ('Pirulin', 'Sindoni'),
   ('Toronto', 'Nestlé Venezuela'),
   ('Papelón', 'Genérico'),
-  ('Café Madrid', 'Fama de América'),
   ('Chocolate El Rey', 'El Rey'),
   ('Harina P.A.N. Cachapas', 'Alimentos Polar');

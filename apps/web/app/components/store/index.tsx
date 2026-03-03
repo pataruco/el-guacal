@@ -1,4 +1,7 @@
+import { Link } from 'react-router';
+import { useDeleteStoreMutation } from '@/graphql/mutations/delete-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
+import { selectAuth } from '@/store/features/auth/slice';
 import { selectStoreState, setShowStore } from '@/store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { formatDate } from '@/utils/date-utils';
@@ -13,7 +16,9 @@ const Store: React.FC = () => {
     dispatch(setShowStore(false));
   };
 
+  const { isAuthenticated } = useAppSelector(selectAuth);
   const { data, isLoading, isError } = useGetStoreByIdQuery({ storeId });
+  const [deleteStore] = useDeleteStoreMutation();
 
   if (!show || isError || isLoading || !data) return null;
 
@@ -21,11 +26,37 @@ const Store: React.FC = () => {
 
   if (!store) return null;
 
-  const { name, address, products, updatedAt, location } = store;
+  const { storeId: id, name, address, products, updatedAt, location } = store;
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this store?')) {
+      try {
+        await deleteStore({ id }).unwrap();
+        handleOnClose();
+      } catch (error) {
+        console.error('Failed to delete store:', error);
+      }
+    }
+  };
 
   return (
     <section className={styles.store}>
       <h2>{name}</h2>
+
+      {isAuthenticated && (
+        <div className={styles.actions}>
+          <Link to={`/stores/${id}/edit`} className={styles.editBtn}>
+            Edit
+          </Link>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className={styles.deleteBtn}
+          >
+            Delete
+          </button>
+        </div>
+      )}
 
       <a
         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}

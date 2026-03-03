@@ -1,0 +1,218 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: bold;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+}
+
+.mapField {
+  .label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.mapWrapper {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: red;
+  pointer-events: none;
+  z-index: 10;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.coordinates {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.selectTrigger {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    border-color: #888;
+  }
+}
+
+.selectPopup {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.selectItem {
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover,
+  &[data-highlighted] {
+    background: #f0f0f0;
+  }
+
+  &[data-selected] {
+    font-weight: bold;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.submitBtn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    background: #0056b3;
+  }
+}
+
+.cancelBtn {
+  background: #f8f9fa;
+  border: 1px solid #ccc;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #e2e6ea;
+  }
+}
+
+.comboboxWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comboboxControl {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+}
+
+.comboboxInput {
+  flex: 1;
+  border: none !important;
+  padding: 0.5rem;
+  outline: none;
+}
+
+.comboboxTrigger {
+  background: #f8f9fa;
+  border: none;
+  border-left: 1px solid #ccc;
+  padding: 0 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #e2e6ea;
+  }
+}
+
+.noResults {
+  padding: 0.5rem;
+  color: #666;
+  font-style: italic;
+}
+
+.selectedList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selectedItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 16px;
+  font-size: 0.85rem;
+}
+
+.removeItemBtn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0;
+
+  &:hover {
+    color: #ff4444;
+  }
+}

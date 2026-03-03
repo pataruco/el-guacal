@@ -31,3 +31,6 @@ tasks:
   integration-test:
     command: "cargo test -- --include-ignored"
     description: "Run unit and integration tests"
+  graphql-generate:
+    command: "cargo run --bin export_schema"
+    description: "Generate GraphQL schema and resolvers"
