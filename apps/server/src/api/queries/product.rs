@@ -11,11 +11,11 @@ impl ProductQuery {
     async fn all_products(&self, ctx: &Context<'_>) -> Result<Vec<Product>> {
         let pool = ctx.data::<PgPool>()?;
         let products = sqlx::query_as::<_, Product>(
-            r#"
+            r"
             SELECT product_id, name, brand, created_at, updated_at
             FROM products
             ORDER BY name ASC
-            "#
+            ",
         )
         .fetch_all(pool)
         .await?;
