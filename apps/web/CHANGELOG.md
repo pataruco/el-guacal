@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.2](https://github.com/pataruco/el-guacal/compare/web-v1.5.1...web-v1.5.2) (2026-03-03)
+
+
+### Bug Fixes
+
+* auth and web deploy ([57dea4e](https://github.com/pataruco/el-guacal/commit/57dea4e40233c9cf3ed931ba886bfea0e45a03fd))
+* remove  auth from pre render ([9739719](https://github.com/pataruco/el-guacal/commit/9739719d4ad50b921aa7b6a2e6f9740164ecdcd8))
+
 ## [1.5.1](https://github.com/pataruco/el-guacal/compare/web-v1.5.0...web-v1.5.1) (2026-03-03)
 
 
