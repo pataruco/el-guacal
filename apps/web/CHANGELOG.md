@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.3](https://github.com/pataruco/el-guacal/compare/web-v1.5.2...web-v1.5.3) (2026-03-03)
+
+
+### Bug Fixes
+
+* react router pre rendering ([b660add](https://github.com/pataruco/el-guacal/commit/b660add2631baf873a3ca04e8d501e7de65c8c74))
+* react router pre rendering ([47340e9](https://github.com/pataruco/el-guacal/commit/47340e94e160816946dea6cc2aade8672cc490d2))
+
 ## [1.5.2](https://github.com/pataruco/el-guacal/compare/web-v1.5.1...web-v1.5.2) (2026-03-03)
 
 
