@@ -6,3 +6,8 @@ project_id = "your-gcp-project-id"
 
 # Database password for the 'pataruco' user (required, sensitive)
 db_password = "your-secure-database-password"
+
+# Google OAuth 2.0 credentials for Google Sign-In (required, sensitive)
+# Create at: https://console.cloud.google.com/apis/credentials
+google_oauth_client_id     = "your-google-oauth-client-id"
+google_oauth_client_secret = "your-google-oauth-client-secret"
