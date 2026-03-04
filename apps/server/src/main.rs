@@ -50,8 +50,14 @@ async fn main() {
         ))
     });
 
-    let schema = create_schema(pool, firebase_verifier);
-    let router = create_router(schema, allowed_origins, config.gcp_project_id, verifier_arc);
+    let schema = create_schema(pool.clone(), firebase_verifier);
+    let router = create_router(
+        schema,
+        allowed_origins,
+        config.gcp_project_id,
+        verifier_arc,
+        pool,
+    );
 
     println!("Server running on http://0.0.0.0:{}/graphql", config.port);
 

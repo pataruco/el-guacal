@@ -38,6 +38,7 @@ pub fn create_router(
     allowed_origins: Vec<HeaderValue>,
     gcp_project_id: Option<String>,
     firebase_verifier: Option<std::sync::Arc<FirebaseVerifier>>,
+    pool: PgPool,
 ) -> Router {
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST])
@@ -48,6 +49,8 @@ pub fn create_router(
         .allow_origin(allowed_origins);
 
     Router::new()
+        .route("/api/export/zip", get(api::export::export_zip_handler))
+        .with_state(pool)
         .route(
             "/graphql",
             get(graphql_handler).post(
