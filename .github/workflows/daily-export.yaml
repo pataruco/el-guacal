@@ -20,14 +20,14 @@ jobs:
 
       - name: Download export from server
         run: |
-          curl -L -o el-guacal-db-${{ steps.date.outputs.date }}.zip https://el-guacal-api-917452656360.europe-west2.run.app/api/export/zip
+          curl -L -o el-guacal-db-${{ steps.date.outputs.date }}.zip https://el-guacal-api-2m7hvbqwdq-nw.a.run.app/api/export/zip
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.date.outputs.date }}
-          name: El Guacal Data Export ${{ steps.date.outputs.date }}
+          tag_name: data-export:${{ steps.date.outputs.date }}
+          name: data-export:${{ steps.date.outputs.date }}
           body: |
             Daily automated data export of El Guacal database.
             Includes stores.csv, products.csv, and data.json.
