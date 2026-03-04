@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0](https://github.com/pataruco/el-guacal/compare/server-v0.5.0...server-v0.6.0) (2026-03-04)
+
+
+### Features
+
+* implement daily data export and dataset page ([7cc0f89](https://github.com/pataruco/el-guacal/commit/7cc0f89fbc4fc387fd07da124632580525d56875))
+* implement daily data export and dataset page ([7f7e0a9](https://github.com/pataruco/el-guacal/commit/7f7e0a94984a9bed1529e7e62961b353001229ed))
+* implement daily data export and dataset page ([500329e](https://github.com/pataruco/el-guacal/commit/500329ec03ae467a43c8a765abc0872442257bd9))
+* implement daily data export and dataset page ([09b9b89](https://github.com/pataruco/el-guacal/commit/09b9b8912d5a76a4b18f3be285622df8c26dde4e))
+* implement daily data export and dataset page ([d3f01f7](https://github.com/pataruco/el-guacal/commit/d3f01f7dff0c31e8644556c957f50644453a223b))
+
 ## [0.5.0](https://github.com/pataruco/el-guacal/compare/server-v0.4.0...server-v0.5.0) (2026-03-03)
 
 
