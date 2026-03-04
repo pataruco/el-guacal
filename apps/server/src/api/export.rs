@@ -34,33 +34,60 @@ struct FullExport {
     products: Vec<ProductExport>,
 }
 
+/// Generates a ZIP file containing the database export.
+///
+/// # Panics
+///
+/// This function will panic if it fails to build the HTTP response.
 pub async fn export_zip_handler(State(pool): State<PgPool>) -> impl IntoResponse {
-    let mut conn = match pool.acquire().await {
-        Ok(conn) => conn,
-        Err(_) => return (StatusCode::INTERNAL_SERVER_ERROR, "Database connection error").into_response(),
+    let Ok(mut conn) = pool.acquire().await else {
+        return (StatusCode::INTERNAL_SERVER_ERROR, "Database connection error").into_response();
     };
 
-    // Fetch all products
-    let products_rows = match sqlx::query("SELECT product_id, name, brand FROM products")
-        .fetch_all(&mut *conn)
-        .await
-    {
-        Ok(rows) => rows,
-        Err(_) => return (StatusCode::INTERNAL_SERVER_ERROR, "Error fetching products").into_response(),
+    let Ok(products) = fetch_products(&mut conn).await else {
+        return (StatusCode::INTERNAL_SERVER_ERROR, "Error fetching products").into_response();
     };
 
-    let products: Vec<ProductExport> = products_rows
+    let Ok(stores) = fetch_stores(&mut conn).await else {
+        return (StatusCode::INTERNAL_SERVER_ERROR, "Error fetching stores").into_response();
+    };
+
+    let full_export = FullExport {
+        stores: stores.clone(),
+        products: products.clone(),
+    };
+
+    let mut buf = Vec::new();
+    if create_zip_archive(&mut buf, &full_export, &stores, &products).is_err() {
+        return (StatusCode::INTERNAL_SERVER_ERROR, "Error creating ZIP file").into_response();
+    }
+
+    Response::builder()
+        .header(header::CONTENT_TYPE, "application/zip")
+        .header(header::CONTENT_DISPOSITION, "attachment; filename=\"el-guacal-db.zip\"")
+        .body(Body::from(buf))
+        .unwrap()
+        .into_response()
+}
+
+async fn fetch_products(conn: &mut sqlx::PgConnection) -> Result<Vec<ProductExport>, sqlx::Error> {
+    let rows = sqlx::query("SELECT product_id, name, brand FROM products")
+        .fetch_all(conn)
+        .await?;
+
+    Ok(rows
         .into_iter()
         .map(|row| ProductExport {
             product_id: row.get("product_id"),
             name: row.get("name"),
             brand: row.get("brand"),
         })
-        .collect();
+        .collect())
+}
 
-    // Fetch all stores with their product IDs
-    let stores_rows = match sqlx::query(
-        r#"
+async fn fetch_stores(conn: &mut sqlx::PgConnection) -> Result<Vec<StoreExport>, sqlx::Error> {
+    let rows = sqlx::query(
+        r"
         SELECT
             s.store_id,
             s.name,
@@ -71,16 +98,12 @@ pub async fn export_zip_handler(State(pool): State<PgPool>) -> impl IntoResponse
         FROM stores s
         LEFT JOIN store_products sp ON s.store_id = sp.store_id
         GROUP BY s.store_id
-        "#
+        "
     )
-    .fetch_all(&mut *conn)
-    .await
-    {
-        Ok(rows) => rows,
-        Err(_) => return (StatusCode::INTERNAL_SERVER_ERROR, "Error fetching stores").into_response(),
-    };
+    .fetch_all(conn)
+    .await?;
 
-    let stores: Vec<StoreExport> = stores_rows
+    Ok(rows
         .into_iter()
         .map(|row| StoreExport {
             store_id: row.get("store_id"),
@@ -90,70 +113,39 @@ pub async fn export_zip_handler(State(pool): State<PgPool>) -> impl IntoResponse
             lng: row.get("lng"),
             product_ids: row.get("product_ids"),
         })
-        .collect();
+        .collect())
+}
 
-    let full_export = FullExport {
-        stores: stores.clone(),
-        products: products.clone(),
-    };
+fn create_zip_archive(
+    buf: &mut Vec<u8>,
+    full_export: &FullExport,
+    stores: &[StoreExport],
+    products: &[ProductExport],
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut zip = ZipWriter::new(Cursor::new(buf));
+    let options = SimpleFileOptions::default()
+        .compression_method(zip::CompressionMethod::Deflated)
+        .unix_permissions(0o644);
 
-    // Create ZIP in memory
-    let mut buf = Vec::new();
-    {
-        let mut zip = ZipWriter::new(Cursor::new(&mut buf));
-        let options = SimpleFileOptions::default()
-            .compression_method(zip::CompressionMethod::Deflated)
-            .unix_permissions(0o644);
+    zip.start_file("data.json", options)?;
+    serde_json::to_writer(&mut zip, full_export)?;
 
-        // Add data.json
-        if zip.start_file("data.json", options).is_err() {
-            return (StatusCode::INTERNAL_SERVER_ERROR, "Error creating ZIP file").into_response();
-        }
-        if serde_json::to_writer(&mut zip, &full_export).is_err() {
-            return (StatusCode::INTERNAL_SERVER_ERROR, "Error writing JSON to ZIP").into_response();
-        }
-
-        // Add stores.csv
-        if zip.start_file("stores.csv", options).is_err() {
-            return (StatusCode::INTERNAL_SERVER_ERROR, "Error creating ZIP file").into_response();
-        }
-        {
-            let mut csv_writer = Writer::from_writer(&mut zip);
-            for store in &stores {
-                if csv_writer.serialize(store).is_err() {
-                    return (StatusCode::INTERNAL_SERVER_ERROR, "Error writing CSV to ZIP").into_response();
-                }
-            }
-            if csv_writer.flush().is_err() {
-                return (StatusCode::INTERNAL_SERVER_ERROR, "Error flushing CSV").into_response();
-            }
-        }
-
-        // Add products.csv
-        if zip.start_file("products.csv", options).is_err() {
-            return (StatusCode::INTERNAL_SERVER_ERROR, "Error creating ZIP file").into_response();
-        }
-        {
-            let mut csv_writer = Writer::from_writer(&mut zip);
-            for product in &products {
-                if csv_writer.serialize(product).is_err() {
-                    return (StatusCode::INTERNAL_SERVER_ERROR, "Error writing CSV to ZIP").into_response();
-                }
-            }
-            if csv_writer.flush().is_err() {
-                return (StatusCode::INTERNAL_SERVER_ERROR, "Error flushing CSV").into_response();
-            }
-        }
-
-        if zip.finish().is_err() {
-            return (StatusCode::INTERNAL_SERVER_ERROR, "Error finishing ZIP file").into_response();
-        }
+    zip.start_file("stores.csv", options)?;
+    let mut csv_writer = Writer::from_writer(&mut zip);
+    for store in stores {
+        csv_writer.serialize(store)?;
     }
+    csv_writer.flush()?;
+    drop(csv_writer);
 
-    Response::builder()
-        .header(header::CONTENT_TYPE, "application/zip")
-        .header(header::CONTENT_DISPOSITION, "attachment; filename=\"el-guacal-db.zip\"")
-        .body(Body::from(buf))
-        .unwrap()
-        .into_response()
+    zip.start_file("products.csv", options)?;
+    let mut csv_writer = Writer::from_writer(&mut zip);
+    for product in products {
+        csv_writer.serialize(product)?;
+    }
+    csv_writer.flush()?;
+    drop(csv_writer);
+
+    zip.finish()?;
+    Ok(())
 }
