@@ -1,9 +1,13 @@
-name: Daily Data Export
+name: Daily database export
+run-name: ${{ github.actor }} is exporting the database and releasing it
 
 on:
   schedule:
     - cron: '0 0 * * *' # Runs every day at midnight UTC
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   export:
@@ -11,29 +15,20 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout
+      - name: 🛎️ Checkout
         uses: actions/checkout@v6
 
-      - name: Get current date
+      - name: 📆 Get current date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - name: Download export from server
+      - name: 📦 Download export from server
         run: |
-          curl -L -o el-guacal-db-${{ steps.date.outputs.date }}.zip https://el-guacal-api-917452656360.europe-west2.run.app/api/export/zip
+          curl -L -o el-guacal-db-${{ steps.date.outputs.date }}.zip https://el-guacal-api-2m7hvbqwdq-nw.a.run.app/api/export/zip
 
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.date.outputs.date }}
-          name: El Guacal Data Export ${{ steps.date.outputs.date }}
-          body: |
-            Daily automated data export of El Guacal database.
-            Includes stores.csv, products.csv, and data.json.
-          draft: false
-          prerelease: false
-          files: |
+      - name: 🚀 Release
+        run: |
+          gh release create "data-export@${{ steps.date.outputs.date }}" \
+            --title "data-export@${{ steps.date.outputs.date }}" \
+            --notes "Daily automated data export of El Guacal database." \
             el-guacal-db-${{ steps.date.outputs.date }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

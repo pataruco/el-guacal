@@ -2,7 +2,8 @@ import Page from '../components/page';
 
 export default function Dataset() {
   const today = new Date().toISOString().split('T')[0];
-  const downloadUrl = `https://github.com/guacal/el-guacal/releases/download/${today}/el-guacal-db-${today}.zip`;
+  const downloadUrl = `https://github.com/pataruco/el-guacal/releases/download/${encodeURI(`data-export@${today}`)}/el-guacal-db-${today}.zip`;
+  console.log(downloadUrl);
 
   return (
     <Page className="dataset">
@@ -13,19 +14,7 @@ export default function Dataset() {
         products.
       </p>
       <div style={{ marginTop: '2rem' }}>
-        <a
-          className="button"
-          href={downloadUrl}
-          style={{
-            backgroundColor: '#007bff',
-            borderRadius: '4px',
-            color: 'white',
-            display: 'inline-block',
-            fontWeight: 'bold',
-            padding: '0.75rem 1.5rem',
-            textDecoration: 'none',
-          }}
-        >
+        <a className="button" href={downloadUrl}>
           Download Dataset ({today})
         </a>
       </div>
