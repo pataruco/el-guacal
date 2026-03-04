@@ -14,7 +14,7 @@ We have chosen [Moon](https://moonrepo.dev/) as our monorepo management tool and
 
 ## Consequences
 
-- **Positive**: Consistent task execution across different projects and languages.
-- **Positive**: Optimised CI/CD pipelines through task caching and incremental builds.
-- **Positive**: Explicit dependency management between projects in the monorepo.
-- **Negative**: Requires developers to learn Moon's configuration and command-line interface.
+- Positive: Consistent task execution across different projects and languages.
+- Positive: Optimised CI/CD pipelines through task caching and incremental builds.
+- Positive: Explicit dependency management between projects in the monorepo.
+- Negative: Requires developers to learn Moon's configuration and command-line interface.

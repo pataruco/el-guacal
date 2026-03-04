@@ -12,15 +12,15 @@ The project requires a structured way to document significant architectural deci
 
 We will use Architectural Decision Records (ADRs) to document all significant technical and architectural choices. We will follow the template proposed by Michael Nygard, which includes the following sections:
 
-- **Status**: The current state of the decision (e.g. Proposed, Accepted, Superseded).
-- **Context**: The problem being solved and the factors that influenced the decision.
-- **Decision**: The specific choice made and how it will be implemented.
-- **Consequences**: The positive and negative impacts of the decision, including any trade-offs.
+- Status: The current state of the decision (e.g. Proposed, Accepted, Superseded).
+- Context: The problem being solved and the factors that influenced the decision.
+- Decision: The specific choice made and how it will be implemented.
+- Consequences: The positive and negative impacts of the decision, including any trade-offs.
 
 ADRs will be stored in the `docs/adrs` directory of the repository.
 
 ## Consequences
 
-- **Positive**: Improved transparency and historical context for architectural choices.
-- **Positive**: Easier onboarding for new developers.
-- **Negative**: Slight increase in overhead when making significant changes to the architecture, as an ADR must be written or updated.
+- Positive: Improved transparency and historical context for architectural choices.
+- Positive: Easier onboarding for new developers.
+- Negative: Slight increase in overhead when making significant changes to the architecture, as an ADR must be written or updated.
