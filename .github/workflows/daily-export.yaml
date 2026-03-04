@@ -28,8 +28,7 @@ jobs:
 
       - name: 🚀 Release
         run: |
-          gh release create "data-export/${{ steps.date.outputs.date }}" \
-            --title "data-export/${{ steps.date.outputs.date }}" \
-            --notes "Daily automated data export of El Guacal database.
-          Includes stores.csv, products.csv, and data.json." \
+          gh release create "data-export@${{ steps.date.outputs.date }}" \
+            --title "data-export@${{ steps.date.outputs.date }}" \
+            --notes "Daily automated data export of El Guacal database." \
             el-guacal-db-${{ steps.date.outputs.date }}.zip
