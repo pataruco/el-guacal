@@ -6,7 +6,7 @@ import { selectAuth } from '@/store/features/auth/slice';
 import { selectStoreState, setShowStore } from '@/store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { formatDate } from '@/utils/date-utils';
-import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
+import DeleteConfirmationDialog from '../delete-store-dialogue';
 import styles from './index.module.scss';
 
 const Store: React.FC = () => {

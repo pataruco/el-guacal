@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import styles from './DeleteConfirmationDialog.module.scss';
+import styles from './index.module.scss';
 
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
