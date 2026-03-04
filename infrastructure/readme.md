@@ -1,46 +1,63 @@
 # Infrastructure
 
-## Requirements
+The infrastructure for El Guacal is managed using Terraform and hosted on Google Cloud Platform.
 
-- Google Cloud CLI
-- Terraform
+## 🚀 Getting Started
 
-We created a `Brewfile` to manage the installation of these tools.
+### Prerequisites
 
-```sh
+We recommend using the root `Brewfile` to install all necessary tools.
+
+```bash
+# From the root directory
 brew bundle
 ```
 
-## Usage
+Alternatively, ensure you have the following installed locally:
+- [Google Cloud SDK](https://cloud.google.com/sdk)
+- [Terraform](https://www.terraform.io/)
 
-Create a `terraform.tfvars` file, copying from `terraform.tfvars.example`:
+---
 
-```sh
-cp terraform.tfvars.example terraform.tfvars
-```
+## 🛠️ Usage
 
-Populate the variables in `terraform.tfvars`
+### Configuration
 
-Login to Google Cloud CLI:
+1. Create a `terraform.tfvars` file by copying the example:
+   ```bash
+   cp terraform.tfvars.example terraform.tfvars
+   ```
 
-```sh
-gcloud auth application-default login
-```
+2. Populate the variables in `terraform.tfvars` with the correct values for your environment.
 
-Then, initialise Terraform:
+### Deployment
 
-```sh
-terraform init
-```
+1. Login to Google Cloud CLI:
+   ```bash
+   gcloud auth application-default login
+   ```
 
-Apply the infrastructure:
+2. Initialise Terraform:
+   ```bash
+   terraform init
+   ```
 
-```sh
-terraform apply
-```
+3. Apply the infrastructure changes:
+   ```bash
+   terraform apply
+   ```
 
-Verify the infrastructure:
+### Verification
 
-```sh
+To see the outputs of your infrastructure (e.g., service URLs):
+```bash
 terraform output
 ```
+
+---
+
+## 🚢 Deployment via CI/CD
+
+While manual deployment is possible, infrastructure changes are typically applied through GitHub Actions when merging into main branches.
+
+For more details on the deployment process, see the root [README.md](../readme.md).
