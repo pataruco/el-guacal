@@ -80,4 +80,4 @@ Infrastructure changes are typically applied through GitHub Actions when merging
 - Deploy services to Cloud Run.
 - Deploy site content to Firebase Hosting.
 
-For more details on the overall deployment process, see the root [README.md](../readme.md).
+For more details on the overall deployment process, see the root [README.md](../README.md).

@@ -14,7 +14,7 @@ brew bundle
 ```
 
 Alternatively, ensure you have the following installed locally:
-- [Node.js](https://nodejs.org/) (lts/krypton recommended)
+- [Node.js](https://nodejs.org/) (lts/jod recommended)
 - [pnpm](https://pnpm.io/)
 - [moon](https://moonrepo.dev/)
 
@@ -81,4 +81,4 @@ The output will be in the `dist/` directory.
 
 The web app is deployed to Firebase Hosting. Deployment is managed via GitHub Actions.
 
-For more details on the deployment process, see the root [README.md](../../readme.md).
+For more details on the deployment process, see the root [README.md](../../README.md).

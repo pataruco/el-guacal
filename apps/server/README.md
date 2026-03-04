@@ -121,4 +121,4 @@ Ensure the database is running and migrations are applied before running integra
 
 The server is deployed as a Docker container to Google Cloud Run. Deployment is managed via GitHub Actions.
 
-For more details on the deployment process, see the root [README.md](../../readme.md).
+For more details on the deployment process, see the root [README.md](../../README.md).

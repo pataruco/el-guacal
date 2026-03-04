@@ -34,7 +34,7 @@ Alternatively, ensure you have the following installed:
 - [moon](https://moonrepo.dev/)
 - [pnpm](https://pnpm.io/)
 - [Rust](https://www.rust-lang.org/)
-- [Node.js](https://nodejs.org/) (lts/krypton recommended)
+- [Node.js](https://nodejs.org/) (lts/jod recommended)
 - [Docker](https://www.docker.com/) (or any container runtime)
 - [Google Cloud SDK](https://cloud.google.com/sdk)
 - [Terraform](https://www.terraform.io/)
@@ -89,7 +89,7 @@ For more details, see [apps/web/README.md](apps/web/README.md).
 
 The infrastructure is managed with Terraform and located in the `infrastructure/` directory.
 
-For more details, see [infrastructure/readme.md](infrastructure/readme.md).
+For more details, see [infrastructure/README.md](infrastructure/README.md).
 
 ---
 
