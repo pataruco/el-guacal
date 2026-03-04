@@ -1,2 +1,0 @@
-cask  'gcloud-cli'
-brew 'terraform'
