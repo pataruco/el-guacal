@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router';
 import { useDeleteStoreMutation } from '@/graphql/mutations/delete-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
@@ -6,14 +5,12 @@ import { selectAuth } from '@/store/features/auth/slice';
 import { selectStoreState, setShowStore } from '@/store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { formatDate } from '@/utils/date-utils';
-import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
 import styles from './index.module.scss';
 
 const Store: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const { storeId, show } = useAppSelector(selectStoreState);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleOnClose = () => {
     dispatch(setShowStore(false));
@@ -32,12 +29,13 @@ const Store: React.FC = () => {
   const { storeId: id, name, address, products, updatedAt, location } = store;
 
   const handleDelete = async () => {
-    try {
-      await deleteStore({ id }).unwrap();
-      setIsDeleteDialogOpen(false);
-      handleOnClose();
-    } catch (error) {
-      console.error('Failed to delete store:', error);
+    if (window.confirm('Are you sure you want to delete this store?')) {
+      try {
+        await deleteStore({ id }).unwrap();
+        handleOnClose();
+      } catch (error) {
+        console.error('Failed to delete store:', error);
+      }
     }
   };
 
@@ -52,21 +50,13 @@ const Store: React.FC = () => {
           </Link>
           <button
             type="button"
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={handleDelete}
             className={styles.deleteBtn}
           >
             Delete
           </button>
         </div>
       )}
-
-      <DeleteConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleDelete}
-        itemName={name}
-        itemType="Store"
-      />
 
       <a
         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
