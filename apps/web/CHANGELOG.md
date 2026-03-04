@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.0](https://github.com/pataruco/el-guacal/compare/web-v1.5.5...web-v1.6.0) (2026-03-04)
+
+
+### Features
+
+* add confirmation dialog for store deletion ([e4b82f5](https://github.com/pataruco/el-guacal/commit/e4b82f55375e75762552bd6517a994ab5534feff))
+* implement daily data export and dataset page ([7cc0f89](https://github.com/pataruco/el-guacal/commit/7cc0f89fbc4fc387fd07da124632580525d56875))
+* implement daily data export and dataset page ([7f7e0a9](https://github.com/pataruco/el-guacal/commit/7f7e0a94984a9bed1529e7e62961b353001229ed))
+* implement daily data export and dataset page ([500329e](https://github.com/pataruco/el-guacal/commit/500329ec03ae467a43c8a765abc0872442257bd9))
+* implement daily data export and dataset page ([09b9b89](https://github.com/pataruco/el-guacal/commit/09b9b8912d5a76a4b18f3be285622df8c26dde4e))
+* implement daily data export and dataset page ([d3f01f7](https://github.com/pataruco/el-guacal/commit/d3f01f7dff0c31e8644556c957f50644453a223b))
+* **web:** add confirmation dialog for store deletion ([efe3a21](https://github.com/pataruco/el-guacal/commit/efe3a21b09dca71c6c4e08e05ea893b46698243b))
+* **web:** add confirmation dialog for store deletion ([555e9da](https://github.com/pataruco/el-guacal/commit/555e9dafd5e447bcf54aeb730a5bb8767a38c555))
+* **web:** add confirmation dialog for store deletion ([203d99b](https://github.com/pataruco/el-guacal/commit/203d99bb2ff694ad29b2cda781a138cb850fffd8))
+
 ## [1.5.5](https://github.com/pataruco/el-guacal/compare/web-v1.5.4...web-v1.5.5) (2026-03-03)
 
 
