@@ -6,20 +6,17 @@ import {
 } from 'firebase/auth';
 import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line deprecation/deprecation
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
-import { supportedLngs } from '../i18n';
 import styles from './auth.module.scss';
 
 const googleProvider = new GoogleAuthProvider();
 
 const AuthPage = () => {
-  const { lang } = useParams();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -28,25 +25,10 @@ const AuthPage = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    if (!lang) {
-      const detectedLng =
-        localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
-      const targetLng = supportedLngs.includes(detectedLng)
-        ? detectedLng
-        : 'en-GB';
-      navigate(`/${targetLng}/auth`, { replace: true });
-    }
-  }, [lang, i18n.language, navigate]);
-
-  useEffect(() => {
     if (isAuthenticated) {
-      navigate(lang ? `/${lang}` : '/');
+      navigate('/');
     }
-  }, [isAuthenticated, navigate, lang]);
-
-  if (!lang) {
-    return null;
-  }
+  }, [isAuthenticated, navigate]);
 
   const handleGoogleSignIn = async () => {
     try {

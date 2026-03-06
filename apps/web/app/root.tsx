@@ -9,9 +9,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useParams,
 } from 'react-router';
-import i18n from './i18n';
+import i18n, { ENGLISH } from './locales/i18n';
 import { clearAuth, setAuth } from './store/features/auth/slice';
 import { useAppDispatch } from './store/hooks';
 import { store } from './store/store';
@@ -26,9 +25,8 @@ export const meta: MetaFunction = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { lang } = useParams();
   return (
-    <html lang={lang || 'en-GB'}>
+    <html lang={i18n.language || ENGLISH}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

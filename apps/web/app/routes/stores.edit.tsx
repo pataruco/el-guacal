@@ -6,37 +6,21 @@ import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.g
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
-import { supportedLngs } from '../i18n';
 
 const EditStorePage = () => {
-  const { lang, id } = useParams<{ lang?: string; id: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
 
   const { data, isLoading } = useGetStoreByIdQuery({ storeId: id as string });
   const [updateStore] = useUpdateStoreMutation();
 
   useEffect(() => {
-    if (!lang) {
-      const detectedLng =
-        localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
-      const targetLng = supportedLngs.includes(detectedLng)
-        ? detectedLng
-        : 'en-GB';
-      navigate(`/${targetLng}/stores/${id}/edit`, { replace: true });
-    }
-  }, [lang, i18n.language, navigate, id]);
-
-  useEffect(() => {
     if (!isAuthenticated) {
-      navigate(lang ? `/${lang}/auth` : '/auth');
+      navigate('/auth');
     }
-  }, [isAuthenticated, navigate, lang]);
-
-  if (!lang) {
-    return null;
-  }
+  }, [isAuthenticated, navigate]);
 
   if (isLoading) return <div>Loading...</div>;
   if (!data?.getStoreById) return <div>Store not found</div>;

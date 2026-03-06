@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link } from 'react-router';
 import { useDeleteStoreMutation } from '@/graphql/mutations/delete-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
+import { ENGLISH, type Language } from '@/locales/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { selectStoreState, setShowStore } from '@/store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -11,8 +12,7 @@ import DeleteConfirmationDialog from '../delete-store-dialogue';
 import styles from './index.module.scss';
 
 const Store: React.FC = () => {
-  const { lang } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { storeId, show } = useAppSelector(selectStoreState);
@@ -50,10 +50,7 @@ const Store: React.FC = () => {
 
       {isAuthenticated && (
         <div className={styles.actions}>
-          <Link
-            to={`/${lang || 'en-GB'}/stores/${id}/edit`}
-            className={styles.editBtn}
-          >
+          <Link to={`/stores/${id}/edit`} className={styles.editBtn}>
             Edit
           </Link>
           <button
@@ -93,7 +90,11 @@ const Store: React.FC = () => {
       </ul>
 
       <p>
-        {t('store.lastUpdated')}: {formatDate(new Date(updatedAt))}{' '}
+        {t('store.lastUpdated')}:{' '}
+        {formatDate({
+          date: new Date(updatedAt),
+          lang: (i18n.language ?? ENGLISH) as Language,
+        })}{' '}
       </p>
 
       <button

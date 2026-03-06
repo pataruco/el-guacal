@@ -1,39 +1,21 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { Link } from 'react-router';
+import { ENGLISH, type Language, SPANISH } from '@/locales/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
 
 const Header = () => {
-  const { lang } = useParams();
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const location = useLocation();
   const { isAuthenticated } = useAppSelector(selectAuth);
 
   const handleLogout = () => {
     auth.signOut();
   };
 
-  const handleLanguageChange = (newLang: string) => {
-    const currentPath = location.pathname;
-    const pathSegments = currentPath.split('/').filter(Boolean);
-
-    // If the first segment is a supported locale, replace it
-    if (
-      pathSegments.length > 0 &&
-      ['en-GB', 'es-VE'].includes(pathSegments[0])
-    ) {
-      pathSegments[0] = newLang;
-    } else {
-      // Otherwise, prepend the new locale
-      pathSegments.unshift(newLang);
-    }
-
-    const newPath = `/${pathSegments.join('/')}`;
+  const handleLanguageChange = (newLang: Language) => {
     i18n.changeLanguage(newLang);
     localStorage.setItem('i18nextLng', newLang);
-    navigate(newPath);
   };
 
   return (
@@ -43,9 +25,9 @@ const Header = () => {
         <div style={{ marginBottom: '1rem' }}>
           <button
             type="button"
-            onClick={() => handleLanguageChange('en-GB')}
+            onClick={() => handleLanguageChange(ENGLISH)}
             style={{
-              fontWeight: lang === 'en-GB' ? 'bold' : 'normal',
+              fontWeight: i18n.language === ENGLISH ? 'bold' : 'normal',
               marginRight: '0.5rem',
             }}
           >
@@ -53,9 +35,9 @@ const Header = () => {
           </button>
           <button
             type="button"
-            onClick={() => handleLanguageChange('es-VE')}
+            onClick={() => handleLanguageChange(SPANISH)}
             style={{
-              fontWeight: lang === 'es-VE' ? 'bold' : 'normal',
+              fontWeight: i18n.language === SPANISH ? 'bold' : 'normal',
             }}
           >
             ES
@@ -63,41 +45,28 @@ const Header = () => {
         </div>
         <ul>
           <li>
-            <Link to={`/${lang || 'en-GB'}`}>{t('nav.home')}</Link>
+            <Link to="/">{t('nav.home')}</Link>
           </li>
           <li>
-            <Link to={`/${lang || 'en-GB'}/about`}>{t('nav.about')}</Link>
+            <Link to="/about">{t('nav.about')}</Link>
           </li>
           <li>
-            <Link to={`/${lang || 'en-GB'}/dataset`}>{t('nav.dataset')}</Link>
+            <Link to="/dataset">{t('nav.dataset')}</Link>
           </li>
           {isAuthenticated ? (
             <>
               <li>
-                <Link to={`/${lang || 'en-GB'}/stores/new`}>
-                  {t('nav.addStore')}
-                </Link>
+                <Link to="/stores/new">{t('nav.addStore')}</Link>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'blue',
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'underline',
-                  }}
-                >
+                <button type="button" onClick={handleLogout}>
                   {t('nav.logout')}
                 </button>
               </li>
             </>
           ) : (
             <li>
-              <Link to={`/${lang || 'en-GB'}/auth`}>{t('nav.login')}</Link>
+              <Link to="/auth">{t('nav.login')}</Link>
             </li>
           )}
         </ul>

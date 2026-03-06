@@ -2,20 +2,27 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
-import enGB from './locales/en-GB/translation.json';
-import esVE from './locales/es-VE/translation.json';
+import enGB from './en-GB/translation.json';
+import esVE from './es-VE/translation.json';
+
+export const Language = {
+  ENGLISH: 'en-GB',
+  SPANISH: 'es-VE',
+} as const;
+export type Language = (typeof Language)[keyof typeof Language];
+
+export const { ENGLISH, SPANISH } = Language;
+export const supportedLngs = [ENGLISH, SPANISH];
 
 export const defaultNS = 'translation';
 export const resources = {
-  'en-GB': {
+  [ENGLISH]: {
     translation: enGB,
   },
-  'es-VE': {
+  [SPANISH]: {
     translation: esVE,
   },
 } as const;
-
-export const supportedLngs = ['en-GB', 'es-VE'];
 
 i18n
   .use(LanguageDetector)
@@ -25,14 +32,14 @@ i18n
       caches: ['localStorage'],
       order: ['localStorage', 'navigator'],
     },
-    fallbackLng: 'en-GB',
+    fallbackLng: ENGLISH,
     interpolation: {
-      escapeValue: false, // react already safes from xss
+      escapeValue: false,
     },
     lng:
       typeof window !== 'undefined'
         ? localStorage.getItem('i18nextLng') || undefined
-        : 'en-GB',
+        : ENGLISH,
     resources,
     supportedLngs,
   });
