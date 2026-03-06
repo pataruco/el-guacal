@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/pataruco/el-guacal/compare/server-v0.6.0...server-v0.7.0) (2026-03-06)
+
+
+### Features
+
+* implement i18n support for web ([812e485](https://github.com/pataruco/el-guacal/commit/812e4852c259c223e88d8525898f5171591a447c))
+* **web:** implement i18n with en-GB and es-VE support ([7838d89](https://github.com/pataruco/el-guacal/commit/7838d8900bd285ea645f2a2433353af3ecd0674d))
+
 ## [0.6.0](https://github.com/pataruco/el-guacal/compare/server-v0.5.0...server-v0.6.0) (2026-03-04)
 
 
