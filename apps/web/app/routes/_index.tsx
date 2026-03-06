@@ -13,8 +13,11 @@ export default function Home() {
 
   useEffect(() => {
     if (!lang) {
-      const detectedLng = localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
-      const targetLng = supportedLngs.includes(detectedLng) ? detectedLng : 'en-GB';
+      const detectedLng =
+        localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
+      const targetLng = supportedLngs.includes(detectedLng)
+        ? detectedLng
+        : 'en-GB';
       navigate(`/${targetLng}`, { replace: true });
     }
   }, [lang, i18n.language, navigate]);

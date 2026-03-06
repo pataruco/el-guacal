@@ -9,9 +9,9 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line deprecation/deprecation
 import { useNavigate, useParams } from 'react-router';
 import { selectAuth } from '@/store/features/auth/slice';
-import { supportedLngs } from '../i18n';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
+import { supportedLngs } from '../i18n';
 import styles from './auth.module.scss';
 
 const googleProvider = new GoogleAuthProvider();
@@ -29,8 +29,11 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (!lang) {
-      const detectedLng = localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
-      const targetLng = supportedLngs.includes(detectedLng) ? detectedLng : 'en-GB';
+      const detectedLng =
+        localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
+      const targetLng = supportedLngs.includes(detectedLng)
+        ? detectedLng
+        : 'en-GB';
       navigate(`/${targetLng}/auth`, { replace: true });
     }
   }, [lang, i18n.language, navigate]);

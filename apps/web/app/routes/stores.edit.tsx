@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
-import { supportedLngs } from '../i18n';
 import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
+import { supportedLngs } from '../i18n';
 
 const EditStorePage = () => {
   const { lang, id } = useParams<{ lang?: string; id: string }>();
@@ -19,8 +19,11 @@ const EditStorePage = () => {
 
   useEffect(() => {
     if (!lang) {
-      const detectedLng = localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
-      const targetLng = supportedLngs.includes(detectedLng) ? detectedLng : 'en-GB';
+      const detectedLng =
+        localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
+      const targetLng = supportedLngs.includes(detectedLng)
+        ? detectedLng
+        : 'en-GB';
       navigate(`/${targetLng}/stores/${id}/edit`, { replace: true });
     }
   }, [lang, i18n.language, navigate, id]);

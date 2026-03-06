@@ -20,7 +20,10 @@ const Header = () => {
     const pathSegments = currentPath.split('/').filter(Boolean);
 
     // If the first segment is a supported locale, replace it
-    if (pathSegments.length > 0 && ['en-GB', 'es-VE'].includes(pathSegments[0])) {
+    if (
+      pathSegments.length > 0 &&
+      ['en-GB', 'es-VE'].includes(pathSegments[0])
+    ) {
       pathSegments[0] = newLang;
     } else {
       // Otherwise, prepend the new locale

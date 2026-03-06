@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
-import { supportedLngs } from '../i18n';
 import { useCreateStoreMutation } from '@/graphql/mutations/create-store/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
+import { supportedLngs } from '../i18n';
 
 const NewStorePage = () => {
   const { lang } = useParams();
@@ -16,8 +16,11 @@ const NewStorePage = () => {
 
   useEffect(() => {
     if (!lang) {
-      const detectedLng = localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
-      const targetLng = supportedLngs.includes(detectedLng) ? detectedLng : 'en-GB';
+      const detectedLng =
+        localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
+      const targetLng = supportedLngs.includes(detectedLng)
+        ? detectedLng
+        : 'en-GB';
       navigate(`/${targetLng}/stores/new`, { replace: true });
     }
   }, [lang, i18n.language, navigate]);
