@@ -1,24 +1,39 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
+import { supportedLngs } from '../i18n';
 import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 
 const EditStorePage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { lang, id } = useParams<{ lang?: string; id: string }>();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
 
   const { data, isLoading } = useGetStoreByIdQuery({ storeId: id as string });
   const [updateStore] = useUpdateStoreMutation();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/auth');
+    if (!lang) {
+      const detectedLng = localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
+      const targetLng = supportedLngs.includes(detectedLng) ? detectedLng : 'en-GB';
+      navigate(`/${targetLng}/stores/${id}/edit`, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [lang, i18n.language, navigate, id]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(lang ? `/${lang}/auth` : '/auth');
+    }
+  }, [isAuthenticated, navigate, lang]);
+
+  if (!lang) {
+    return null;
+  }
 
   if (isLoading) return <div>Loading...</div>;
   if (!data?.getStoreById) return <div>Store not found</div>;
@@ -60,7 +75,7 @@ const EditStorePage = () => {
 
   return (
     <StoreForm
-      title="Edit Store"
+      title={t('storeForm.editTitle')}
       initialValues={initialValues}
       onSubmit={handleSubmit}
     />

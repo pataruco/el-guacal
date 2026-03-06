@@ -1,20 +1,36 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
+import { supportedLngs } from '../i18n';
 import { useCreateStoreMutation } from '@/graphql/mutations/create-store/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 
 const NewStorePage = () => {
+  const { lang } = useParams();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const [createStore] = useCreateStoreMutation();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/auth');
+    if (!lang) {
+      const detectedLng = localStorage.getItem('i18nextLng') || i18n.language || 'en-GB';
+      const targetLng = supportedLngs.includes(detectedLng) ? detectedLng : 'en-GB';
+      navigate(`/${targetLng}/stores/new`, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [lang, i18n.language, navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(lang ? `/${lang}/auth` : '/auth');
+    }
+  }, [isAuthenticated, navigate, lang]);
+
+  if (!lang) {
+    return null;
+  }
 
   const handleSubmit = async (values: {
     address: string;
@@ -41,7 +57,7 @@ const NewStorePage = () => {
 
   if (!isAuthenticated) return null;
 
-  return <StoreForm title="Add New Store" onSubmit={handleSubmit} />;
+  return <StoreForm title={t('storeForm.addTitle')} onSubmit={handleSubmit} />;
 };
 
 export default NewStorePage;

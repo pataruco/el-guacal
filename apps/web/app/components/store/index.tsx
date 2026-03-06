@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router';
 import { useDeleteStoreMutation } from '@/graphql/mutations/delete-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
@@ -10,6 +11,8 @@ import DeleteConfirmationDialog from '../delete-store-dialogue';
 import styles from './index.module.scss';
 
 const Store: React.FC = () => {
+  const { lang } = useParams();
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { storeId, show } = useAppSelector(selectStoreState);
@@ -47,7 +50,10 @@ const Store: React.FC = () => {
 
       {isAuthenticated && (
         <div className={styles.actions}>
-          <Link to={`/stores/${id}/edit`} className={styles.editBtn}>
+          <Link
+            to={`/${lang || 'en-GB'}/stores/${id}/edit`}
+            className={styles.editBtn}
+          >
             Edit
           </Link>
           <button
@@ -73,27 +79,29 @@ const Store: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Directions
+        {t('store.directions')}
       </a>
 
-      <h3>Address</h3>
+      <h3>{t('store.address')}</h3>
       <p>{address}</p>
 
-      <h3>Products</h3>
+      <h3>{t('store.products')}</h3>
       <ul>
         {products.map((product) => (
           <li key={product.productId}>{product.name}</li>
         ))}
       </ul>
 
-      <p>Last updated at: {formatDate(new Date(updatedAt))} </p>
+      <p>
+        {t('store.lastUpdated')}: {formatDate(new Date(updatedAt))}{' '}
+      </p>
 
       <button
         type="button"
         onClick={handleOnClose}
         className={styles.store__button}
       >
-        close
+        {t('store.close')}
       </button>
     </section>
   );

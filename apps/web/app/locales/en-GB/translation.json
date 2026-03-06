@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "login": "Login",
+    "logout": "Logout",
+    "dataset": "Dataset",
+    "addStore": "Add Store"
+  },
+  "store": {
+    "address": "Address",
+    "products": "Products",
+    "close": "Close",
+    "lastUpdated": "Last updated at",
+    "directions": "Directions"
+  },
+  "pages": {
+    "about": {
+      "title": "About El Guacal",
+      "body": "This is a placeholder for the about page."
+    },
+    "dataset": {
+      "title": "Dataset",
+      "description": "You can download the latest version of the El Guacal dataset here. The dataset is updated daily and includes information about all stores and products.",
+      "download": "Download Dataset",
+      "whatsIncluded": "What's included?",
+      "storesCsv": "A list of all stores with their names, addresses, coordinates, and associated product IDs.",
+      "productsCsv": "A list of all products with their names and brands.",
+      "dataJson": "A complete JSON export of all stores and products."
+    }
+  },
+  "footer": {
+    "text": "Footer text"
+  },
+  "auth": {
+    "login": "Login",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "signInWithGoogle": "Sign in with Google",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "or": "or"
+  },
+  "storeForm": {
+    "storeName": "Store Name",
+    "address": "Address",
+    "location": "Location",
+    "products": "Products",
+    "searchProducts": "Search products...",
+    "noProductsFound": "No products found",
+    "saveStore": "Save Store",
+    "cancel": "Cancel",
+    "addTitle": "Add New Store",
+    "editTitle": "Edit Store",
+    "validation": {
+      "addressRequired": "Address is required",
+      "nameRequired": "Name is required",
+      "productRequired": "Select at least one product"
+    }
+  }
+}
