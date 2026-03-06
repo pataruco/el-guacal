@@ -1,0 +1,64 @@
+{
+  "auth": {
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "email": "Correo",
+    "emailPlaceholder": "Ingresa tu correo",
+    "login": "Ingresar",
+    "or": "o",
+    "password": "Clave",
+    "passwordPlaceholder": "Ingresa tu clave",
+    "signInWithGoogle": "Ingresar con Google",
+    "signUp": "Registrarse"
+  },
+  "footer": {
+    "text": "Texto del pie de página"
+  },
+  "nav": {
+    "about": "Nosotros",
+    "addStore": "Agregar Tienda",
+    "dataset": "Datos",
+    "home": "Inicio",
+    "login": "Ingresar",
+    "logout": "Salir"
+  },
+  "pages": {
+    "about": {
+      "body": "Este es un espacio reservado para la página sobre nosotros.",
+      "title": "Sobre El Guacal"
+    },
+    "dataset": {
+      "dataJson": "Una exportación JSON completa de todas las tiendas y productos.",
+      "description": "Puedes descargar la última versión del conjunto de datos de El Guacal aquí. El conjunto de datos se actualiza diariamente e incluye información sobre todas las tiendas y productos.",
+      "download": "Descargar Datos",
+      "productsCsv": "Una lista de todos los productos con sus nombres y marcas.",
+      "storesCsv": "Una lista de todas las tiendas con sus nombres, direcciones, coordenadas e IDs de productos asociados.",
+      "title": "Conjunto de Datos",
+      "whatsIncluded": "¿Qué incluye?"
+    }
+  },
+  "store": {
+    "address": "Dirección",
+    "close": "Cerrar",
+    "directions": "Cómo llegar",
+    "lastUpdated": "Última actualización",
+    "products": "Productos"
+  },
+  "storeForm": {
+    "address": "Dirección",
+    "addTitle": "Agregar Nueva Tienda",
+    "cancel": "Cancelar",
+    "editTitle": "Editar Tienda",
+    "location": "Ubicación",
+    "noProductsFound": "No se encontraron productos",
+    "products": "Productos",
+    "saveStore": "Guardar Tienda",
+    "searchProducts": "Buscar productos...",
+    "storeName": "Nombre de la Tienda",
+    "validation": {
+      "addressRequired": "La dirección es obligatoria",
+      "nameRequired": "El nombre es obligatorio",
+      "productRequired": "Selecciona al menos un producto"
+    }
+  }
+}

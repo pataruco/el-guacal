@@ -43,7 +43,6 @@ const MapComponent = () => {
     dispatch(setZoom(ev.detail.zoom));
   };
 
-  // TODO: add Advanced marker and MapId
   return (
     <div className={isLoading ? styles.loading : styles.map}>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY} onLoad={handleOnLoad}>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import StoreForm from '@/components/store/StoreForm';
 import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
@@ -9,6 +10,7 @@ import { useAppSelector } from '@/store/hooks';
 const EditStorePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
 
   const { data, isLoading } = useGetStoreByIdQuery({ storeId: id as string });
@@ -60,7 +62,7 @@ const EditStorePage = () => {
 
   return (
     <StoreForm
-      title="Edit Store"
+      title={t('storeForm.editTitle')}
       initialValues={initialValues}
       onSubmit={handleSubmit}
     />

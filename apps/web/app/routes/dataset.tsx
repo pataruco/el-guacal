@@ -1,37 +1,33 @@
+import { useTranslation } from 'react-i18next';
 import Page from '../components/page';
 
 export default function Dataset() {
+  const { t } = useTranslation();
+
   const today = new Date().toISOString().split('T')[0];
   const downloadUrl = `https://github.com/pataruco/el-guacal/releases/download/${encodeURI(`data-export@${today}`)}/el-guacal-db-${today}.zip`;
   console.log(downloadUrl);
 
   return (
     <Page className="dataset">
-      <h1>Dataset</h1>
-      <p>
-        You can download the latest version of the El Guacal dataset here. The
-        dataset is updated daily and includes information about all stores and
-        products.
-      </p>
+      <h1>{t('pages.dataset.title')}</h1>
+      <p>{t('pages.dataset.description')}</p>
       <div style={{ marginTop: '2rem' }}>
         <a className="button" href={downloadUrl}>
-          Download Dataset ({today})
+          {t('pages.dataset.download')} ({today})
         </a>
       </div>
       <section style={{ marginTop: '3rem' }}>
-        <h2>What's included?</h2>
+        <h2>{t('pages.dataset.whatsIncluded')}</h2>
         <ul>
           <li>
-            <strong>stores.csv</strong>: A list of all stores with their names,
-            addresses, coordinates, and associated product IDs.
+            <strong>stores.csv</strong>: {t('pages.dataset.storesCsv')}
           </li>
           <li>
-            <strong>products.csv</strong>: A list of all products with their
-            names and brands.
+            <strong>products.csv</strong>: {t('pages.dataset.productsCsv')}
           </li>
           <li>
-            <strong>data.json</strong>: A complete JSON export of all stores and
-            products.
+            <strong>data.json</strong>: {t('pages.dataset.dataJson')}
           </li>
         </ul>
       </section>

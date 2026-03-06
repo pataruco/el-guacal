@@ -1,4 +1,11 @@
-export const formatDate = (date: Date): string => {
+import type { Language } from '@/locales/i18n';
+
+interface FormatDate {
+  date: Date;
+  lang?: Language;
+}
+
+export const formatDate = ({ date, lang }: FormatDate): string => {
   const options: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     hour: 'numeric',
@@ -6,5 +13,5 @@ export const formatDate = (date: Date): string => {
     month: 'long',
     year: 'numeric',
   };
-  return new Intl.DateTimeFormat('en-GB', options).format(date);
+  return new Intl.DateTimeFormat(lang, options).format(date);
 };
