@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/pataruco/el-guacal/compare/web-v1.6.0...web-v1.7.0) (2026-03-06)
+
+
+### Features
+
+* i18n for frontend (en-GB, es-VE) ([#111](https://github.com/pataruco/el-guacal/issues/111)) ([919c2ac](https://github.com/pataruco/el-guacal/commit/919c2ac6f75cad90655cf2eac1522b83e489594b))
+* implement i18n support for web ([812e485](https://github.com/pataruco/el-guacal/commit/812e4852c259c223e88d8525898f5171591a447c))
+* set i18n ([b7d3c39](https://github.com/pataruco/el-guacal/commit/b7d3c397be70bf09169192e2eb8dec0f2783e1ca))
+* **web:** implement i18n with en-GB and es-VE support ([d0d48f7](https://github.com/pataruco/el-guacal/commit/d0d48f7766fce76115e734701cb9362222d2cc27))
+* **web:** implement i18n with en-GB and es-VE support ([7838d89](https://github.com/pataruco/el-guacal/commit/7838d8900bd285ea645f2a2433353af3ecd0674d))
+* **web:** implement i18n with en-GB and es-VE support ([6022b2b](https://github.com/pataruco/el-guacal/commit/6022b2ba69a61476c879d4a9ddb15156b394b7c5))
+
 ## [1.6.0](https://github.com/pataruco/el-guacal/compare/web-v1.5.5...web-v1.6.0) (2026-03-04)
 
 
