@@ -58,40 +58,40 @@ const AuthPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>
+    <div className={styles['c-auth']}>
+      <h1 className={styles['c-auth__title']}>
         {isSignUp ? t('auth.signUp') : t('auth.login')}
       </h1>
 
       <button
         type="button"
         disabled={loading}
-        className={`${styles.providerBtn} ${styles.google}`}
+        className={styles['c-auth__provider-btn']}
         onClick={handleGoogleSignIn}
       >
         {t('auth.signInWithGoogle')}
       </button>
 
-      <div className={styles.divider}>
+      <div className={styles['c-auth__divider']}>
         <span>{t('auth.or')}</span>
       </div>
 
-      <form onSubmit={handleEmailSubmit} className={styles.form}>
-        <label className={styles.label} htmlFor="email">
+      <form onSubmit={handleEmailSubmit} className={styles['c-auth__form']}>
+        <label className={styles['c-auth__label']} htmlFor="email">
           {t('auth.email')}
         </label>
         <input
           id="email"
           type="email"
           required
-          className={styles.input}
+          className={styles['c-auth__input']}
           value={email}
           placeholder={t('auth.emailPlaceholder')}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
         />
 
-        <label className={styles.label} htmlFor="password">
+        <label className={styles['c-auth__label']} htmlFor="password">
           {t('auth.password')}
         </label>
         <input
@@ -99,25 +99,29 @@ const AuthPage = () => {
           type="password"
           required
           minLength={6}
-          className={styles.input}
+          className={styles['c-auth__input']}
           value={password}
           placeholder={t('auth.passwordPlaceholder')}
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
         />
 
-        <button type="submit" disabled={loading} className={styles.submitBtn}>
+        <button
+          type="submit"
+          disabled={loading}
+          className={styles['c-auth__submit-btn']}
+        >
           {isSignUp ? t('auth.signUp') : t('auth.login')}
         </button>
       </form>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className={styles['c-auth__error']}>{error}</p>}
 
-      <p className={styles.toggle}>
+      <p className={styles['c-auth__toggle']}>
         {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}{' '}
         <button
           type="button"
-          className={styles.toggleBtn}
+          className={styles['c-auth__toggle-btn']}
           onClick={() => {
             setIsSignUp(!isSignUp);
             setError(null);

@@ -67,7 +67,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles['c-form-container']}>
       <h1>{title}</h1>
       <Formik
         initialValues={defaultValues}
@@ -76,8 +76,8 @@ const StoreForm: React.FC<StoreFormProps> = ({
         enableReinitialize
       >
         {({ values, setFieldValue, errors, touched }) => (
-          <Form className={styles.form}>
-            <div className={styles.field}>
+          <Form className={styles['c-form']}>
+            <div className={styles['c-form__field']}>
               <label htmlFor="name">{t('storeForm.storeName')}</label>
               <Field
                 id="name"
@@ -85,11 +85,11 @@ const StoreForm: React.FC<StoreFormProps> = ({
                 placeholder={t('storeForm.storeName')}
               />
               {errors.name && touched.name && (
-                <div className={styles.error}>{errors.name}</div>
+                <div className={styles['c-form__error']}>{errors.name}</div>
               )}
             </div>
 
-            <div className={styles.field}>
+            <div className={styles['c-form__field']}>
               <label htmlFor="address">{t('storeForm.address')}</label>
               <Field
                 id="address"
@@ -97,13 +97,13 @@ const StoreForm: React.FC<StoreFormProps> = ({
                 placeholder={t('storeForm.address')}
               />
               {errors.address && touched.address && (
-                <div className={styles.error}>{errors.address}</div>
+                <div className={styles['c-form__error']}>{errors.address}</div>
               )}
             </div>
 
-            <div className={styles.mapField}>
+            <div className={styles['c-form__map-field']}>
               <p className={styles.label}>{t('storeForm.location')}</p>
-              <div className={styles.mapWrapper}>
+              <div className={styles['c-form__map-wrapper']}>
                 <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
                   <GoogleMap
                     defaultZoom={15}
@@ -117,15 +117,15 @@ const StoreForm: React.FC<StoreFormProps> = ({
                     disableDefaultUI
                     reuseMaps
                   />
-                  <div className={styles.crosshair}>+</div>
+                  <div className={styles['c-form__crosshair']}>+</div>
                 </APIProvider>
               </div>
-              <div className={styles.coordinates}>
+              <div className={styles['c-form__coordinates']}>
                 Lat: {values.lat.toFixed(6)}, Lng: {values.lng.toFixed(6)}
               </div>
             </div>
 
-            <div className={styles.field}>
+            <div className={styles['c-form__field']}>
               <label htmlFor={comboboxId}>{t('storeForm.products')}</label>
               <Field name="productIds">
                 {({ field, form }: FieldProps) => {
@@ -140,7 +140,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   );
 
                   return (
-                    <div className={styles.comboboxWrapper}>
+                    <div className={styles['c-form__combobox-wrapper']}>
                       <Combobox.Root
                         value={selectedIds}
                         onValueChange={(val) =>
@@ -149,26 +149,30 @@ const StoreForm: React.FC<StoreFormProps> = ({
                         onInputValueChange={setSearchValue}
                         multiple
                       >
-                        <div className={styles.comboboxControl}>
+                        <div className={styles['c-form__combobox-control']}>
                           <Combobox.Input
                             id={comboboxId}
-                            className={styles.comboboxInput}
+                            className={styles['c-form__combobox-input']}
                             placeholder={t('storeForm.searchProducts')}
                           />
-                          <Combobox.Trigger className={styles.comboboxTrigger}>
+                          <Combobox.Trigger
+                            className={styles['c-form__combobox-trigger']}
+                          >
                             ▼
                           </Combobox.Trigger>
                         </div>
                         <Combobox.Portal>
                           <Combobox.Positioner
-                            className={styles.selectPositioner}
+                            className={styles['c-form__select-positioner']}
                           >
-                            <Combobox.Popup className={styles.selectPopup}>
+                            <Combobox.Popup
+                              className={styles['c-form__select-popup']}
+                            >
                               {filteredProducts?.map((product) => (
                                 <Combobox.Item
                                   key={product.productId}
                                   value={product.productId}
-                                  className={styles.selectItem}
+                                  className={styles['c-form__select-item']}
                                 >
                                   {product.name}
                                   <Combobox.ItemIndicator>
@@ -187,11 +191,11 @@ const StoreForm: React.FC<StoreFormProps> = ({
                       </Combobox.Root>
 
                       {selectedProducts && selectedProducts.length > 0 && (
-                        <ul className={styles.selectedList}>
+                        <ul className={styles['c-form__selected-list']}>
                           {selectedProducts.map((product) => (
                             <li
                               key={product.productId}
-                              className={styles.selectedItem}
+                              className={styles['c-form__selected-item']}
                             >
                               <span>{product.name}</span>
                               <button
@@ -204,7 +208,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                                     ),
                                   )
                                 }
-                                className={styles.removeItemBtn}
+                                className={styles['c-form__remove-item-btn']}
                               >
                                 ×
                               </button>
@@ -217,19 +221,22 @@ const StoreForm: React.FC<StoreFormProps> = ({
                 }}
               </Field>
               {errors.productIds && touched.productIds && (
-                <div className={styles.error}>
+                <div className={styles['c-form__error']}>
                   {errors.productIds as string}
                 </div>
               )}
             </div>
 
-            <div className={styles.actions}>
-              <button type="submit" className={styles.submitBtn}>
+            <div className={styles['c-form__actions']}>
+              <button
+                type="submit"
+                className={`${styles['c-form__btn']} ${styles['c-form__btn--submit']}`}
+              >
                 {t('storeForm.saveStore')}
               </button>
               <button
                 type="button"
-                className={styles.cancelBtn}
+                className={`${styles['c-form__btn']} ${styles['c-form__btn--cancel']}`}
                 onClick={() => navigate(-1)}
               >
                 {t('storeForm.cancel')}

@@ -44,7 +44,7 @@ const MapComponent = () => {
   };
 
   return (
-    <div className={isLoading ? styles.loading : styles.map}>
+    <div className={isLoading ? styles['c-map--loading'] : styles['c-map']}>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY} onLoad={handleOnLoad}>
         <GoogleMap
           defaultZoom={13}

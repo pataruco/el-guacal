@@ -1,0 +1,45 @@
+@use '../settings/settings.colors' as colors;
+@use '../settings/settings.typography' as typography;
+
+body {
+  font-family: typography.$font-stack;
+  font-size: typography.$font-size-base;
+  color: colors.$color-text;
+  background-color: colors.$color-background;
+  line-height: 1.5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  & > main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: typography.$font-weight-bold;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: typography.$font-size-heading-large;
+}
+
+h2 {
+  font-size: typography.$font-size-heading;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}

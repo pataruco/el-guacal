@@ -1,69 +1,97 @@
-.dialog {
-  padding: 2rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  max-width: 400px;
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-dialog {
+  padding: globals.$spacing-lg;
+  border: globals.$border-utility;
+  border-radius: globals.$radius-standard;
+  background-color: colors.$color-background;
+  box-shadow: globals.$shadow-utility;
+  max-width: 25rem; // 400px
   width: 100%;
 
   &::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(10, 25, 49, 0.4);
+    backdrop-filter: blur(2px);
   }
 
-  h2 {
-    margin-top: 0;
-    color: #d32f2f;
+  &__title {
+    font-size: 1.5rem;
+    color: colors.$color-text;
+    text-transform: uppercase;
+    margin-bottom: globals.$spacing-md;
+    font-weight: typography.$font-weight-bold;
   }
 
-  .warning {
-    margin-bottom: 1rem;
-    font-weight: bold;
+  &__warning {
+    color: colors.$color-muted;
+    font-size: 0.875rem;
+    margin-bottom: globals.$spacing-md;
   }
 
-  .suggestion {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #666;
+  &__suggestion {
+    font-size: 0.875rem;
+    margin-bottom: globals.$spacing-sm;
+
+    strong {
+      color: colors.$color-accent;
+    }
   }
 
-  input {
+  &__input {
     width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    border: globals.$border-utility;
+    background-color: colors.$color-surface;
+    font-family: inherit;
+    margin-bottom: globals.$spacing-lg;
+    outline: none;
+
+    &:focus {
+      box-shadow: globals.$shadow-active;
+    }
   }
 
-  .actions {
+  &__actions {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: globals.$spacing-md;
+  }
 
-    button {
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
+  &__btn {
+    padding: globals.$spacing-sm globals.$spacing-lg;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+
+    &--cancel {
+      background-color: transparent;
       border: none;
-    }
 
-    .cancelBtn {
-      background: #eee;
       &:hover {
-        background: #ddd;
+        text-decoration: underline;
       }
     }
 
-    .deleteBtn {
-      background: #d32f2f;
-      color: white;
+    &--delete {
+      background-color: colors.$color-accent;
+      color: colors.$color-background;
+      border: globals.$border-utility;
+      box-shadow: globals.$shadow-utility;
 
       &:disabled {
-        background: #ef9a9a;
+        opacity: 0.5;
         cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
       }
 
-      &:not(:disabled):hover {
-        background: #b71c1c;
+      &:not(:disabled):active {
+        @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
       }
     }
   }

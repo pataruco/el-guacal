@@ -1,0 +1,136 @@
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: globals.$spacing-sm globals.$spacing-lg;
+  background-color: colors.$color-background;
+  border-bottom: globals.$border-utility;
+  box-shadow: globals.$shadow-utility;
+
+  &__branding {
+    display: flex;
+    align-items: center;
+    gap: globals.$spacing-lg;
+
+    h1 {
+      font-size: typography.$font-size-heading;
+      font-weight: typography.$font-weight-black;
+      color: colors.$color-text;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    gap: globals.$spacing-md;
+    align-items: center;
+
+    &-list {
+      display: flex;
+      gap: globals.$spacing-md;
+    }
+
+    &-item {
+      display: inline-block;
+    }
+
+    &-link {
+      font-weight: typography.$font-weight-bold;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      padding: globals.$spacing-sm;
+      transition: transform 0.1s ease-in-out;
+      background: transparent;
+      border: none;
+      font-size: typography.$font-size-small;
+      cursor: pointer;
+
+      &:hover {
+        background-color: colors.$color-surface;
+      }
+
+      @include mixins.mechanical-press(0px, 0.1875rem);
+
+      &--active {
+        border-bottom: globals.$border-utility;
+        border-color: colors.$color-primary;
+        border-bottom-width: 0.1875rem;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: globals.$spacing-sm;
+  }
+
+  &__lang-toggle {
+    display: flex;
+    gap: globals.$spacing-sm;
+
+    &-btn {
+      background: transparent;
+      border: none;
+      padding: globals.$spacing-sm;
+      font-weight: typography.$font-weight-regular;
+      font-size: typography.$font-size-small;
+      cursor: pointer;
+
+      &--active {
+        font-weight: typography.$font-weight-bold;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__auth-link {
+    background-color: colors.$color-primary;
+    color: colors.$color-text;
+    border: globals.$border-utility;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    box-shadow: globals.$shadow-utility;
+    transition: all 0.1s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+
+    &:hover {
+      background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+    }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+  }
+
+  &__logout-btn {
+    background-color: colors.$color-surface;
+    color: colors.$color-text;
+    border: globals.$border-utility;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    box-shadow: globals.$shadow-utility;
+    transition: all 0.1s ease-in-out;
+
+    &:hover {
+      background-color: color.adjust(colors.$color-surface, $lightness: -5%);
+    }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+  }
+}

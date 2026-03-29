@@ -1,0 +1,71 @@
+@use '../settings/settings.colors' as colors;
+@use '../settings/settings.globals' as globals;
+@use '../settings/settings.typography' as typography;
+
+.u-margin-b-xs {
+  margin-bottom: globals.$spacing-xs;
+}
+
+.u-margin-b-sm {
+  margin-bottom: globals.$spacing-sm;
+}
+
+.u-margin-b-md {
+  margin-bottom: globals.$spacing-md;
+}
+
+.u-margin-b-lg {
+  margin-bottom: globals.$spacing-lg;
+}
+
+.u-text-uppercase {
+  text-transform: uppercase;
+}
+
+.u-text-bold {
+  font-weight: typography.$font-weight-bold;
+}
+
+.u-text-black {
+  font-weight: typography.$font-weight-black;
+}
+
+.u-text-center {
+  text-align: center;
+}
+
+.u-bg-primary {
+  background-color: colors.$color-primary;
+}
+
+.u-bg-surface {
+  background-color: colors.$color-surface;
+}
+
+.u-text-accent {
+  color: colors.$color-accent;
+}
+
+.u-text-muted {
+  color: colors.$color-muted;
+}
+
+.u-text-navy {
+  color: colors.$color-text;
+}
+
+.u-shadow-utility {
+  box-shadow: globals.$shadow-utility;
+}
+
+.u-border-utility {
+  border: globals.$border-utility;
+}
+
+.u-radius-standard {
+  border-radius: globals.$radius-standard;
+}
+
+.u-radius-pill {
+  border-radius: globals.$radius-pill;
+}

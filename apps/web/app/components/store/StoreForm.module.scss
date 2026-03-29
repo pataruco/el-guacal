@@ -1,218 +1,235 @@
-.container {
-  max-width: 600px;
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-form-container {
+  padding: globals.$spacing-lg;
+  max-width: 37.5rem; // 600px
   margin: 0 auto;
-  padding: 2rem;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  label {
-    font-weight: bold;
-  }
-
-  input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-}
-
-.error {
-  color: red;
-  font-size: 0.8rem;
-}
-
-.mapField {
-  .label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-}
-
-.mapWrapper {
-  position: relative;
-  height: 300px;
   width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #ccc;
-}
 
-.crosshair {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 24px;
-  color: red;
-  pointer-events: none;
-  z-index: 10;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-.coordinates {
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 0.25rem;
-}
-
-.selectTrigger {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: white;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &:hover {
-    border-color: #888;
+  h1 {
+    font-size: typography.$font-size-heading-large;
+    color: colors.$color-text;
+    text-transform: uppercase;
+    margin-bottom: globals.$spacing-lg;
+    border-bottom: globals.$border-utility;
+    padding-bottom: globals.$spacing-sm;
   }
 }
 
-.selectPopup {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 0.5rem;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-.selectItem {
-  padding: 0.5rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &:hover,
-  &[data-highlighted] {
-    background: #f0f0f0;
-  }
-
-  &[data-selected] {
-    font-weight: bold;
-  }
-}
-
-.actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.submitBtn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-
-  &:hover {
-    background: #0056b3;
-  }
-}
-
-.cancelBtn {
-  background: #f8f9fa;
-  border: 1px solid #ccc;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background: #e2e6ea;
-  }
-}
-
-.comboboxWrapper {
+.c-form {
+  background-color: colors.$color-surface;
+  border: globals.$border-utility;
+  padding: globals.$spacing-lg;
+  box-shadow: globals.$shadow-utility;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
+  gap: globals.$spacing-md;
 
-.comboboxControl {
-  display: flex;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; // 4px
 
-  &:focus-within {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    label {
+      font-size: 0.75rem; // 12px
+      font-weight: typography.$font-weight-bold;
+      text-transform: uppercase;
+      color: colors.$color-text;
+    }
+
+    input[type='text'],
+    input[type='email'] {
+      width: 100%;
+      padding: globals.$spacing-sm globals.$spacing-md;
+      border: globals.$border-utility;
+      background-color: colors.$color-background;
+      outline: none;
+      font-family: inherit;
+
+      &:focus {
+        box-shadow: globals.$shadow-active;
+      }
+    }
   }
-}
 
-.comboboxInput {
-  flex: 1;
-  border: none !important;
-  padding: 0.5rem;
-  outline: none;
-}
-
-.comboboxTrigger {
-  background: #f8f9fa;
-  border: none;
-  border-left: 1px solid #ccc;
-  padding: 0 0.5rem;
-  cursor: pointer;
-
-  &:hover {
-    background: #e2e6ea;
+  &__error {
+    color: colors.$color-accent;
+    font-size: 0.75rem; // 12px
+    font-weight: typography.$font-weight-semibold;
   }
-}
 
-.noResults {
-  padding: 0.5rem;
-  color: #666;
-  font-style: italic;
-}
+  &__map-field {
+    .label {
+      font-size: 0.75rem; // 12px
+      font-weight: typography.$font-weight-bold;
+      text-transform: uppercase;
+      color: colors.$color-text;
+      margin-bottom: 0.25rem; // 4px
+    }
+  }
 
-.selectedList {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
+  &__map-wrapper {
+    height: 18.75rem; // 300px
+    border: globals.$border-utility;
+    position: relative;
+    box-shadow: globals.$shadow-active;
+  }
 
-.selectedItem {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #e9ecef;
-  padding: 0.25rem 0.5rem;
-  border-radius: 16px;
-  font-size: 0.85rem;
-}
+  &__crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: colors.$color-accent;
+    font-size: 1.5rem; // 24px
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10;
+  }
 
-.removeItemBtn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  font-size: 1.1rem;
-  line-height: 1;
-  padding: 0;
+  &__coordinates {
+    font-size: 0.75rem; // 12px
+    color: colors.$color-muted;
+    margin-top: 0.25rem; // 4px
+    text-align: right;
+  }
 
-  &:hover {
-    color: #ff4444;
+  &__combobox-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-sm;
+  }
+
+  &__combobox-control {
+    display: flex;
+    border: globals.$border-utility;
+    background-color: colors.$color-background;
+
+    &:focus-within {
+      box-shadow: globals.$shadow-active;
+    }
+  }
+
+  &__combobox-input {
+    flex: 1;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+  }
+
+  &__combobox-trigger {
+    background: transparent;
+    border: none;
+    padding: globals.$spacing-sm;
+    cursor: pointer;
+    color: colors.$color-muted;
+  }
+
+  &__select-positioner {
+    z-index: 100;
+  }
+
+  &__select-popup {
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    max-height: 12.5rem; // 200px
+    overflow-y: auto;
+    min-width: 12.5rem; // 200px
+  }
+
+  &__select-item {
+    padding: globals.$spacing-sm globals.$spacing-md;
+    cursor: pointer;
+    font-size: typography.$font-size-small;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      background-color: colors.$color-surface;
+    }
+
+    &[data-highlighted] {
+      background-color: colors.$color-primary;
+      color: colors.$color-text;
+    }
+
+    &[data-selected] {
+      font-weight: typography.$font-weight-bold;
+    }
+  }
+
+  &__selected-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: globals.$spacing-sm;
+  }
+
+  &__selected-item {
+    background-color: colors.$color-text;
+    color: colors.$color-background;
+    padding: 0.125rem 0.5rem; // 2px 8px
+    border-radius: globals.$radius-pill;
+    font-size: 0.75rem; // 12px
+    font-weight: typography.$font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; // 4px
+  }
+
+  &__remove-item-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    line-height: 1;
+  }
+
+  &__actions {
+    display: flex;
+    gap: globals.$spacing-md;
+    margin-top: globals.$spacing-md;
+  }
+
+  &__btn {
+    padding: globals.$spacing-sm globals.$spacing-lg;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+
+    &--submit {
+      background-color: colors.$color-primary;
+      color: colors.$color-text;
+      border: globals.$border-utility;
+      box-shadow: globals.$shadow-utility;
+
+      &:hover {
+        background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+      }
+
+      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    }
+
+    &--cancel {
+      background-color: transparent;
+      border: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
