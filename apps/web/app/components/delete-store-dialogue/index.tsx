@@ -72,7 +72,6 @@ const DeleteConfirmationDialog = ({
         onChange={(e) => setInputValue(e.target.value)}
         placeholder={`Type the ${itemType.toLowerCase()} name`}
         className={styles['c-dialog__input']}
-        // biome-ignore lint/a11y/noAutofocus: intentional for UX
         autoFocus
       />
       <div className={styles['c-dialog__actions']}>

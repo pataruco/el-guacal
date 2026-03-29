@@ -1,7 +1,4 @@
-import {
-  AdvancedMarker,
-  CollisionBehavior,
-} from '@vis.gl/react-google-maps';
+import { AdvancedMarker, CollisionBehavior } from '@vis.gl/react-google-maps';
 import type React from 'react';
 import { setShowStore, setStoreId } from '@/store/features/stores/slice';
 import { useAppDispatch } from '@/store/hooks';

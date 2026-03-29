@@ -32,7 +32,7 @@ const Store: React.FC = () => {
 
   if (!store) return null;
 
-  const { storeId: id, name, address, products, updatedAt, location } = store;
+  const { storeId: id, name, address, updatedAt, location } = store;
 
   const handleDelete = async () => {
     try {
