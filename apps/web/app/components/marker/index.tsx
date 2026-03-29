@@ -1,11 +1,11 @@
 import {
   AdvancedMarker,
   CollisionBehavior,
-  Pin,
 } from '@vis.gl/react-google-maps';
 import type React from 'react';
 import { setShowStore, setStoreId } from '@/store/features/stores/slice';
 import { useAppDispatch } from '@/store/hooks';
+import styles from './index.module.scss';
 
 interface MarkerProps {
   id: string;
@@ -27,7 +27,25 @@ const Marker: React.FC<MarkerProps> = ({ id, position }) => {
       clickable
       onClick={handleOnClick}
     >
-      <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} />
+      <div className={styles['c-marker']}>
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>Marker</title>
+          <path
+            d="M12 21.325C12 21.325 19 14.3625 19 9C19 5.13401 15.866 2 12 2C8.13401 2 5 5.13401 5 9C5 14.3625 12 21.325 12 21.325Z"
+            fill="#990000"
+            stroke="#0A1931"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+          <circle cx="12" cy="9" r="3" fill="#0A1931" />
+        </svg>
+      </div>
     </AdvancedMarker>
   );
 };

@@ -1,2 +1,19 @@
-@use 'reset';
-@use 'main';
+/* ITCSS Layer: Settings */
+@use 'settings/settings.colors' as colors;
+@use 'settings/settings.typography' as typography;
+@use 'settings/settings.globals' as globals;
+
+/* ITCSS Layer: Tools */
+@use 'tools/tools.mixins' as mixins;
+
+/* ITCSS Layer: Generic */
+@use 'generic/generic.reset' as reset;
+
+/* ITCSS Layer: Base */
+@use 'base/base.page' as page;
+
+/* ITCSS Layer: Pages (Global page styles) */
+@use 'pages' as pages;
+
+/* ITCSS Layer: Utilities */
+@use 'utilities/utilities.helpers' as helpers;

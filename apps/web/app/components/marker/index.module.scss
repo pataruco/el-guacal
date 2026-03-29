@@ -1,0 +1,19 @@
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-marker {
+  cursor: pointer;
+  filter: drop-shadow(2px 2px 0px colors.$color-text);
+  transition: transform 0.1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: translate(1px, 1px) scale(1);
+    filter: drop-shadow(1px 1px 0px colors.$color-text);
+  }
+}

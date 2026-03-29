@@ -5,9 +5,9 @@ export default function About() {
   const { t } = useTranslation();
 
   return (
-    <Page className="about">
-      <h1>{t('pages.about.title')}</h1>
-      <p>{t('pages.about.body')}</p>
+    <Page className="c-page">
+      <h1 className="c-page__title">{t('pages.about.title')}</h1>
+      <p className="c-page__text">{t('pages.about.body')}</p>
     </Page>
   );
 }

@@ -1,0 +1,23 @@
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+
+.c-footer {
+  width: 100%;
+  padding: globals.$spacing-md globals.$spacing-lg;
+  background-color: colors.$color-surface;
+  border-top: globals.$border-utility;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: colors.$color-muted;
+  z-index: 10;
+
+  &__text {
+    margin: 0;
+    font-weight: typography.$font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}

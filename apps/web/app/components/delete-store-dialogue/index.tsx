@@ -54,16 +54,16 @@ const DeleteConfirmationDialog = ({
   return (
     <dialog
       ref={dialogRef}
-      className={styles.dialog}
+      className={styles['c-dialog']}
       onClose={onClose}
       onKeyDown={handleKeyDown}
     >
-      <h2>Delete {itemType}</h2>
-      <p className={styles.warning}>
+      <h2 className={styles['c-dialog__title']}>Delete {itemType}</h2>
+      <p className={styles['c-dialog__warning']}>
         This action cannot be undone. All data associated with this{' '}
         {itemType.toLowerCase()} will be permanently removed.
       </p>
-      <p className={styles.suggestion}>
+      <p className={styles['c-dialog__suggestion']}>
         Please type <strong>{itemName}</strong> to confirm.
       </p>
       <input
@@ -71,13 +71,15 @@ const DeleteConfirmationDialog = ({
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder={`Type the ${itemType.toLowerCase()} name`}
+        className={styles['c-dialog__input']}
+        // biome-ignore lint/a11y/noAutofocus: intentional for UX
         autoFocus
       />
-      <div className={styles.actions}>
+      <div className={styles['c-dialog__actions']}>
         <button
           type="button"
           onClick={handleCancel}
-          className={styles.cancelBtn}
+          className={`${styles['c-dialog__btn']} ${styles['c-dialog__btn--cancel']}`}
         >
           Cancel
         </button>
@@ -85,7 +87,7 @@ const DeleteConfirmationDialog = ({
           type="button"
           onClick={handleConfirm}
           disabled={inputValue !== itemName}
-          className={styles.deleteBtn}
+          className={`${styles['c-dialog__btn']} ${styles['c-dialog__btn--delete']}`}
         >
           Delete
         </button>

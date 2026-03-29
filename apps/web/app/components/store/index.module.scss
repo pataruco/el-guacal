@@ -1,43 +1,156 @@
-.store {
-  position: absolute;
-  inset: auto 0 0;
-  background-color: white;
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
 
-  &__button {
-    position: absolute;
-    right: 0;
-    top: 0;
+.c-store-container {
+  position: absolute;
+  bottom: globals.$spacing-lg;
+  left: globals.$spacing-lg;
+  right: globals.$spacing-lg;
+  z-index: 40;
+
+  @media (min-width: 1024px) {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 37.5rem; // 600px
+  }
+}
+
+.c-store {
+  background-color: colors.$color-background;
+  border: globals.$border-utility;
+  box-shadow: 0.5rem 0.5rem 0px 0px colors.$color-text; // 8px
+  padding: globals.$spacing-md;
+  display: flex;
+  gap: globals.$spacing-md;
+  align-items: center;
+  position: relative;
+
+  &__image {
+    width: 5rem; // 80px
+    height: 5rem; // 80px
+    background-color: colors.$color-surface;
+    border: 0.0625rem solid colors.$color-text; // 1px
+    flex-shrink: 0;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  &__content {
+    flex: 1;
+  }
 
-    .editBtn,
-    .deleteBtn {
-      padding: 0.5rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      text-decoration: none;
-      color: inherit;
-      background: #f0f0f0;
-      cursor: pointer;
-      font-size: 0.875rem;
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: globals.$spacing-sm;
+    margin-bottom: 0.25rem; // 4px
+
+    h2 {
+      font-size: 1rem;
+      font-weight: typography.$font-weight-bold;
+      color: colors.$color-text;
+    }
+  }
+
+  &__badge {
+    background-color: colors.$color-text;
+    color: colors.$color-background;
+    font-size: 0.625rem; // 10px
+    font-weight: typography.$font-weight-black;
+    text-transform: uppercase;
+    padding: 0.125rem 0.5rem; // 2px 8px
+  }
+
+  &__address {
+    font-size: typography.$font-size-small;
+    color: colors.$color-muted;
+    margin-bottom: 0.25rem; // 4px
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__meta {
+    font-size: 0.75rem; // 12px
+    color: colors.$color-muted;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-sm;
+  }
+
+  &__btn {
+    padding: globals.$spacing-sm globals.$spacing-md;
+    font-weight: typography.$font-weight-bold;
+    font-size: typography.$font-size-small;
+    text-transform: uppercase;
+    box-shadow: globals.$shadow-utility;
+    transition: all 0.1s ease-in-out;
+    text-align: center;
+    cursor: pointer;
+    border: globals.$border-utility;
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+
+    &--primary {
+      background-color: colors.$color-primary;
+      color: colors.$color-text;
 
       &:hover {
-        background: #e0e0e0;
+        background-color: color.adjust(colors.$color-primary, $lightness: 5%);
       }
     }
 
-    .deleteBtn {
-      background: #ffebeb;
-      color: #d32f2f;
-      border-color: #ffcdd2;
+    &--secondary {
+      background-color: colors.$color-background;
+      color: colors.$color-text;
 
       &:hover {
-        background: #ffcdd2;
+        background-color: colors.$color-surface;
       }
+    }
+
+    &--danger {
+      background-color: colors.$color-accent;
+      color: colors.$color-background;
+
+      &:hover {
+        background-color: color.adjust(colors.$color-accent, $lightness: 5%);
+      }
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: -0.75rem; // -12px
+    right: -0.75rem; // -12px
+    width: 1.5rem; // 24px
+    height: 1.5rem; // 24px
+    background-color: colors.$color-text;
+    color: colors.$color-background;
+    border: globals.$border-utility;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: typography.$font-weight-black;
+    cursor: pointer;
+    box-shadow: 0.125rem 0.125rem 0px 0px rgba(0, 0, 0, 0.2); // 2px 2px
+
+    &:active {
+      transform: translate(0.0625rem, 0.0625rem); // 1px
+      box-shadow: none;
     }
   }
 }

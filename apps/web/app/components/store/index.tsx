@@ -45,23 +45,68 @@ const Store: React.FC = () => {
   };
 
   return (
-    <section className={styles.store}>
-      <h2>{name}</h2>
-
-      {isAuthenticated && (
-        <div className={styles.actions}>
-          <Link to={`/stores/${id}/edit`} className={styles.editBtn}>
-            Edit
-          </Link>
-          <button
-            type="button"
-            onClick={() => setIsDeleteDialogOpen(true)}
-            className={styles.deleteBtn}
-          >
-            Delete
-          </button>
+    <div className={styles['c-store-container']}>
+      <section className={styles['c-store']}>
+        <div className={styles['c-store__image']}>
+          <img
+            src="https://via.placeholder.com/80x80/F4F6F9/0A1931?text=Store"
+            alt={name}
+          />
         </div>
-      )}
+
+        <div className={styles['c-store__content']}>
+          <div className={styles['c-store__header']}>
+            <span className={styles['c-store__badge']}>STORE</span>
+            <h2>{name}</h2>
+          </div>
+          <p className={styles['c-store__address']}>{address}</p>
+          <p className={styles['c-store__meta']}>
+            {t('store.lastUpdated')}:{' '}
+            {formatDate({
+              date: new Date(updatedAt),
+              lang: (i18n.language ?? ENGLISH) as Language,
+            })}{' '}
+          </p>
+        </div>
+
+        <div className={styles['c-store__actions']}>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles['c-store__btn']} ${styles['c-store__btn--primary']}`}
+          >
+            {t('store.directions')}
+          </a>
+
+          {isAuthenticated && (
+            <>
+              <Link
+                to={`/stores/${id}/edit`}
+                className={`${styles['c-store__btn']} ${styles['c-store__btn--secondary']}`}
+              >
+                Edit
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className={`${styles['c-store__btn']} ${styles['c-store__btn--danger']}`}
+              >
+                Delete
+              </button>
+            </>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={handleOnClose}
+          className={styles['c-store__close']}
+          aria-label={t('store.close')}
+        >
+          &times;
+        </button>
+      </section>
 
       <DeleteConfirmationDialog
         isOpen={isDeleteDialogOpen}
@@ -70,41 +115,7 @@ const Store: React.FC = () => {
         itemName={name}
         itemType="Store"
       />
-
-      <a
-        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {t('store.directions')}
-      </a>
-
-      <h3>{t('store.address')}</h3>
-      <p>{address}</p>
-
-      <h3>{t('store.products')}</h3>
-      <ul>
-        {products.map((product) => (
-          <li key={product.productId}>{product.name}</li>
-        ))}
-      </ul>
-
-      <p>
-        {t('store.lastUpdated')}:{' '}
-        {formatDate({
-          date: new Date(updatedAt),
-          lang: (i18n.language ?? ENGLISH) as Language,
-        })}{' '}
-      </p>
-
-      <button
-        type="button"
-        onClick={handleOnClose}
-        className={styles.store__button}
-      >
-        {t('store.close')}
-      </button>
-    </section>
+    </div>
   );
 };
 
