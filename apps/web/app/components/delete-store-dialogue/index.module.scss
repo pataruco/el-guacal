@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../styles/settings/settings.colors' as colors;
 @use '../../styles/settings/settings.globals' as globals;
 @use '../../styles/settings/settings.typography' as typography;
@@ -8,8 +9,8 @@
   border: globals.$border-utility;
   border-radius: globals.$radius-standard;
   background-color: colors.$color-background;
-  box-shadow: 8px 8px 0px 0px colors.$color-text;
-  max-width: 400px;
+  box-shadow: globals.$shadow-utility;
+  max-width: 25rem; // 400px
   width: 100%;
 
   &::backdrop {
@@ -90,7 +91,7 @@
       }
 
       &:not(:disabled):active {
-        @include mixins.mechanical-press(globals.$shadow-active, 3px);
+        @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
       }
     }
   }

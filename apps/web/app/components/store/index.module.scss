@@ -21,7 +21,7 @@
 .c-store {
   background-color: colors.$color-background;
   border: globals.$border-utility;
-  box-shadow: 0.5rem 0.5rem 0px 0px colors.$color-text; // 8px
+  box-shadow: globals.$shadow-utility;
   padding: globals.$spacing-md;
   display: flex;
   gap: globals.$spacing-md;
