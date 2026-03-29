@@ -32,6 +32,8 @@ const Header = () => {
               <Link
                 to="/"
                 className={`${styles['c-header__nav-link']} ${isActive('/') ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={isActive('/') ? 'page' : undefined}
+                aria-label={t('nav.home')}
               >
                 {t('nav.home')}
               </Link>
@@ -40,6 +42,8 @@ const Header = () => {
               <Link
                 to="/about"
                 className={`${styles['c-header__nav-link']} ${isActive('/about') ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={isActive('/about') ? 'page' : undefined}
+                aria-label={t('nav.about')}
               >
                 {t('nav.about')}
               </Link>
@@ -48,6 +52,8 @@ const Header = () => {
               <Link
                 to="/dataset"
                 className={`${styles['c-header__nav-link']} ${isActive('/dataset') ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={isActive('/dataset') ? 'page' : undefined}
+                aria-label={t('nav.dataset')}
               >
                 {t('nav.dataset')}
               </Link>
@@ -57,6 +63,8 @@ const Header = () => {
                 <Link
                   to="/stores/new"
                   className={`${styles['c-header__nav-link']} ${isActive('/stores/new') ? styles['c-header__nav-link--active'] : ''}`}
+                  aria-current={isActive('/stores/new') ? 'page' : undefined}
+                  aria-label={t('nav.addStore')}
                 >
                   {t('nav.addStore')}
                 </Link>

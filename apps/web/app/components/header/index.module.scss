@@ -64,9 +64,9 @@
       @include mixins.mechanical-press(0px, 0.1875rem);
 
       &--active {
-        color: colors.$color-primary;
         border-bottom: globals.$border-utility;
         border-color: colors.$color-primary;
+        border-bottom-width: 0.1875rem;
       }
     }
   }

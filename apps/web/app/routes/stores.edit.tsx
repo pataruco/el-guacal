@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
+import Page from '@/components/page';
 import StoreForm from '@/components/store/StoreForm';
 import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
@@ -61,11 +62,13 @@ const EditStorePage = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <StoreForm
-      title={t('storeForm.editTitle')}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-    />
+    <Page>
+      <StoreForm
+        title={t('storeForm.editTitle')}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      />
+    </Page>
   );
 };
 
