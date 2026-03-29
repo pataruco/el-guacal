@@ -94,7 +94,10 @@ const Store: React.FC = () => {
           <h3>{t('store.products')}</h3>
           <ul className={styles['c-store__products-list']}>
             {products.map((product) => (
-              <li key={product.productId} className={styles['c-store__product']}>
+              <li
+                key={product.productId}
+                className={styles['c-store__product']}
+              >
                 {product.name}
               </li>
             ))}
