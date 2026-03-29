@@ -1,0 +1,20 @@
+
+> web@1.7.0 dev /app/apps/web
+> react-router dev
+
+6:25:45 PM [vite] warning: `esbuild` option was specified by "react-router" plugin. This option is deprecated, please use `oxc` instead.
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+6:26:33 PM [vite] (client) ✨ new dependencies optimized: @reduxjs/toolkit, @reduxjs/toolkit/query, @reduxjs/toolkit/query/react, @rtk-query/graphql-request-base-query, firebase/app, firebase/auth, graphql-request, i18next-browser-languagedetector, i18next, react-i18next, react-redux
+6:26:33 PM [vite] (client) ✨ optimized dependencies changed. reloading
+6:26:57 PM [vite] (client) ✨ new dependencies optimized: @vis.gl/react-google-maps
+6:26:57 PM [vite] (client) ✨ optimized dependencies changed. reloading
+6:29:22 PM [vite] (client) hmr update /app/components/store/index.tsx
+6:29:22 PM [vite] (client) hmr update /app/components/store/index.tsx
+6:29:22 PM [vite] (client) hmr update /app/components/store/index.tsx
+6:29:22 PM [vite] (ssr) page reload app/components/store/index.tsx
+6:29:30 PM [vite] (client) hmr update /app/components/store/index.tsx
+6:29:30 PM [vite] (client) hmr update /app/components/store/index.tsx
+6:29:30 PM [vite] (client) hmr update /app/components/store/index.tsx
+6:29:30 PM [vite] (ssr) page reload app/components/store/index.module.scss
