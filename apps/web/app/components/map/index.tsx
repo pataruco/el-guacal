@@ -59,6 +59,7 @@ const MapComponent = () => {
             <CustomMarker
               key={store.storeId}
               id={store.storeId}
+              name={store.name}
               position={store.location}
             />
           ))}

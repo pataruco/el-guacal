@@ -6,94 +6,90 @@
 
 .c-store-container {
   position: absolute;
-  bottom: globals.$spacing-lg;
-  left: globals.$spacing-lg;
-  right: globals.$spacing-lg;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 40;
-
-  @media (min-width: 1024px) {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 37.5rem; // 600px
-  }
 }
 
 .c-store {
   background-color: colors.$color-background;
-  border: globals.$border-utility;
-  box-shadow: globals.$shadow-utility;
+  border-top: globals.$border-utility;
+  box-shadow: 0 -0.25rem 0 0 rgba(0, 0, 0, 0.1);
   padding: globals.$spacing-md;
-  display: flex;
-  gap: globals.$spacing-md;
-  align-items: center;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: globals.$spacing-md;
+  min-height: 12.5rem;
 
-  &__image {
-    width: 5rem; // 80px
-    height: 5rem; // 80px
-    background-color: colors.$color-surface;
-    border: 0.0625rem solid colors.$color-text; // 1px
-    flex-shrink: 0;
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  &__header {
+    display: flex;
+    gap: globals.$spacing-md;
+    align-items: flex-start;
+    justify-content: space-between;
   }
 
   &__content {
     flex: 1;
-  }
-
-  &__header {
-    display: flex;
-    align-items: center;
-    gap: globals.$spacing-sm;
-    margin-bottom: 0.25rem; // 4px
 
     h2 {
-      font-size: 1rem;
-      font-weight: typography.$font-weight-bold;
-      color: colors.$color-text;
+      font-size: 1.25rem;
+      font-weight: typography.$font-weight-black;
+      color: colors.$color-primary;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
     }
-  }
-
-  &__badge {
-    background-color: colors.$color-text;
-    color: colors.$color-background;
-    font-size: 0.625rem; // 10px
-    font-weight: typography.$font-weight-black;
-    text-transform: uppercase;
-    padding: 0.125rem 0.5rem; // 2px 8px
   }
 
   &__address {
     font-size: typography.$font-size-small;
-    color: colors.$color-muted;
-    margin-bottom: 0.25rem; // 4px
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: colors.$color-text;
+    font-weight: typography.$font-weight-bold;
   }
 
-  &__meta {
-    font-size: 0.75rem; // 12px
-    color: colors.$color-muted;
-  }
-
-  &__actions {
+  &__header-actions {
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
+    align-items: center;
     gap: globals.$spacing-sm;
   }
 
-  &__btn {
-    padding: globals.$spacing-sm globals.$spacing-md;
+  &__products {
+    border-top: globals.$border-utility;
+    padding-top: globals.$spacing-md;
+
+    h3 {
+      font-size: 0.75rem;
+      font-weight: typography.$font-weight-black;
+      text-transform: uppercase;
+      margin-bottom: globals.$spacing-sm;
+      color: colors.$color-text;
+    }
+  }
+
+  &__products-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: globals.$spacing-xs;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__product {
+    background-color: colors.$color-surface;
+    border: globals.$border-utility;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
     font-weight: typography.$font-weight-bold;
-    font-size: typography.$font-size-small;
+    color: colors.$color-text;
+  }
+
+  &__btn {
+    padding: globals.$spacing-xs globals.$spacing-md;
+    font-weight: typography.$font-weight-bold;
+    font-size: 0.7rem;
     text-transform: uppercase;
     box-shadow: globals.$shadow-utility;
     transition: all 0.1s ease-in-out;
@@ -101,7 +97,7 @@
     cursor: pointer;
     border: globals.$border-utility;
 
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    @include mixins.mechanical-press(globals.$shadow-active, 0.125rem);
 
     &--primary {
       background-color: colors.$color-primary;
@@ -132,11 +128,8 @@
   }
 
   &__close {
-    position: absolute;
-    top: -0.75rem; // -12px
-    right: -0.75rem; // -12px
-    width: 1.5rem; // 24px
-    height: 1.5rem; // 24px
+    width: 2rem;
+    height: 2rem;
     background-color: colors.$color-text;
     color: colors.$color-background;
     border: globals.$border-utility;
@@ -144,12 +137,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.5rem;
     font-weight: typography.$font-weight-black;
     cursor: pointer;
-    box-shadow: 0.125rem 0.125rem 0px 0px rgba(0, 0, 0, 0.2); // 2px 2px
+    box-shadow: 0.125rem 0.125rem 0px 0px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 
     &:active {
-      transform: translate(0.0625rem, 0.0625rem); // 1px
+      transform: translate(0.0625rem, 0.0625rem);
       box-shadow: none;
     }
   }

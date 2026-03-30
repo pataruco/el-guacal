@@ -3,16 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useDeleteStoreMutation } from '@/graphql/mutations/delete-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
-import { ENGLISH, type Language } from '@/locales/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { selectStoreState, setShowStore } from '@/store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { formatDate } from '@/utils/date-utils';
 import DeleteConfirmationDialog from '../delete-store-dialogue';
 import styles from './index.module.scss';
 
 const Store: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { storeId, show } = useAppSelector(selectStoreState);
@@ -32,7 +30,7 @@ const Store: React.FC = () => {
 
   if (!store) return null;
 
-  const { storeId: id, name, address, updatedAt, location } = store;
+  const { storeId: id, name, address, location, products = [] } = store;
 
   const handleDelete = async () => {
     try {
@@ -47,65 +45,63 @@ const Store: React.FC = () => {
   return (
     <div className={styles['c-store-container']}>
       <section className={styles['c-store']}>
-        <div className={styles['c-store__image']}>
-          <img
-            src="https://via.placeholder.com/80x80/F4F6F9/0A1931?text=Store"
-            alt={name}
-          />
-        </div>
-
-        <div className={styles['c-store__content']}>
-          <div className={styles['c-store__header']}>
-            <span className={styles['c-store__badge']}>STORE</span>
+        <div className={styles['c-store__header']}>
+          <div className={styles['c-store__content']}>
             <h2>{name}</h2>
+            <p className={styles['c-store__address']}>{address}</p>
           </div>
-          <p className={styles['c-store__address']}>{address}</p>
-          <p className={styles['c-store__meta']}>
-            {t('store.lastUpdated')}:{' '}
-            {formatDate({
-              date: new Date(updatedAt),
-              lang: (i18n.language ?? ENGLISH) as Language,
-            })}{' '}
-          </p>
+
+          <div className={styles['c-store__header-actions']}>
+            <button
+              type="button"
+              onClick={handleOnClose}
+              className={styles['c-store__close']}
+              aria-label={t('store.close')}
+            >
+              &times;
+            </button>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${styles['c-store__btn']} ${styles['c-store__btn--primary']}`}
+            >
+              {t('store.directions')}
+            </a>
+
+            {isAuthenticated && (
+              <>
+                <Link
+                  to={`/stores/${id}/edit`}
+                  className={`${styles['c-store__btn']} ${styles['c-store__btn--secondary']}`}
+                >
+                  Edit
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  className={`${styles['c-store__btn']} ${styles['c-store__btn--danger']}`}
+                >
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        <div className={styles['c-store__actions']}>
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${styles['c-store__btn']} ${styles['c-store__btn--primary']}`}
-          >
-            {t('store.directions')}
-          </a>
-
-          {isAuthenticated && (
-            <>
-              <Link
-                to={`/stores/${id}/edit`}
-                className={`${styles['c-store__btn']} ${styles['c-store__btn--secondary']}`}
+        <div className={styles['c-store__products']}>
+          <h3>{t('store.products')}</h3>
+          <ul className={styles['c-store__products-list']}>
+            {products.map((product) => (
+              <li
+                key={product.productId}
+                className={styles['c-store__product']}
               >
-                Edit
-              </Link>
-              <button
-                type="button"
-                onClick={() => setIsDeleteDialogOpen(true)}
-                className={`${styles['c-store__btn']} ${styles['c-store__btn--danger']}`}
-              >
-                Delete
-              </button>
-            </>
-          )}
+                {product.name}
+              </li>
+            ))}
+          </ul>
         </div>
-
-        <button
-          type="button"
-          onClick={handleOnClose}
-          className={styles['c-store__close']}
-          aria-label={t('store.close')}
-        >
-          &times;
-        </button>
       </section>
 
       <DeleteConfirmationDialog
