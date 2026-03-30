@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 import { ENGLISH, type Language, SPANISH } from '@/locales/i18n';
@@ -10,9 +11,11 @@ const Header = () => {
   const { t, i18n } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     auth.signOut();
+    setIsMenuOpen(false);
   };
 
   const handleLanguageChange = (newLang: Language) => {
@@ -21,6 +24,8 @@ const Header = () => {
   };
 
   const isActive = (path: string) => location.pathname === path;
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <header className={styles['c-header']}>
@@ -74,7 +79,66 @@ const Header = () => {
         </nav>
       </div>
 
+      <div
+        className={`${styles['c-header__mobile-overlay']} ${isMenuOpen ? styles['c-header__mobile-overlay--open'] : ''}`}
+        onClick={toggleMenu}
+      />
+      <div
+        className={`${styles['c-header__mobile-menu']} ${isMenuOpen ? styles['c-header__mobile-menu--open'] : ''}`}
+      >
+        <div className={styles['c-header__mobile-menu-header']}>
+          <h2>Menu</h2>
+          <button
+            type="button"
+            className={styles['c-header__mobile-menu-close']}
+            onClick={toggleMenu}
+          >
+            &times;
+          </button>
+        </div>
+        <nav className={styles['c-header__mobile-nav']}>
+          <Link to="/" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+            {t('nav.home')}
+          </Link>
+          <Link to="/about" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+            {t('nav.about')}
+          </Link>
+          <Link to="/dataset" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+            {t('nav.dataset')}
+          </Link>
+          {isAuthenticated && (
+            <Link to="/stores/new" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+              {t('nav.addStore')}
+            </Link>
+          )}
+          <hr className={styles['c-header__mobile-menu-divider']} />
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className={styles['c-header__mobile-nav-link']}
+            >
+              {t('nav.logout')}
+            </button>
+          ) : (
+            <Link to="/auth" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+              {t('nav.login')}
+            </Link>
+          )}
+        </nav>
+      </div>
+
       <div className={styles['c-header__actions']}>
+        <button
+          type="button"
+          className={styles['c-header__hamburger']}
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
         <div className={styles['c-header__lang-toggle']}>
           <button
             type="button"

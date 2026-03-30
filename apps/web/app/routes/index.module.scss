@@ -1,0 +1,65 @@
+@use '../styles/settings/settings.colors' as colors;
+@use '../styles/settings/settings.globals' as globals;
+
+.p-home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+
+  &__sidebar {
+    position: absolute;
+    top: globals.$spacing-md;
+    left: globals.$spacing-md;
+    right: globals.$spacing-md;
+    z-index: 150;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-md;
+
+    @media (min-width: 768px) {
+      position: relative;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 400px;
+      height: 100%;
+      background: colors.$color-background;
+      border-right: globals.$border-utility;
+      pointer-events: all;
+      padding: globals.$spacing-md;
+      overflow-y: auto;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    gap: globals.$spacing-sm;
+    pointer-events: all;
+
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+  }
+
+  &__details {
+    pointer-events: all;
+    @media (min-width: 768px) {
+      flex: 1;
+    }
+  }
+
+  &__map-container {
+    flex: 1;
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+}

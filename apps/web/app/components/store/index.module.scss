@@ -5,11 +5,16 @@
 @use '../../styles/tools/tools.mixins' as mixins;
 
 .c-store-container {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  z-index: 200;
+
+  @media (min-width: 768px) {
+    position: relative;
+    z-index: 10;
+  }
 }
 
 .c-store {
@@ -22,6 +27,12 @@
   flex-direction: column;
   gap: globals.$spacing-md;
   min-height: 12.5rem;
+
+  @media (min-width: 768px) {
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    min-height: 0;
+  }
 
   &__header {
     display: flex;

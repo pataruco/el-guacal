@@ -1,0 +1,79 @@
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-search {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  z-index: 100;
+
+  &__input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__input {
+    width: 100%;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    font-family: typography.$font-stack;
+    font-size: typography.$font-size-base;
+    font-weight: typography.$font-weight-bold;
+    color: colors.$color-text;
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    transition: all 0.1s ease-in-out;
+
+    &:focus {
+      outline: none;
+      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    }
+
+    &::placeholder {
+      color: color.adjust(colors.$color-text, $alpha: -0.5);
+      font-style: italic;
+    }
+  }
+
+  &__loading {
+    position: absolute;
+    right: globals.$spacing-md;
+    font-size: 0.8rem;
+    color: colors.$color-text;
+  }
+
+  &__suggestions {
+    position: absolute;
+    top: calc(100% + globals.$spacing-xs);
+    left: 0;
+    right: 0;
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  &__suggestion {
+    padding: globals.$spacing-sm globals.$spacing-md;
+    font-size: typography.$font-size-small;
+    font-weight: typography.$font-weight-bold;
+    cursor: pointer;
+    border-bottom: globals.$border-width-utility solid color.adjust(colors.$color-text, $alpha: -0.9);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: colors.$color-surface;
+    }
+  }
+}

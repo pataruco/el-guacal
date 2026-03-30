@@ -1,12 +1,27 @@
+import FilterButton from '../components/filter-button';
+import LocateMeButton from '../components/locate-me-button';
 import MapComponent from '../components/map';
 import Page from '../components/page';
+import SearchBar from '../components/search-bar';
 import StoreComponent from '../components/store';
+import styles from './index.module.scss';
 
 export default function Home() {
   return (
-    <Page className="home">
-      <MapComponent />
-      <StoreComponent />
+    <Page className={styles['p-home']}>
+      <div className={styles['p-home__sidebar']}>
+        <div className={styles['p-home__controls']}>
+          <SearchBar />
+          <FilterButton />
+        </div>
+        <div className={styles['p-home__details']}>
+          <StoreComponent />
+        </div>
+      </div>
+      <div className={styles['p-home__map-container']}>
+        <MapComponent />
+        <LocateMeButton />
+      </div>
     </Page>
   );
 }

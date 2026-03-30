@@ -1,0 +1,93 @@
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-filter {
+  position: relative;
+  z-index: 100;
+
+  &__btn {
+    padding: globals.$spacing-sm globals.$spacing-lg;
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    color: colors.$color-text;
+
+    &:hover {
+      background-color: colors.$color-surface;
+    }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+  }
+
+  &__panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 2 * globals.$spacing-lg);
+    max-width: 400px;
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: globals.$spacing-md;
+    border-bottom: globals.$border-utility;
+
+    h3 {
+      font-size: 1.25rem;
+      text-transform: uppercase;
+      font-weight: typography.$font-weight-black;
+    }
+  }
+
+  &__close {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    color: colors.$color-text;
+  }
+
+  &__content {
+    padding: globals.$spacing-lg;
+    font-weight: typography.$font-weight-bold;
+    text-align: center;
+  }
+
+  &__footer {
+    padding: globals.$spacing-md;
+    border-top: globals.$border-utility;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__done {
+    width: 100%;
+    padding: globals.$spacing-sm;
+    background-color: colors.$color-primary;
+    color: colors.$color-text;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+  }
+}
