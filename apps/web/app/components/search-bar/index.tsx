@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Combobox } from '@base-ui/react/combobox';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   useGetAutocompleteSuggestionsQuery,
   useLazyGetGeocodeQuery,
@@ -64,12 +64,16 @@ const SearchBar = () => {
           <Combobox.Input
             className={styles['c-search__input']}
             placeholder={t('search.placeholder') || 'Search for a location...'}
+            aria-label={t('search.placeholder') || 'Search for a location...'}
           />
           {isLoading && <div className={styles['c-search__loading']}>...</div>}
         </div>
 
         <Combobox.Portal>
-          <Combobox.Positioner sideOffset={8} className={styles['c-search__positioner']}>
+          <Combobox.Positioner
+            sideOffset={8}
+            className={styles['c-search__positioner']}
+          >
             <Combobox.Popup className={styles['c-search__popup']}>
               <Combobox.List className={styles['c-search__suggestions']}>
                 {(suggestion: Suggestion) => (
