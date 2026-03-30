@@ -8,16 +8,18 @@ import styles from './index.module.scss';
 
 export default function Home() {
   return (
-    <Page className={styles['p-home']}>
-      <div className={styles['p-home__sidebar']}>
+    <Page className={styles['p-home']} isHome>
+      <aside className={styles['p-home__sidebar']}>
         <div className={styles['p-home__controls']}>
-          <SearchBar />
-          <FilterButton />
+          <div className={styles['p-home__search-wrapper']}>
+            <SearchBar />
+            <FilterButton />
+          </div>
         </div>
         <div className={styles['p-home__details']}>
           <StoreComponent />
         </div>
-      </div>
+      </aside>
       <div className={styles['p-home__map-container']}>
         <MapComponent />
         <LocateMeButton />

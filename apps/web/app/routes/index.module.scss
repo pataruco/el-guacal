@@ -30,29 +30,49 @@
       left: 0;
       right: 0;
       width: 400px;
+      min-width: 400px;
       height: 100%;
       background: colors.$color-background;
       border-right: globals.$border-utility;
       pointer-events: all;
-      padding: globals.$spacing-md;
+      padding: 0; // We'll manage padding in children
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0.25rem 0 0 colors.$color-text;
     }
   }
 
   &__controls {
     display: flex;
+    flex-direction: column;
     gap: globals.$spacing-sm;
     pointer-events: all;
+    padding: globals.$spacing-md;
+    background: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
 
-    @media (max-width: 767px) {
-      width: 100%;
+    @media (min-width: 768px) {
+      border: none;
+      border-bottom: globals.$border-utility;
+      box-shadow: none;
+      background: transparent;
     }
+  }
+
+  &__search-wrapper {
+    display: flex;
+    gap: globals.$spacing-sm;
   }
 
   &__details {
     pointer-events: all;
+    flex: 1;
+    overflow-y: auto;
+
     @media (min-width: 768px) {
-      flex: 1;
+      padding: globals.$spacing-md;
     }
   }
 
@@ -61,5 +81,6 @@
     position: relative;
     height: 100%;
     width: 100%;
+    z-index: 1;
   }
 }

@@ -4,10 +4,10 @@ import Header from '../header';
 interface PageProps {
   children: React.ReactNode;
   className?: string;
+  isHome?: boolean;
 }
 
-const Page = ({ children, className }: PageProps) => {
-  const isHome = className?.includes('p-home');
+const Page = ({ children, className, isHome = false }: PageProps) => {
   return (
     <div
       style={{

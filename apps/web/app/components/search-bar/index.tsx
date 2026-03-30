@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Combobox } from '@base-ui/react/combobox';
 import {
   useGetAutocompleteSuggestionsQuery,
   useLazyGetGeocodeQuery,
@@ -8,13 +9,16 @@ import { setCenter, setZoom } from '@/store/features/map/slice';
 import { useAppDispatch } from '@/store/hooks';
 import styles from './index.module.scss';
 
+interface Suggestion {
+  place_id: string;
+  description: string;
+}
+
 const SearchBar = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [inputValue, setInputValue] = useState('');
   const [debouncedValue, setDebouncedValue] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -37,7 +41,6 @@ const SearchBar = () => {
     description: string,
   ) => {
     setInputValue(description);
-    setShowSuggestions(false);
     const { data: location } = await triggerGeocode(placeId);
     if (location) {
       dispatch(setCenter(location));
@@ -45,65 +48,44 @@ const SearchBar = () => {
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   return (
-    <div className={styles['c-search']} ref={containerRef}>
-      <div className={styles['c-search__input-wrapper']}>
-        <input
-          type="text"
-          className={styles['c-search__input']}
-          placeholder={t('search.placeholder') || 'Search for a location...'}
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            setShowSuggestions(true);
-          }}
-          onFocus={() => setShowSuggestions(true)}
-        />
-        {isLoading && <div className={styles['c-search__loading']}>...</div>}
-      </div>
-
-      {showSuggestions && suggestions && suggestions.length > 0 && (
-        <div className={styles['c-search__suggestions']} role="listbox">
-          {suggestions.map((suggestion) => (
-            <div
-              key={suggestion.place_id}
-              className={styles['c-search__suggestion']}
-              role="option"
-              aria-selected="false"
-              tabIndex={0}
-              onClick={() =>
-                handleSelectSuggestion(
-                  suggestion.place_id,
-                  suggestion.description,
-                )
-              }
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleSelectSuggestion(
-                    suggestion.place_id,
-                    suggestion.description,
-                  );
-                }
-              }}
-            >
-              {suggestion.description}
-            </div>
-          ))}
+    <div className={styles['c-search']}>
+      <Combobox.Root
+        items={suggestions || []}
+        inputValue={inputValue}
+        onInputValueChange={setInputValue}
+        onValueChange={(value: Suggestion | null) => {
+          if (value) {
+            handleSelectSuggestion(value.place_id, value.description);
+          }
+        }}
+      >
+        <div className={styles['c-search__input-wrapper']}>
+          <Combobox.Input
+            className={styles['c-search__input']}
+            placeholder={t('search.placeholder') || 'Search for a location...'}
+          />
+          {isLoading && <div className={styles['c-search__loading']}>...</div>}
         </div>
-      )}
+
+        <Combobox.Portal>
+          <Combobox.Positioner sideOffset={8} className={styles['c-search__positioner']}>
+            <Combobox.Popup className={styles['c-search__popup']}>
+              <Combobox.List className={styles['c-search__suggestions']}>
+                {(suggestion: Suggestion) => (
+                  <Combobox.Item
+                    key={suggestion.place_id}
+                    value={suggestion}
+                    className={styles['c-search__suggestion']}
+                  >
+                    <span>{suggestion.description}</span>
+                  </Combobox.Item>
+                )}
+              </Combobox.List>
+            </Combobox.Popup>
+          </Combobox.Positioner>
+        </Combobox.Portal>
+      </Combobox.Root>
     </div>
   );
 };

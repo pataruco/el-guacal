@@ -9,8 +9,8 @@
   bottom: globals.$spacing-lg;
   right: globals.$spacing-lg;
   z-index: 100;
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,6 +20,11 @@
   cursor: pointer;
   transition: all 0.1s ease-in-out;
   color: colors.$color-text;
+
+  @media (min-width: 768px) {
+    bottom: globals.$spacing-xl;
+    right: globals.$spacing-xl;
+  }
 
   &:hover {
     background-color: colors.$color-surface;
@@ -33,7 +38,7 @@
   @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
 
   svg {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 2rem;
+    height: 2rem;
   }
 }
