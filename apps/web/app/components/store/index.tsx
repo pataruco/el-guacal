@@ -52,6 +52,14 @@ const Store: React.FC = () => {
           </div>
 
           <div className={styles['c-store__header-actions']}>
+            <button
+              type="button"
+              onClick={handleOnClose}
+              className={styles['c-store__close']}
+              aria-label={t('store.close')}
+            >
+              &times;
+            </button>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
               target="_blank"
@@ -79,15 +87,6 @@ const Store: React.FC = () => {
               </>
             )}
           </div>
-
-          <button
-            type="button"
-            onClick={handleOnClose}
-            className={styles['c-store__close']}
-            aria-label={t('store.close')}
-          >
-            &times;
-          </button>
         </div>
 
         <div className={styles['c-store__products']}>

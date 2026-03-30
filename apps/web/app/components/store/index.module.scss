@@ -6,27 +6,22 @@
 
 .c-store-container {
   position: absolute;
-  bottom: globals.$spacing-lg;
-  left: globals.$spacing-lg;
-  right: globals.$spacing-lg;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 40;
-
-  @media (min-width: 1024px) {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 37.5rem; // 600px
-  }
 }
 
 .c-store {
   background-color: colors.$color-background;
-  border: globals.$border-utility;
-  box-shadow: globals.$shadow-utility;
+  border-top: globals.$border-utility;
+  box-shadow: 0 -0.25rem 0 0 rgba(0, 0, 0, 0.1);
   padding: globals.$spacing-md;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: globals.$spacing-md;
+  min-height: 12.5rem;
 
   &__header {
     display: flex;
@@ -55,8 +50,9 @@
 
   &__header-actions {
     display: flex;
-    flex-direction: column;
-    gap: globals.$spacing-xs;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: globals.$spacing-sm;
   }
 
   &__products {
@@ -132,9 +128,6 @@
   }
 
   &__close {
-    position: absolute;
-    top: -0.75rem;
-    right: -0.75rem;
     width: 2rem;
     height: 2rem;
     background-color: colors.$color-text;
@@ -147,10 +140,11 @@
     font-size: 1.5rem;
     font-weight: typography.$font-weight-black;
     cursor: pointer;
-    box-shadow: 0.25rem 0.25rem 0px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0.125rem 0.125rem 0px 0px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 
     &:active {
-      transform: translate(0.125rem, 0.125rem);
+      transform: translate(0.0625rem, 0.0625rem);
       box-shadow: none;
     }
   }
