@@ -7,13 +7,15 @@ interface PageProps {
 }
 
 const Page = ({ children, className }: PageProps) => {
+  const isHome = className?.includes('p-home');
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
-        overflow: 'hidden',
+        height: isHome ? '100vh' : 'auto',
+        minHeight: '100vh',
+        overflow: isHome ? 'hidden' : 'visible',
         width: '100vw',
       }}
     >

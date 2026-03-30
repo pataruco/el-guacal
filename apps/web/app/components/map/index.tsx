@@ -45,7 +45,11 @@ const MapComponent = () => {
 
   return (
     <div className={isLoading ? styles['c-map--loading'] : styles['c-map']}>
-      <APIProvider apiKey={GOOGLE_MAPS_API_KEY} onLoad={handleOnLoad}>
+      <APIProvider
+        apiKey={GOOGLE_MAPS_API_KEY}
+        onLoad={handleOnLoad}
+        libraries={['places']}
+      >
         <GoogleMap
           style={{ height: '100%', width: '100%' }}
           defaultZoom={13}

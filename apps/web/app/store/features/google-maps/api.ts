@@ -1,53 +1,72 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+import { createApi } from '@reduxjs/toolkit/query/react';
 
 export interface AutocompleteSuggestion {
   description: string;
   place_id: string;
 }
 
-export interface AutocompleteResponse {
-  predictions: AutocompleteSuggestion[];
-  status: string;
-}
-
-export interface GeocodeResult {
-  geometry: {
-    location: {
-      lat: number;
-      lng: number;
-    };
-  };
-}
-
-export interface GeocodeResponse {
-  results: GeocodeResult[];
-  status: string;
-}
-
 export const googleMapsApiSlice = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://maps.googleapis.com/maps/api/',
-  }),
+  baseQuery: async (args: {
+    type: 'autocomplete' | 'geocode';
+    input: string;
+  }) => {
+    // Wait for Google Maps SDK to be available
+    if (typeof google === 'undefined') {
+      return { error: 'Google Maps SDK not loaded' };
+    }
+
+    try {
+      if (args.type === 'autocomplete') {
+        const service = new google.maps.places.AutocompleteService();
+        return new Promise((resolve) => {
+          service.getPlacePredictions(
+            { input: args.input },
+            (predictions, status) => {
+              if (
+                status !== google.maps.places.PlacesServiceStatus.OK ||
+                !predictions
+              ) {
+                resolve({ data: [] });
+                return;
+              }
+              resolve({
+                data: predictions.map((p) => ({
+                  description: p.description,
+                  place_id: p.place_id,
+                })) as AutocompleteSuggestion[],
+              });
+            },
+          );
+        });
+      }
+
+      const geocoder = new google.maps.Geocoder();
+      return new Promise((resolve) => {
+        geocoder.geocode({ placeId: args.input }, (results, status) => {
+          if (status !== google.maps.GeocoderStatus.OK || !results) {
+            resolve({ data: null });
+            return;
+          }
+          if (results.length > 0) {
+            const { lat, lng } = results[0].geometry.location;
+            resolve({ data: { lat: lat(), lng: lng() } });
+          } else {
+            resolve({ data: null });
+          }
+        });
+      });
+    } catch (error) {
+      return { error: (error as Error).message };
+    }
+  },
   endpoints: (builder) => ({
     getAutocompleteSuggestions: builder.query<AutocompleteSuggestion[], string>(
       {
-        query: (input) =>
-          `place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_MAPS_API_KEY}`,
-        transformResponse: (response: AutocompleteResponse) =>
-          response.predictions,
+        query: (input) => ({ input, type: 'autocomplete' }),
       },
     ),
     getGeocode: builder.query<{ lat: number; lng: number } | null, string>({
-      query: (placeId) =>
-        `geocode/json?place_id=${placeId}&key=${GOOGLE_MAPS_API_KEY}`,
-      transformResponse: (response: GeocodeResponse) => {
-        if (response.status === 'OK' && response.results.length > 0) {
-          return response.results[0].geometry.location;
-        }
-        return null;
-      },
+      query: (placeId) => ({ input: placeId, type: 'geocode' }),
     }),
   }),
   reducerPath: 'googleMapsApi',
