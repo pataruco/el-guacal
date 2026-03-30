@@ -1,6 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetAutocompleteSuggestionsQuery, useLazyGetGeocodeQuery } from '@/store/features/google-maps/api';
+import {
+  useGetAutocompleteSuggestionsQuery,
+  useLazyGetGeocodeQuery,
+} from '@/store/features/google-maps/api';
 import { setCenter, setZoom } from '@/store/features/map/slice';
 import { useAppDispatch } from '@/store/hooks';
 import styles from './index.module.scss';
@@ -20,13 +23,19 @@ const SearchBar = () => {
     return () => clearTimeout(timer);
   }, [inputValue]);
 
-  const { data: suggestions, isLoading } = useGetAutocompleteSuggestionsQuery(debouncedValue, {
-    skip: debouncedValue.length < 3,
-  });
+  const { data: suggestions, isLoading } = useGetAutocompleteSuggestionsQuery(
+    debouncedValue,
+    {
+      skip: debouncedValue.length < 3,
+    },
+  );
 
   const [triggerGeocode] = useLazyGetGeocodeQuery();
 
-  const handleSelectSuggestion = async (placeId: string, description: string) => {
+  const handleSelectSuggestion = async (
+    placeId: string,
+    description: string,
+  ) => {
     setInputValue(description);
     setShowSuggestions(false);
     const { data: location } = await triggerGeocode(placeId);
@@ -38,7 +47,10 @@ const SearchBar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setShowSuggestions(false);
       }
     };
@@ -64,17 +76,33 @@ const SearchBar = () => {
       </div>
 
       {showSuggestions && suggestions && suggestions.length > 0 && (
-        <ul className={styles['c-search__suggestions']}>
+        <div className={styles['c-search__suggestions']} role="listbox">
           {suggestions.map((suggestion) => (
-            <li
+            <div
               key={suggestion.place_id}
               className={styles['c-search__suggestion']}
-              onClick={() => handleSelectSuggestion(suggestion.place_id, suggestion.description)}
+              role="option"
+              aria-selected="false"
+              tabIndex={0}
+              onClick={() =>
+                handleSelectSuggestion(
+                  suggestion.place_id,
+                  suggestion.description,
+                )
+              }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleSelectSuggestion(
+                    suggestion.place_id,
+                    suggestion.description,
+                  );
+                }
+              }}
             >
               {suggestion.description}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

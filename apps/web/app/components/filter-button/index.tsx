@@ -34,7 +34,9 @@ const FilterButton = () => {
             </button>
           </div>
           <div className={styles['c-filter__content']}>
-            <p>{t('filter.placeholder') || 'Filter options will appear here.'}</p>
+            <p>
+              {t('filter.placeholder') || 'Filter options will appear here.'}
+            </p>
           </div>
           <div className={styles['c-filter__footer']}>
             <button

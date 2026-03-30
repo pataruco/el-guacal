@@ -79,7 +79,9 @@ const Header = () => {
         </nav>
       </div>
 
-      <div
+      <button
+        type="button"
+        aria-label="Close menu"
         className={`${styles['c-header__mobile-overlay']} ${isMenuOpen ? styles['c-header__mobile-overlay--open'] : ''}`}
         onClick={toggleMenu}
       />
@@ -97,17 +99,33 @@ const Header = () => {
           </button>
         </div>
         <nav className={styles['c-header__mobile-nav']}>
-          <Link to="/" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+          <Link
+            to="/"
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
             {t('nav.home')}
           </Link>
-          <Link to="/about" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+          <Link
+            to="/about"
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
             {t('nav.about')}
           </Link>
-          <Link to="/dataset" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+          <Link
+            to="/dataset"
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
             {t('nav.dataset')}
           </Link>
           {isAuthenticated && (
-            <Link to="/stores/new" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+            <Link
+              to="/stores/new"
+              onClick={toggleMenu}
+              className={styles['c-header__mobile-nav-link']}
+            >
               {t('nav.addStore')}
             </Link>
           )}
@@ -121,7 +139,11 @@ const Header = () => {
               {t('nav.logout')}
             </button>
           ) : (
-            <Link to="/auth" onClick={toggleMenu} className={styles['c-header__mobile-nav-link']}>
+            <Link
+              to="/auth"
+              onClick={toggleMenu}
+              className={styles['c-header__mobile-nav-link']}
+            >
               {t('nav.login')}
             </Link>
           )}

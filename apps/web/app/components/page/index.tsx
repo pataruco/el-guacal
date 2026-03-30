@@ -13,8 +13,8 @@ const Page = ({ children, className }: PageProps) => {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        width: '100vw',
         overflow: 'hidden',
+        width: '100vw',
       }}
     >
       <Header />

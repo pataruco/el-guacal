@@ -16,3 +16,43 @@
 8:13:05 AM [vite] (client) hmr update /app/root.tsx, /app/components/header/index.tsx
 8:13:05 AM [vite] (client) hmr update /app/root.tsx, /app/components/header/index.tsx
 8:13:05 AM [vite] (ssr) page reload app/locales/es-VE/translation.json
+8:18:14 AM [vite] (client) hmr update /app/components/filter-button/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/filter-button/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/filter-button/index.tsx
+8:18:14 AM [vite] (ssr) page reload app/components/filter-button/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:14 AM [vite] (ssr) page reload app/components/header/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/page/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/page/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/page/index.tsx
+8:18:14 AM [vite] (ssr) page reload app/components/page/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:14 AM [vite] (ssr) page reload app/components/search-bar/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/root.tsx, /app/components/search-bar/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/root.tsx, /app/components/search-bar/index.tsx
+8:18:14 AM [vite] (client) hmr update /app/root.tsx, /app/components/search-bar/index.tsx
+8:18:14 AM [vite] (ssr) page reload app/store/features/google-maps/api.ts
+8:18:23 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:23 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:23 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:23 AM [vite] (ssr) page reload app/components/header/index.tsx
+8:18:31 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:31 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:31 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:31 AM [vite] (ssr) page reload app/components/search-bar/index.tsx
+8:18:44 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:44 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:44 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:18:44 AM [vite] (ssr) page reload app/components/header/index.tsx
+8:18:48 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:48 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:48 AM [vite] (client) hmr update /app/components/search-bar/index.tsx
+8:18:48 AM [vite] (ssr) page reload app/components/search-bar/index.tsx
+8:19:02 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:19:02 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:19:02 AM [vite] (client) hmr update /app/components/header/index.tsx
+8:19:02 AM [vite] (ssr) page reload app/components/header/index.module.scss

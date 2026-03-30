@@ -31,11 +31,14 @@ export const googleMapsApiSlice = createApi({
     baseUrl: 'https://maps.googleapis.com/maps/api/',
   }),
   endpoints: (builder) => ({
-    getAutocompleteSuggestions: builder.query<AutocompleteSuggestion[], string>({
-      query: (input) =>
-        `place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_MAPS_API_KEY}`,
-      transformResponse: (response: AutocompleteResponse) => response.predictions,
-    }),
+    getAutocompleteSuggestions: builder.query<AutocompleteSuggestion[], string>(
+      {
+        query: (input) =>
+          `place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_MAPS_API_KEY}`,
+        transformResponse: (response: AutocompleteResponse) =>
+          response.predictions,
+      },
+    ),
     getGeocode: builder.query<{ lat: number; lng: number } | null, string>({
       query: (placeId) =>
         `geocode/json?place_id=${placeId}&key=${GOOGLE_MAPS_API_KEY}`,
