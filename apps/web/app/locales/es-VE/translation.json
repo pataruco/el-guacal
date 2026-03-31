@@ -11,16 +11,7 @@
     "signInWithGoogle": "Ingresar con Google",
     "signUp": "Registrarse"
   },
-  "filter": {
-    "done": "Listo",
-    "label": "Filtrar",
-    "placeholder": "Las opciones de filtro aparecerán aquí.",
-    "title": "Filtros",
-    "toggle": "Alternar Filtro"
-  },
-  "footer": {
-    "text": "El Mapa de los Baños de Venezuela"
-  },
+  "footer": {},
   "map": {
     "locateMe": "Buscar un baño cerca de mí"
   },

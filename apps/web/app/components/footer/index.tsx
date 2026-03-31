@@ -8,7 +8,6 @@ const Footer = () => {
       <p className={styles['c-footer__text']}>
         EL GUACAL © {new Date().getFullYear()}
       </p>
-      <p className={styles['c-footer__text']}>{t('footer.text')}</p>
     </footer>
   );
 };

@@ -1,5 +1,3 @@
-import FilterButton from '../components/filter-button';
-import LocateMeButton from '../components/locate-me-button';
 import MapComponent from '../components/map';
 import Page from '../components/page';
 import SearchBar from '../components/search-bar';
@@ -13,13 +11,11 @@ export default function Home() {
         <div className={styles['p-home__controls']}>
           <div className={styles['p-home__search-wrapper']}>
             <SearchBar />
-            <FilterButton />
           </div>
         </div>
       </aside>
       <div className={styles['p-home__map-container']}>
         <MapComponent />
-        <LocateMeButton />
       </div>
       <StoreComponent />
     </Page>

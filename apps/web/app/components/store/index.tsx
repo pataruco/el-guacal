@@ -58,7 +58,7 @@ const Store: React.FC = () => {
               className={styles['c-store__close']}
               aria-label={t('store.close')}
             >
-              &times;
+              {t('store.close')}
             </button>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
