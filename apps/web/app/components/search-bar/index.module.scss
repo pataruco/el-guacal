@@ -51,7 +51,6 @@
 
   &__popup {
     background-color: colors.$color-background;
-    border: globals.$border-utility;
     box-shadow: globals.$shadow-utility;
     max-height: 300px;
     overflow-y: auto;
@@ -70,7 +69,8 @@
     font-weight: typography.$font-weight-bold;
     cursor: pointer;
     color: colors.$color-text;
-    border-bottom: globals.$border-width-utility solid color.adjust(colors.$color-text, $alpha: -0.9);
+    border-bottom: globals.$border-width-utility solid
+      color.adjust(colors.$color-text, $alpha: -0.9);
 
     &:last-child {
       border-bottom: none;

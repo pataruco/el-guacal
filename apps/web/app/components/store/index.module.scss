@@ -9,7 +9,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 200;
+  z-index: 300;
   width: 100%;
 }
 
@@ -142,25 +142,23 @@
   }
 
   &__close {
-    width: 2.5rem;
-    height: 2.5rem;
-    background-color: colors.$color-text;
-    color: colors.$color-background;
+    display: inline-block;
+    padding: globals.$spacing-sm globals.$spacing-lg;
+    background-color: colors.$color-secondary;
+    color: colors.$color-text;
     border: globals.$border-utility;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
+    font-size: 0.75rem;
     font-weight: typography.$font-weight-black;
+    text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 0.125rem 0.125rem 0px colors.$color-text;
+    box-shadow: globals.$shadow-utility;
     flex-shrink: 0;
     transition: all 0.1s ease-in-out;
 
-    &:active {
-      transform: translate(0.0625rem, 0.0625rem);
-      box-shadow: none;
+    &:hover {
+      background-color: color.adjust(colors.$color-secondary, $lightness: 5%);
     }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.125rem);
   }
 }

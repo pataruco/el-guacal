@@ -11,26 +11,19 @@
     "signInWithGoogle": "Sign in with Google",
     "signUp": "Sign Up"
   },
-  "filter": {
-    "done": "Done",
-    "label": "Filter",
-    "placeholder": "Filter options will appear here.",
-    "title": "Filters",
-    "toggle": "Toggle Filter"
-  },
-  "footer": {
-    "text": "The Toilet Map of Venezuela"
-  },
+  "footer": {},
   "map": {
     "locateMe": "Find a toilet near me"
   },
   "nav": {
     "about": "About",
     "addStore": "Add Store",
+    "close": "Close",
     "dataset": "Dataset",
     "home": "Home",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "menu": "Menu"
   },
   "pages": {
     "about": {
