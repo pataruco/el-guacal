@@ -35,7 +35,7 @@
       background: colors.$color-background;
       border-right: globals.$border-utility;
       pointer-events: all;
-      padding: 0; // We'll manage padding in children
+      padding: 0;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -64,16 +64,6 @@
   &__search-wrapper {
     display: flex;
     gap: globals.$spacing-sm;
-  }
-
-  &__details {
-    pointer-events: all;
-    flex: 1;
-    overflow-y: auto;
-
-    @media (min-width: 768px) {
-      padding: globals.$spacing-md;
-    }
   }
 
   &__map-container {

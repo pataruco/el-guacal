@@ -16,14 +16,12 @@ export default function Home() {
             <FilterButton />
           </div>
         </div>
-        <div className={styles['p-home__details']}>
-          <StoreComponent />
-        </div>
       </aside>
       <div className={styles['p-home__map-container']}>
         <MapComponent />
         <LocateMeButton />
       </div>
+      <StoreComponent />
     </Page>
   );
 }

@@ -10,11 +10,7 @@
   left: 0;
   right: 0;
   z-index: 200;
-
-  @media (min-width: 768px) {
-    position: relative;
-    z-index: 10;
-  }
+  width: 100%;
 }
 
 .c-store {
@@ -26,13 +22,12 @@
   display: flex;
   flex-direction: column;
   gap: globals.$spacing-md;
-  min-height: 12.5rem;
+  max-height: 50vh; // Prevent it from covering too much of the map
+  overflow-y: auto; // Allow internal scrolling if content is long
 
   @media (min-width: 768px) {
-    border: globals.$border-utility;
-    box-shadow: globals.$shadow-utility;
-    min-height: 0;
     padding: globals.$spacing-lg;
+    max-height: 40vh;
   }
 
   &__header {
