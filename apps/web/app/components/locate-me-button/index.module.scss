@@ -1,0 +1,44 @@
+@use 'sass:color';
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-locate-me {
+  position: absolute;
+  bottom: globals.$spacing-lg;
+  right: globals.$spacing-lg;
+  z-index: 100;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: colors.$color-background;
+  border: globals.$border-utility;
+  box-shadow: globals.$shadow-utility;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  color: colors.$color-text;
+
+  @media (min-width: 768px) {
+    bottom: globals.$spacing-xl;
+    right: globals.$spacing-xl;
+  }
+
+  &:hover {
+    background-color: colors.$color-surface;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+  }
+}

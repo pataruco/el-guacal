@@ -4,15 +4,30 @@ import Header from '../header';
 interface PageProps {
   children: React.ReactNode;
   className?: string;
+  isHome?: boolean;
 }
 
-const Page = ({ children, className }: PageProps) => {
+const Page = ({ children, className, isHome = false }: PageProps) => {
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: isHome ? '100vh' : 'auto',
+        minHeight: '100vh',
+        overflow: isHome ? 'hidden' : 'visible',
+        width: '100vw',
+      }}
+    >
       <Header />
-      <main className={className ? className : ''}>{children}</main>
+      <main
+        className={className ? className : ''}
+        style={{ flex: 1, position: 'relative' }}
+      >
+        {children}
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

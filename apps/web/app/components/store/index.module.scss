@@ -5,23 +5,30 @@
 @use '../../styles/tools/tools.mixins' as mixins;
 
 .c-store-container {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  z-index: 200;
+  width: 100%;
 }
 
 .c-store {
   background-color: colors.$color-background;
   border-top: globals.$border-utility;
-  box-shadow: 0 -0.25rem 0 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -0.25rem 0 0 colors.$color-text;
   padding: globals.$spacing-md;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: globals.$spacing-md;
-  min-height: 12.5rem;
+  max-height: 50vh; // Prevent it from covering too much of the map
+  overflow-y: auto; // Allow internal scrolling if content is long
+
+  @media (min-width: 768px) {
+    padding: globals.$spacing-lg;
+    max-height: 40vh;
+  }
 
   &__header {
     display: flex;
@@ -34,11 +41,12 @@
     flex: 1;
 
     h2 {
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       font-weight: typography.$font-weight-black;
-      color: colors.$color-primary;
+      color: colors.$color-text;
       text-transform: uppercase;
       margin-bottom: 0.25rem;
+      letter-spacing: -0.025em;
     }
   }
 
@@ -46,6 +54,7 @@
     font-size: typography.$font-size-small;
     color: colors.$color-text;
     font-weight: typography.$font-weight-bold;
+    opacity: 0.8;
   }
 
   &__header-actions {
@@ -60,18 +69,19 @@
     padding-top: globals.$spacing-md;
 
     h3 {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: typography.$font-weight-black;
       text-transform: uppercase;
       margin-bottom: globals.$spacing-sm;
       color: colors.$color-text;
+      letter-spacing: 0.05em;
     }
   }
 
   &__products-list {
     display: flex;
     flex-wrap: wrap;
-    gap: globals.$spacing-xs;
+    gap: globals.$spacing-sm;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -80,28 +90,32 @@
   &__product {
     background-color: colors.$color-surface;
     border: globals.$border-utility;
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.75rem;
     font-size: 0.75rem;
-    font-weight: typography.$font-weight-bold;
+    font-weight: typography.$font-weight-black;
     color: colors.$color-text;
+    text-transform: uppercase;
+    box-shadow: 0.125rem 0.125rem 0px colors.$color-text;
   }
 
   &__btn {
-    padding: globals.$spacing-xs globals.$spacing-md;
-    font-weight: typography.$font-weight-bold;
-    font-size: 0.7rem;
+    display: inline-block;
+    padding: globals.$spacing-sm globals.$spacing-lg;
+    font-weight: typography.$font-weight-black;
+    font-size: 0.75rem;
     text-transform: uppercase;
     box-shadow: globals.$shadow-utility;
     transition: all 0.1s ease-in-out;
     text-align: center;
     cursor: pointer;
     border: globals.$border-utility;
+    text-decoration: none;
 
     @include mixins.mechanical-press(globals.$shadow-active, 0.125rem);
 
     &--primary {
       background-color: colors.$color-primary;
-      color: colors.$color-text;
+      color: colors.$color-background;
 
       &:hover {
         background-color: color.adjust(colors.$color-primary, $lightness: 5%);
@@ -128,8 +142,8 @@
   }
 
   &__close {
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     background-color: colors.$color-text;
     color: colors.$color-background;
     border: globals.$border-utility;
@@ -137,11 +151,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: typography.$font-weight-black;
     cursor: pointer;
-    box-shadow: 0.125rem 0.125rem 0px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0.125rem 0.125rem 0px colors.$color-text;
     flex-shrink: 0;
+    transition: all 0.1s ease-in-out;
 
     &:active {
       transform: translate(0.0625rem, 0.0625rem);

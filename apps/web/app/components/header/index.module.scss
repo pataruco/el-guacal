@@ -8,7 +8,7 @@
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 50;
+  z-index: 500; // Increased to be above everything else
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,9 +33,13 @@
   }
 
   &__nav {
-    display: flex;
+    display: none;
     gap: globals.$spacing-md;
     align-items: center;
+
+    @media (min-width: 768px) {
+      display: flex;
+    }
 
     &-list {
       display: flex;
@@ -56,6 +60,8 @@
       border: none;
       font-size: typography.$font-size-small;
       cursor: pointer;
+      color: colors.$color-text;
+      text-decoration: none;
 
       &:hover {
         background-color: colors.$color-surface;
@@ -67,6 +73,122 @@
         border-bottom: globals.$border-utility;
         border-color: colors.$color-primary;
         border-bottom-width: 0.1875rem;
+      }
+    }
+  }
+
+  &__hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: transparent;
+    border: globals.$border-utility;
+    box-shadow: 0.125rem 0.125rem 0px colors.$color-text;
+    cursor: pointer;
+    padding: globals.$spacing-xs;
+
+    @media (min-width: 768px) {
+      display: none;
+    }
+
+    span {
+      width: 100%;
+      height: 0.25rem;
+      background: colors.$color-text;
+      transition: all 0.3s linear;
+      position: relative;
+    }
+  }
+
+  &__mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 66, 0.5);
+    z-index: 600; // Above header
+    display: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    &--open {
+      display: block;
+    }
+  }
+
+  &__mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: colors.$color-background;
+    z-index: 700; // Above overlay
+    display: flex;
+    flex-direction: column;
+    padding: globals.$spacing-lg;
+    border-left: globals.$border-utility;
+    box-shadow: -0.25rem 0 0 colors.$color-text;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+
+    &--open {
+      transform: translateX(0);
+    }
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: globals.$spacing-xl;
+
+      h2 {
+        font-size: typography.$font-size-heading;
+        text-transform: uppercase;
+        font-weight: typography.$font-weight-black;
+      }
+    }
+
+    &-close {
+      background: transparent;
+      border: none;
+      font-size: 2.5rem;
+      cursor: pointer;
+      color: colors.$color-text;
+      line-height: 1;
+    }
+
+    &-divider {
+      border: none;
+      border-top: globals.$border-utility;
+      margin: globals.$spacing-lg 0;
+    }
+  }
+
+  &__mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-md;
+
+    &-link {
+      font-size: 1.25rem;
+      font-weight: typography.$font-weight-black;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: colors.$color-text;
+      padding: globals.$spacing-sm 0;
+      text-align: left;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+
+      &:hover {
+        color: colors.$color-primary;
       }
     }
   }
@@ -85,52 +207,63 @@
       background: transparent;
       border: none;
       padding: globals.$spacing-sm;
-      font-weight: typography.$font-weight-regular;
+      font-weight: typography.$font-weight-bold;
       font-size: typography.$font-size-small;
       cursor: pointer;
+      color: colors.$color-text;
 
       &--active {
-        font-weight: typography.$font-weight-bold;
-        text-decoration: underline;
+        background-color: colors.$color-primary;
+        color: colors.$color-background;
+        border: globals.$border-utility;
       }
     }
   }
 
   &__auth-link {
-    background-color: colors.$color-primary;
-    color: colors.$color-text;
-    border: globals.$border-utility;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    letter-spacing: -0.025em;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
-    text-decoration: none;
-    display: inline-block;
+    display: none;
 
-    &:hover {
-      background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+    @media (min-width: 768px) {
+      display: inline-block;
+      background-color: colors.$color-primary;
+      color: colors.$color-background;
+      border: globals.$border-utility;
+      padding: globals.$spacing-sm globals.$spacing-md;
+      font-weight: typography.$font-weight-black;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      box-shadow: globals.$shadow-utility;
+      transition: all 0.1s ease-in-out;
+      text-decoration: none;
+
+      &:hover {
+        background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+      }
+
+      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
     }
-
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
   }
 
   &__logout-btn {
-    background-color: colors.$color-surface;
-    color: colors.$color-text;
-    border: globals.$border-utility;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    letter-spacing: -0.025em;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
+    display: none;
 
-    &:hover {
-      background-color: color.adjust(colors.$color-surface, $lightness: -5%);
+    @media (min-width: 768px) {
+      display: block;
+      background-color: colors.$color-surface;
+      color: colors.$color-text;
+      border: globals.$border-utility;
+      padding: globals.$spacing-sm globals.$spacing-md;
+      font-weight: typography.$font-weight-black;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      box-shadow: globals.$shadow-utility;
+      transition: all 0.1s ease-in-out;
+
+      &:hover {
+        background-color: color.adjust(colors.$color-surface, $lightness: -5%);
+      }
+
+      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
     }
-
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
   }
 }
