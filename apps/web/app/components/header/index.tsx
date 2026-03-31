@@ -89,13 +89,13 @@ const Header = () => {
         className={`${styles['c-header__mobile-menu']} ${isMenuOpen ? styles['c-header__mobile-menu--open'] : ''}`}
       >
         <div className={styles['c-header__mobile-menu-header']}>
-          <h2>Menu</h2>
           <button
             type="button"
             className={styles['c-header__mobile-menu-close']}
             onClick={toggleMenu}
+            aria-label={t('nav.close')}
           >
-            &times;
+            {t('nav.close')}
           </button>
         </div>
         <nav className={styles['c-header__mobile-nav']}>
@@ -155,11 +155,9 @@ const Header = () => {
           type="button"
           className={styles['c-header__hamburger']}
           onClick={toggleMenu}
-          aria-label="Toggle menu"
+          aria-label={t('nav.menu')}
         >
-          <span />
-          <span />
-          <span />
+          {t('nav.menu')}
         </button>
         <div className={styles['c-header__lang-toggle']}>
           <button

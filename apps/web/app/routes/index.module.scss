@@ -25,21 +25,18 @@
     gap: globals.$spacing-md;
 
     @media (min-width: 768px) {
-      position: relative;
       top: 0;
       left: 0;
       right: 0;
       width: 400px;
       min-width: 400px;
       height: 100%;
-      background: colors.$color-background;
-      border-right: globals.$border-utility;
+      background: transparent;
       pointer-events: all;
       padding: 0;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      box-shadow: 0.25rem 0 0 colors.$color-text;
     }
   }
 
@@ -49,13 +46,9 @@
     gap: globals.$spacing-sm;
     pointer-events: all;
     padding: globals.$spacing-md;
-    background: colors.$color-background;
-    border: globals.$border-utility;
-    box-shadow: globals.$shadow-utility;
 
     @media (min-width: 768px) {
       border: none;
-      border-bottom: globals.$border-utility;
       box-shadow: none;
       background: transparent;
     }

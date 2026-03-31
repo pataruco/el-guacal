@@ -54,6 +54,7 @@ const SearchBar = () => {
         items={suggestions || []}
         inputValue={inputValue}
         onInputValueChange={setInputValue}
+        itemToStringLabel={(item: Suggestion) => item.description}
         onValueChange={(value: Suggestion | null) => {
           if (value) {
             handleSelectSuggestion(value.place_id, value.description);

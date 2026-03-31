@@ -18,10 +18,12 @@
   "nav": {
     "about": "About",
     "addStore": "Add Store",
+    "close": "Close",
     "dataset": "Dataset",
     "home": "Home",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "menu": "Menu"
   },
   "pages": {
     "about": {
