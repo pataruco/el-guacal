@@ -192,23 +192,92 @@
     gap: globals.$spacing-sm;
   }
 
-  &__lang-toggle {
-    display: flex;
-    gap: globals.$spacing-sm;
+  &__lang-selector {
+    display: none;
 
-    &-btn {
-      background: transparent;
-      border: none;
-      padding: globals.$spacing-sm;
-      font-weight: typography.$font-weight-bold;
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
+
+  &__mobile-lang-selector {
+    margin-top: globals.$spacing-md;
+  }
+
+  &__lang-select {
+    &-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: globals.$spacing-sm;
+      background: colors.$color-background;
+      border: globals.$border-utility;
+      box-shadow: globals.$shadow-utility;
+      padding: globals.$spacing-sm globals.$spacing-md;
+      font-family: inherit;
       font-size: typography.$font-size-small;
+      font-weight: typography.$font-weight-black;
+      text-transform: uppercase;
       cursor: pointer;
       color: colors.$color-text;
+      min-width: 120px;
 
-      &--active {
+      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+
+      &:hover {
+        background-color: colors.$color-surface;
+      }
+
+      &[data-expanded] {
+        background-color: colors.$color-surface;
+      }
+    }
+
+    &-icon {
+      font-size: 0.75rem;
+      transition: transform 0.2s ease-in-out;
+
+      [data-expanded] & {
+        transform: rotate(180deg);
+      }
+    }
+
+    &-positioner {
+      z-index: 1000;
+    }
+
+    &-popup {
+      background: colors.$color-background;
+      border: globals.$border-utility;
+      box-shadow: globals.$shadow-utility;
+      min-width: 120px;
+      padding: globals.$spacing-xs 0;
+      outline: none;
+    }
+
+    &-item {
+      padding: globals.$spacing-sm globals.$spacing-md;
+      font-size: typography.$font-size-small;
+      font-weight: typography.$font-weight-bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: colors.$color-text;
+      outline: none;
+
+      &:hover,
+      &[data-highlighted] {
         background-color: colors.$color-primary;
         color: colors.$color-background;
-        border: globals.$border-utility;
+      }
+
+      &[data-selected] {
+        background-color: colors.$color-surface;
+        color: colors.$color-text;
+
+        &[data-highlighted] {
+          background-color: colors.$color-primary;
+          color: colors.$color-background;
+        }
       }
     }
   }

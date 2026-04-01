@@ -24,22 +24,29 @@ export const resources = {
   },
 } as const;
 
+const detector = new LanguageDetector();
+detector.addDetector({
+  lookup() {
+    const lng = window.navigator.language;
+    if (lng.startsWith('es')) return SPANISH;
+    if (lng.startsWith('en')) return ENGLISH;
+    return undefined;
+  },
+  name: 'customNavigator',
+});
+
 i18n
-  .use(LanguageDetector)
+  .use(detector)
   .use(initReactI18next)
   .init({
     detection: {
       caches: ['localStorage'],
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage', 'customNavigator', 'navigator'],
     },
     fallbackLng: ENGLISH,
     interpolation: {
       escapeValue: false,
     },
-    lng:
-      typeof window !== 'undefined'
-        ? localStorage.getItem('i18nextLng') || undefined
-        : ENGLISH,
     resources,
     supportedLngs,
   });
