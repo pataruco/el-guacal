@@ -243,3 +243,139 @@ async fn test_graphql_store_mutations() {
     let data = response.data.into_json().unwrap();
     assert!(data["deleteStore"].as_bool().unwrap());
 }
+
+#[tokio::test]
+#[ignore = "integration tests"]
+async fn test_graphql_stores_near_filter() {
+    let config = Config::new().expect("Failed to load config");
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .connect(&config.database_url)
+        .await
+        .expect("Failed to create pool");
+
+    let schema = create_schema(pool.clone(), None);
+
+    // Get two products
+    let products: Vec<(uuid::Uuid, String)> =
+        sqlx::query_as("SELECT product_id, name FROM products LIMIT 2")
+            .fetch_all(&pool)
+            .await
+            .expect("Failed to fetch products");
+
+    assert!(products.len() >= 2, "Need at least 2 products for this test");
+    let p1_id = products[0].0;
+    let p2_id = products[1].0;
+
+    // Create a store with both products
+    let user = server::auth::FirebaseUser {
+        uid: "test-user-filter".to_string(),
+        email: Some("test-filter@example.com".to_string()),
+    };
+
+    let create_mutation = format!(
+        r#"
+        mutation {{
+            createStore(input: {{
+                name: "Filtered Store Both",
+                address: "Filtered Address",
+                lat: 51.5,
+                lng: -0.1,
+                productIds: ["{}", "{}"]
+            }}) {{
+                storeId
+            }}
+        }}
+    "#,
+        p1_id, p2_id
+    );
+
+    let response = schema
+        .execute(async_graphql::Request::new(create_mutation).data(user.clone()))
+        .await;
+    assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
+    let store_both_id = response.data.into_json().unwrap()["createStore"]["storeId"]
+        .as_str()
+        .unwrap()
+        .to_string();
+
+    // Create a store with only one product
+    let create_mutation_one = format!(
+        r#"
+        mutation {{
+            createStore(input: {{
+                name: "Filtered Store One",
+                address: "Filtered Address",
+                lat: 51.5,
+                lng: -0.1,
+                productIds: ["{}"]
+            }}) {{
+                storeId
+            }}
+        }}
+    "#,
+        p1_id
+    );
+
+    let response = schema
+        .execute(async_graphql::Request::new(create_mutation_one).data(user.clone()))
+        .await;
+    assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
+    let store_one_id = response.data.into_json().unwrap()["createStore"]["storeId"]
+        .as_str()
+        .unwrap()
+        .to_string();
+
+    // Query for stores with both products
+    let query = format!(
+        r#"
+        query {{
+            storesNear(
+                location: {{lat: 51.5, lng: -0.1}},
+                radius: ZOOM_11,
+                productIds: ["{}", "{}"]
+            ) {{
+                storeId
+                name
+            }}
+        }}
+    "#,
+        p1_id, p2_id
+    );
+
+    let response = schema.execute(query).await;
+    assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
+    let stores = response.data.into_json().unwrap()["storesNear"]
+        .as_array()
+        .unwrap()
+        .clone();
+
+    let store_ids: Vec<&str> = stores
+        .iter()
+        .map(|s| s["storeId"].as_str().unwrap())
+        .collect();
+
+    assert!(
+        store_ids.contains(&store_both_id.as_str()),
+        "Should contain the store with both products"
+    );
+    assert!(
+        !store_ids.contains(&store_one_id.as_str()),
+        "Should NOT contain the store with only one product"
+    );
+
+    // Cleanup
+    for id in &[store_both_id, store_one_id] {
+        let delete_mutation = format!(
+            r#"
+            mutation {{
+                deleteStore(id: "{}")
+            }}
+        "#,
+            id
+        );
+        schema
+            .execute(async_graphql::Request::new(delete_mutation).data(user.clone()))
+            .await;
+    }
+}

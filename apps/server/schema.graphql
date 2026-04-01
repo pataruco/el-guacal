@@ -38,7 +38,7 @@ type Product {
 }
 
 type Query {
-	storesNear(location: LocationInput!, radius: Radius!): [Store!]!
+	storesNear(location: LocationInput!, radius: Radius!, productIds: [UUID!]): [Store!]!
 	getStoreById(id: UUID!): Store
 	allProducts: [Product!]!
 }
