@@ -27,6 +27,7 @@ export const resources = {
 const detector = new LanguageDetector();
 detector.addDetector({
   lookup() {
+    if (typeof window === 'undefined') return undefined;
     const lng = window.navigator.language;
     if (lng.startsWith('es')) return SPANISH;
     if (lng.startsWith('en')) return ENGLISH;
