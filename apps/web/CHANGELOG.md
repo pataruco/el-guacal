@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.8.0](https://github.com/pataruco/el-guacal/compare/web-v1.7.0...web-v1.8.0) (2026-04-01)
+
+
+### Features
+
+* add product filter to storesNear query ([8bd4617](https://github.com/pataruco/el-guacal/commit/8bd46179e457604d125baffb67e54eaa00287029))
+* fix styles ([f6b96a9](https://github.com/pataruco/el-guacal/commit/f6b96a9f9ce00c2d543503a2f6723e9ecae46817))
+* remote filter ([facfa71](https://github.com/pataruco/el-guacal/commit/facfa711d1987f20544eab7605b81a180e29e442))
+* replace language buttons with a combo box ([6b64e38](https://github.com/pataruco/el-guacal/commit/6b64e381633eb79e17d1979b3c31ced3809709e8))
+* replace language buttons with a combo box and add detection ([91160e3](https://github.com/pataruco/el-guacal/commit/91160e3c164ad5ac26de6d71c0302495cc19dbe8))
+* replace language selection buttons with a combo box ([be5400d](https://github.com/pataruco/el-guacal/commit/be5400db25abfae4641bed11f61e4edf43bc3dd1))
+* replace language selection buttons with a combo box ([a4c751a](https://github.com/pataruco/el-guacal/commit/a4c751a713484b748e179e9b9603f80aa0bbda97))
+* replace language selection buttons with a combo box ([9f77b9d](https://github.com/pataruco/el-guacal/commit/9f77b9d916ed213fd3f6bb3cae1a1bc45c1f9123))
+* replace language selection buttons with a combo box ([ff8840a](https://github.com/pataruco/el-guacal/commit/ff8840a29d617d271b942938cea5ce42c4b9a1c0))
+* select language ([#119](https://github.com/pataruco/el-guacal/issues/119)) ([f4b23cb](https://github.com/pataruco/el-guacal/commit/f4b23cb03709f6a97a2b2ca24dca0b63e72a1da9))
+* **server:** add product filter to storesNear query ([3ac4c56](https://github.com/pataruco/el-guacal/commit/3ac4c56d29dc20051d5f7c24b731432a58c3494a))
+* style first round ([#117](https://github.com/pataruco/el-guacal/issues/117)) ([ff3b435](https://github.com/pataruco/el-guacal/commit/ff3b435b019d53c22f5eef024954a7917a9799b6))
+* **web:** enhance design system standardisation and accessibility ([66bcadb](https://github.com/pataruco/el-guacal/commit/66bcadb1705a844691597587fa581f67fbaf6969))
+* **web:** implement Industrial Artefact design system ([1904035](https://github.com/pataruco/el-guacal/commit/1904035495ad8b56980056924c1af790d51618fa))
+* **web:** implement Industrial Artefact design system with ITCSS and BEM ([#113](https://github.com/pataruco/el-guacal/issues/113)) ([53f85fb](https://github.com/pataruco/el-guacal/commit/53f85fbb569a4d0a6ca65c1317a33f2b6426255b))
+* **web:** implement Toilet Map-inspired layout and fix Google Maps integration ([4a6cf92](https://github.com/pataruco/el-guacal/commit/4a6cf929cb45548c4d03332b7a51fb548514d7ed))
+* **web:** implement Toilet Map-inspired layout with Industrial Artefact styling ([393d9c3](https://github.com/pataruco/el-guacal/commit/393d9c3c3245c74da092a255b930af325f586b16))
+* **web:** implement Toilet Map-inspired layout with Industrial Artefact styling ([f252a2c](https://github.com/pataruco/el-guacal/commit/f252a2c891c0d935c1a0d1fdf495fd1d60c0da33))
+* **web:** implement Toilet Map-inspired layout with Industrial Artefact styling ([f0468e8](https://github.com/pataruco/el-guacal/commit/f0468e81489ef98352b32adbf141db2ce8c9cd5b))
+* **web:** redesign UI using Industrial Artefact system ([c76fd64](https://github.com/pataruco/el-guacal/commit/c76fd64e357c9764ce5b5324b7d3b535ea95890a))
+* **web:** redesign UI using Industrial Artefact system ([215328e](https://github.com/pataruco/el-guacal/commit/215328ecbe378ce58305eb73586e2c143dea8715))
+* **web:** redesign UI with map-centric layout and Industrial Artefact system ([033460c](https://github.com/pataruco/el-guacal/commit/033460c9e1ff71dfebefba8b08690ad835952c5b))
+* **web:** restore full-width bottom view for store details ([cc9b521](https://github.com/pataruco/el-guacal/commit/cc9b5215d7c53bb7f1dba0581705420e534bfc1d))
+
+
+### Bug Fixes
+
+* styles ([#118](https://github.com/pataruco/el-guacal/issues/118)) ([798a59c](https://github.com/pataruco/el-guacal/commit/798a59c1297815ef1d3417fd022ce9db1661b06f))
+* **web:** resolve linting and formatting issues in redesign ([eb1b0fa](https://github.com/pataruco/el-guacal/commit/eb1b0fa8880f99f540785407a447c9c2104760e4))
+
 ## [1.7.0](https://github.com/pataruco/el-guacal/compare/web-v1.6.0...web-v1.7.0) (2026-03-06)
 
 

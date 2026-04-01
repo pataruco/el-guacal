@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.0](https://github.com/pataruco/el-guacal/compare/server-v0.7.0...server-v0.8.0) (2026-04-01)
+
+
+### Features
+
+* add product filter to storesNear query ([8bd4617](https://github.com/pataruco/el-guacal/commit/8bd46179e457604d125baffb67e54eaa00287029))
+* add product filtering to storesNear GraphQL query ([#120](https://github.com/pataruco/el-guacal/issues/120)) ([9642dc4](https://github.com/pataruco/el-guacal/commit/9642dc4d063bdb27a41d62d7314666a1c6a36067))
+* replace language buttons with a combo box ([6b64e38](https://github.com/pataruco/el-guacal/commit/6b64e381633eb79e17d1979b3c31ced3809709e8))
+* replace language selection buttons with a combo box ([a4c751a](https://github.com/pataruco/el-guacal/commit/a4c751a713484b748e179e9b9603f80aa0bbda97))
+* replace language selection buttons with a combo box ([9f77b9d](https://github.com/pataruco/el-guacal/commit/9f77b9d916ed213fd3f6bb3cae1a1bc45c1f9123))
+* replace language selection buttons with a combo box ([ff8840a](https://github.com/pataruco/el-guacal/commit/ff8840a29d617d271b942938cea5ce42c4b9a1c0))
+* **server:** add product filter to storesNear query ([3ac4c56](https://github.com/pataruco/el-guacal/commit/3ac4c56d29dc20051d5f7c24b731432a58c3494a))
+* **server:** add product filter to storesNear query ([e51266b](https://github.com/pataruco/el-guacal/commit/e51266b28ad8e85409d05197c20b7062858dc427))
+
 ## [0.7.0](https://github.com/pataruco/el-guacal/compare/server-v0.6.0...server-v0.7.0) (2026-03-06)
 
 
