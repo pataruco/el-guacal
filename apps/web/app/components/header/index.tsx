@@ -1,3 +1,4 @@
+import { Select } from '@base-ui/react/select';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
@@ -6,6 +7,57 @@ import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
 import styles from './index.module.scss';
+
+const LanguageSelector = () => {
+  const { i18n } = useTranslation();
+
+  const handleLanguageChange = (newLang: Language) => {
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('i18nextLng', newLang);
+  };
+
+  const languageLabels: Record<Language, string> = {
+    [ENGLISH]: 'English',
+    [SPANISH]: 'Español',
+  };
+
+  return (
+    <Select.Root
+      value={i18n.language as Language}
+      onValueChange={handleLanguageChange}
+    >
+      <Select.Trigger className={styles['c-header__lang-select-trigger']}>
+        <Select.Value>
+          {languageLabels[i18n.language as Language] || i18n.language}
+        </Select.Value>
+        <Select.Icon className={styles['c-header__lang-select-icon']}>
+          ▼
+        </Select.Icon>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          sideOffset={8}
+          className={styles['c-header__lang-select-positioner']}
+        >
+          <Select.Popup className={styles['c-header__lang-select-popup']}>
+            <Select.Item
+              value={ENGLISH}
+              className={styles['c-header__lang-select-item']}
+            >
+              English
+            </Select.Item>
+            <Select.Item
+              value={SPANISH}
+              className={styles['c-header__lang-select-item']}
+            >
+              Español
+            </Select.Item>
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
 
 const Header = () => {
   const { t, i18n } = useTranslation();
@@ -16,11 +68,6 @@ const Header = () => {
   const handleLogout = () => {
     auth.signOut();
     setIsMenuOpen(false);
-  };
-
-  const handleLanguageChange = (newLang: Language) => {
-    i18n.changeLanguage(newLang);
-    localStorage.setItem('i18nextLng', newLang);
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -147,6 +194,10 @@ const Header = () => {
               {t('nav.login')}
             </Link>
           )}
+          <hr className={styles['c-header__mobile-menu-divider']} />
+          <div className={styles['c-header__mobile-lang-selector']}>
+            <LanguageSelector />
+          </div>
         </nav>
       </div>
 
@@ -159,21 +210,8 @@ const Header = () => {
         >
           {t('nav.menu')}
         </button>
-        <div className={styles['c-header__lang-toggle']}>
-          <button
-            type="button"
-            onClick={() => handleLanguageChange(ENGLISH)}
-            className={`${styles['c-header__lang-toggle-btn']} ${i18n.language === ENGLISH ? styles['c-header__lang-toggle-btn--active'] : ''}`}
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            onClick={() => handleLanguageChange(SPANISH)}
-            className={`${styles['c-header__lang-toggle-btn']} ${i18n.language === SPANISH ? styles['c-header__lang-toggle-btn--active'] : ''}`}
-          >
-            ES
-          </button>
+        <div className={styles['c-header__lang-selector']}>
+          <LanguageSelector />
         </div>
 
         {isAuthenticated ? (
