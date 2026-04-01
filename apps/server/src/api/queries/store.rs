@@ -72,9 +72,12 @@ impl StoreQuery {
         ctx: &Context<'_>,
         location: LocationInput,
         radius: Radius,
+        product_ids: Option<Vec<Uuid>>,
     ) -> async_graphql::Result<Vec<Store>> {
         let pool = ctx.data::<PgPool>()?;
         let radius_meters = radius.to_meters(location.lat);
+
+        let product_ids = product_ids.filter(|ids| !ids.is_empty());
 
         let rows = sqlx::query(
             r"
@@ -86,17 +89,23 @@ impl StoreQuery {
                 ST_X(location::geometry) as lng,
                 created_at,
                 updated_at
-            FROM stores
+            FROM stores s
             WHERE ST_DWithin(
                 location,
                 ST_SetSRID(ST_Point($1, $2), 4326)::geography,
                 $3
             )
+            AND ($4::uuid[] IS NULL OR (
+                SELECT COUNT(*)
+                FROM store_products sp
+                WHERE sp.store_id = s.store_id AND sp.product_id = ANY($4)
+            ) = array_length($4, 1))
             ",
         )
         .bind(location.lng)
         .bind(location.lat)
         .bind(radius_meters)
+        .bind(product_ids)
         .fetch_all(pool)
         .await?;
 
