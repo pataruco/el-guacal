@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.9.0](https://github.com/pataruco/el-guacal/compare/web-v1.8.0...web-v1.9.0) (2026-04-02)
+
+
+### Features
+
+* normalise style accross components ([fc807eb](https://github.com/pataruco/el-guacal/commit/fc807eb8ee40cd698f187a452f490f13f36c1b61))
+* normalise style across components ([#123](https://github.com/pataruco/el-guacal/issues/123)) ([dd3284f](https://github.com/pataruco/el-guacal/commit/dd3284f2295441f8191e7f18c00923a51edd7177))
+* **web:** add product filtering to stores search ([7c57b30](https://github.com/pataruco/el-guacal/commit/7c57b3052d00360d7ccfe3ce51951c4e9a8b55e6))
+* **web:** add product filtering to stores search ([#121](https://github.com/pataruco/el-guacal/issues/121)) ([a7c18ad](https://github.com/pataruco/el-guacal/commit/a7c18ad78deaae2f62c3b4086270fd14472cc84e))
+
 ## [1.8.0](https://github.com/pataruco/el-guacal/compare/web-v1.7.0...web-v1.8.0) (2026-04-01)
 
 
