@@ -19,7 +19,7 @@
   }
 
   &__title {
-    font-size: typography.$font-size-heading;
+    font-size: 1.5rem;
     color: colors.$color-text;
     text-transform: uppercase;
     margin-bottom: globals.$spacing-md;
@@ -28,12 +28,12 @@
 
   &__warning {
     color: colors.$color-muted;
-    font-size: typography.$font-size-small;
+    font-size: 0.875rem;
     margin-bottom: globals.$spacing-md;
   }
 
   &__suggestion {
-    font-size: typography.$font-size-small;
+    font-size: 0.875rem;
     margin-bottom: globals.$spacing-sm;
 
     strong {
@@ -48,9 +48,10 @@
     background-color: colors.$color-surface;
     font-family: inherit;
     margin-bottom: globals.$spacing-lg;
-    &:focus-visible {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: 0.125rem;
+    outline: none;
+
+    &:focus {
+      box-shadow: globals.$shadow-active;
     }
   }
 
@@ -62,7 +63,6 @@
 
   &__btn {
     padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
     font-weight: typography.$font-weight-bold;
     text-transform: uppercase;
     transition: all 0.1s ease-in-out;
@@ -84,9 +84,7 @@
       box-shadow: globals.$shadow-utility;
 
       &:disabled {
-        background-color: colors.$color-surface;
-        color: colors.$color-muted;
-        border-color: colors.$color-muted;
+        opacity: 0.5;
         cursor: not-allowed;
         box-shadow: none;
         transform: none;

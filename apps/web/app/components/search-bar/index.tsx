@@ -67,12 +67,7 @@ const SearchBar = () => {
             placeholder={t('search.placeholder') || 'Search for a location...'}
             aria-label={t('search.placeholder') || 'Search for a location...'}
           />
-          {isLoading && (
-            <output className={styles['c-search__loading']} aria-live="polite">
-              <span className="sr-only">{t('search.loading')}</span>
-              ...
-            </output>
-          )}
+          {isLoading && <div className={styles['c-search__loading']}>...</div>}
         </div>
 
         <Combobox.Portal>

@@ -4,12 +4,8 @@
 @use '../../styles/settings/settings.typography' as typography;
 @use '../../styles/tools/tools.mixins' as mixins;
 
-.c-form-page {
-  width: 100%;
-}
-
 .c-form-container {
-  padding: globals.$spacing-md globals.$spacing-lg;
+  padding: globals.$spacing-lg;
   max-width: 37.5rem; // 600px
   margin: 0 auto;
   width: 100%;
@@ -36,10 +32,10 @@
   &__field {
     display: flex;
     flex-direction: column;
-    gap: globals.$spacing-xs;
+    gap: 0.25rem; // 4px
 
     label {
-      font-size: typography.$font-size-xs;
+      font-size: 0.75rem; // 12px
       font-weight: typography.$font-weight-bold;
       text-transform: uppercase;
       color: colors.$color-text;
@@ -49,45 +45,38 @@
     input[type='email'] {
       width: 100%;
       padding: globals.$spacing-sm globals.$spacing-md;
-      min-height: globals.$target-size-min;
       border: globals.$border-utility;
       background-color: colors.$color-background;
+      outline: none;
       font-family: inherit;
-      font-size: typography.$font-size-base;
-      color: colors.$color-text;
 
-      &::placeholder {
-        color: colors.$color-muted;
-        font-style: italic;
-      }
-
-      &:focus-visible {
-        outline: 0.1875rem solid colors.$color-focus;
-        outline-offset: 0.125rem;
+      &:focus {
+        box-shadow: globals.$shadow-active;
       }
     }
   }
 
   &__error {
     color: colors.$color-accent;
-    font-size: typography.$font-size-xs;
+    font-size: 0.75rem; // 12px
     font-weight: typography.$font-weight-semibold;
   }
 
-  &__map-section {
-    width: 100%;
-    border-bottom: globals.$border-utility;
-    position: relative;
+  &__map-field {
+    .label {
+      font-size: 0.75rem; // 12px
+      font-weight: typography.$font-weight-bold;
+      text-transform: uppercase;
+      color: colors.$color-text;
+      margin-bottom: 0.25rem; // 4px
+    }
   }
 
   &__map-wrapper {
-    width: 100%;
     height: 18.75rem; // 300px
+    border: globals.$border-utility;
     position: relative;
-
-    @media (min-width: 768px) {
-      height: 25rem; // 400px
-    }
+    box-shadow: globals.$shadow-active;
   }
 
   &__crosshair {
@@ -96,24 +85,17 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: colors.$color-accent;
-    font-size: 4rem;
-    font-weight: typography.$font-weight-regular;
+    font-size: 1.5rem; // 24px
+    font-weight: bold;
     pointer-events: none;
     z-index: 10;
-    text-shadow:
-      0 0 0.125rem colors.$color-background,
-      0 0 0.25rem colors.$color-background;
   }
 
   &__coordinates {
-    position: absolute;
-    bottom: globals.$spacing-sm;
-    right: globals.$spacing-sm;
-    font-size: typography.$font-size-xs;
-    color: colors.$color-text;
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: globals.$spacing-xs globals.$spacing-sm;
-    z-index: 10;
+    font-size: 0.75rem; // 12px
+    color: colors.$color-muted;
+    margin-top: 0.25rem; // 4px
+    text-align: right;
   }
 
   &__combobox-wrapper {
@@ -128,44 +110,25 @@
     background-color: colors.$color-background;
 
     &:focus-within {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: 0.125rem;
+      box-shadow: globals.$shadow-active;
     }
   }
 
   &__combobox-input {
     flex: 1;
     padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
     border: none;
     background: transparent;
+    outline: none;
     font-family: inherit;
-    font-size: typography.$font-size-base;
-    color: colors.$color-text;
-
-    &::placeholder {
-      color: colors.$color-muted;
-      font-style: italic;
-    }
-
-    &:focus-visible {
-      outline: none;
-    }
   }
 
   &__combobox-trigger {
     background: transparent;
     border: none;
-    border-left: globals.$border-utility;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-width: globals.$target-size-min;
+    padding: globals.$spacing-sm;
     cursor: pointer;
-    color: colors.$color-text;
-    font-size: typography.$font-size-small;
-
-    &:focus-visible {
-      outline: none;
-    }
+    color: colors.$color-muted;
   }
 
   &__select-positioner {
@@ -176,27 +139,18 @@
     background-color: colors.$color-background;
     border: globals.$border-utility;
     box-shadow: globals.$shadow-utility;
-    max-height: 15rem; // 240px
+    max-height: 12.5rem; // 200px
     overflow-y: auto;
-    width: var(--anchor-width, 100%);
+    min-width: 12.5rem; // 200px
   }
 
   &__select-item {
     padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
     cursor: pointer;
     font-size: typography.$font-size-small;
-    font-weight: typography.$font-weight-bold;
-    color: colors.$color-text;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: globals.$border-width-utility solid
-      color.adjust(colors.$color-text, $alpha: -0.9);
-
-    &:last-child {
-      border-bottom: none;
-    }
 
     &:hover {
       background-color: colors.$color-surface;
@@ -204,7 +158,7 @@
 
     &[data-highlighted] {
       background-color: colors.$color-primary;
-      color: colors.$color-background;
+      color: colors.$color-text;
     }
 
     &[data-selected] {
@@ -222,36 +176,25 @@
   }
 
   &__selected-item {
-    background-color: colors.$color-background;
-    border: globals.$border-utility;
-    color: colors.$color-text;
-    padding: globals.$spacing-sm globals.$spacing-md;
+    background-color: colors.$color-text;
+    color: colors.$color-background;
+    padding: 0.125rem 0.5rem; // 2px 8px
     border-radius: globals.$radius-pill;
-    font-size: typography.$font-size-xs;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-    display: inline-flex;
+    font-size: 0.75rem; // 12px
+    font-weight: typography.$font-weight-semibold;
+    display: flex;
     align-items: center;
-    gap: globals.$spacing-sm;
-    min-height: globals.$target-size-min;
+    gap: 0.25rem; // 4px
   }
 
   &__remove-item-btn {
     background: none;
     border: none;
-    color: colors.$color-text;
+    color: inherit;
     cursor: pointer;
-    font-size: typography.$font-size-base;
+    font-size: 1rem;
     padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     line-height: 1;
-
-    &:hover {
-      color: colors.$color-accent;
-    }
   }
 
   &__actions {
@@ -262,7 +205,6 @@
 
   &__btn {
     padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
     font-weight: typography.$font-weight-bold;
     text-transform: uppercase;
     transition: all 0.1s ease-in-out;
@@ -270,7 +212,7 @@
 
     &--submit {
       background-color: colors.$color-primary;
-      color: colors.$color-background;
+      color: colors.$color-text;
       border: globals.$border-utility;
       box-shadow: globals.$shadow-utility;
 

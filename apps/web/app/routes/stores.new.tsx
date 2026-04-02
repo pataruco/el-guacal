@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import Page from '@/components/page';
 import StoreForm from '@/components/store/StoreForm';
 import { useCreateStoreMutation } from '@/graphql/mutations/create-store/index.generated';
 import { selectAuth } from '@/store/features/auth/slice';
@@ -44,11 +43,7 @@ const NewStorePage = () => {
 
   if (!isAuthenticated) return null;
 
-  return (
-    <Page>
-      <StoreForm title={t('storeForm.addTitle')} onSubmit={handleSubmit} />
-    </Page>
-  );
+  return <StoreForm title={t('storeForm.addTitle')} onSubmit={handleSubmit} />;
 };
 
 export default NewStorePage;

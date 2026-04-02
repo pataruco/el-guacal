@@ -15,7 +15,6 @@
     justify-content: space-between;
     width: 100%;
     padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
     font-family: typography.$font-stack;
     font-size: typography.$font-size-small;
     font-weight: typography.$font-weight-bold;
@@ -26,8 +25,8 @@
     cursor: pointer;
     transition: all 0.1s ease-in-out;
 
-    &:focus-visible {
-      outline-offset: 0;
+    &:focus {
+      outline: none;
       @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
     }
 
@@ -37,7 +36,7 @@
   }
 
   &__trigger-icon {
-    font-size: typography.$font-size-small;
+    font-size: 0.8rem;
     transition: transform 0.2s ease;
 
     [data-state='open'] & {
@@ -70,7 +69,6 @@
     display: flex;
     align-items: center;
     padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
     font-family: typography.$font-stack;
     font-size: typography.$font-size-small;
     font-weight: typography.$font-weight-bold;
@@ -86,8 +84,9 @@
       background-color: colors.$color-surface;
     }
 
-    &:focus-visible {
+    &:focus {
       background-color: colors.$color-surface;
+      outline: none;
     }
   }
 
@@ -107,7 +106,7 @@
 
       &::after {
         content: '✓';
-        font-size: typography.$font-size-small;
+        font-size: 0.8rem;
       }
     }
   }

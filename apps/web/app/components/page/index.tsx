@@ -21,7 +21,6 @@ const Page = ({ children, className, isHome = false }: PageProps) => {
     >
       <Header />
       <main
-        id="main-content"
         className={className ? className : ''}
         style={{ flex: 1, position: 'relative' }}
       >

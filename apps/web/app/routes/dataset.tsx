@@ -13,8 +13,8 @@ export default function Dataset() {
       <p className="c-page__text">{t('pages.dataset.description')}</p>
 
       <section className="c-page__section">
-        <a className="c-page__btn" href={downloadUrl} download>
-          {t('pages.dataset.download')} ({today}) — ZIP
+        <a className="c-page__btn" href={downloadUrl}>
+          {t('pages.dataset.download')} ({today})
         </a>
       </section>
 

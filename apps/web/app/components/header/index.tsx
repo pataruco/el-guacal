@@ -1,12 +1,11 @@
 import { Select } from '@base-ui/react/select';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 import { ENGLISH, type Language, SPANISH } from '@/locales/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
-import { useFocusTrap } from '@/utils/use-focus-trap';
 import styles from './index.module.scss';
 
 const LanguageSelector = () => {
@@ -65,8 +64,6 @@ const Header = () => {
   const { isAuthenticated } = useAppSelector(selectAuth);
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  useFocusTrap(mobileMenuRef, isMenuOpen);
 
   const handleLogout = () => {
     auth.signOut();
@@ -80,31 +77,17 @@ const Header = () => {
   return (
     <header className={styles['c-header']}>
       <div className={styles['c-header__branding']}>
-        <Link to="/" className={styles['c-header__logo']}>
-          <h1>El Guacal</h1>
-        </Link>
+        <h1>El Guacal</h1>
         <nav className={styles['c-header__nav']}>
           <ul className={styles['c-header__nav-list']}>
-            {isAuthenticated && (
-              <li className={styles['c-header__nav-item']}>
-                <Link
-                  to="/stores/new"
-                  className={`${styles['c-header__nav-link']} ${isActive('/stores/new') ? styles['c-header__nav-link--active'] : ''}`}
-                  aria-current={isActive('/stores/new') ? 'page' : undefined}
-                  aria-label={t('nav.addStore')}
-                >
-                  {t('nav.addStore')}
-                </Link>
-              </li>
-            )}
             <li className={styles['c-header__nav-item']}>
               <Link
-                to="/dataset"
-                className={`${styles['c-header__nav-link']} ${isActive('/dataset') ? styles['c-header__nav-link--active'] : ''}`}
-                aria-current={isActive('/dataset') ? 'page' : undefined}
-                aria-label={t('nav.dataset')}
+                to="/"
+                className={`${styles['c-header__nav-link']} ${isActive('/') ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={isActive('/') ? 'page' : undefined}
+                aria-label={t('nav.home')}
               >
-                {t('nav.dataset')}
+                {t('nav.home')}
               </Link>
             </li>
             <li className={styles['c-header__nav-item']}>
@@ -117,6 +100,28 @@ const Header = () => {
                 {t('nav.about')}
               </Link>
             </li>
+            <li className={styles['c-header__nav-item']}>
+              <Link
+                to="/dataset"
+                className={`${styles['c-header__nav-link']} ${isActive('/dataset') ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={isActive('/dataset') ? 'page' : undefined}
+                aria-label={t('nav.dataset')}
+              >
+                {t('nav.dataset')}
+              </Link>
+            </li>
+            {isAuthenticated && (
+              <li className={styles['c-header__nav-item']}>
+                <Link
+                  to="/stores/new"
+                  className={`${styles['c-header__nav-link']} ${isActive('/stores/new') ? styles['c-header__nav-link--active'] : ''}`}
+                  aria-current={isActive('/stores/new') ? 'page' : undefined}
+                  aria-label={t('nav.addStore')}
+                >
+                  {t('nav.addStore')}
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
@@ -128,12 +133,7 @@ const Header = () => {
         onClick={toggleMenu}
       />
       <div
-        ref={mobileMenuRef}
         className={`${styles['c-header__mobile-menu']} ${isMenuOpen ? styles['c-header__mobile-menu--open'] : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label={t('nav.menu')}
-        aria-hidden={!isMenuOpen}
       >
         <div className={styles['c-header__mobile-menu-header']}>
           <button
@@ -146,6 +146,27 @@ const Header = () => {
           </button>
         </div>
         <nav className={styles['c-header__mobile-nav']}>
+          <Link
+            to="/"
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
+            {t('nav.home')}
+          </Link>
+          <Link
+            to="/about"
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
+            {t('nav.about')}
+          </Link>
+          <Link
+            to="/dataset"
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
+            {t('nav.dataset')}
+          </Link>
           {isAuthenticated && (
             <Link
               to="/stores/new"
@@ -155,20 +176,6 @@ const Header = () => {
               {t('nav.addStore')}
             </Link>
           )}
-          <Link
-            to="/dataset"
-            onClick={toggleMenu}
-            className={styles['c-header__mobile-nav-link']}
-          >
-            {t('nav.dataset')}
-          </Link>
-          <Link
-            to="/about"
-            onClick={toggleMenu}
-            className={styles['c-header__mobile-nav-link']}
-          >
-            {t('nav.about')}
-          </Link>
           <hr className={styles['c-header__mobile-menu-divider']} />
           {isAuthenticated ? (
             <button

@@ -115,11 +115,7 @@ const AuthPage = () => {
         </button>
       </form>
 
-      {error && (
-        <p className={styles['c-auth__error']} role="alert">
-          {error}
-        </p>
-      )}
+      {error && <p className={styles['c-auth__error']}>{error}</p>}
 
       <p className={styles['c-auth__toggle']}>
         {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}{' '}

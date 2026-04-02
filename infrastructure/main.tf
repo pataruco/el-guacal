@@ -264,15 +264,20 @@ resource "google_firebase_hosting_custom_domain" "www" {
   custom_domain = "www.${var.domain_name}"
 }
 
-resource "google_cloud_run_domain_mapping" "api" {
-  location = var.region
-  name     = "server.${var.domain_name}"
 
-  metadata {
-    namespace = var.project_id
-  }
 
-  spec {
-    route_name = google_cloud_run_v2_service.api.name
-  }
+# ---------------------------------------------------------
+# 10. API Firebase Hosting (Proxy to Cloud Run)
+# ---------------------------------------------------------
+resource "google_firebase_hosting_site" "api" {
+  provider = google-beta
+  project  = google_firebase_project.default.project
+  site_id  = "${var.project_id}-api"
+}
+
+resource "google_firebase_hosting_custom_domain" "api" {
+  provider = google-beta
+  project  = var.project_id
+  site_id  = google_firebase_hosting_site.api.site_id
+  custom_domain = "server.${var.domain_name}"
 }

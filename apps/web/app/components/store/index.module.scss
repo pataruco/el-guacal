@@ -41,11 +41,11 @@
     flex: 1;
 
     h2 {
-      font-size: typography.$font-size-heading;
+      font-size: 1.5rem;
       font-weight: typography.$font-weight-black;
       color: colors.$color-text;
       text-transform: uppercase;
-      margin-bottom: globals.$spacing-xs;
+      margin-bottom: 0.25rem;
       letter-spacing: -0.025em;
     }
   }
@@ -54,11 +54,12 @@
     font-size: typography.$font-size-small;
     color: colors.$color-text;
     font-weight: typography.$font-weight-bold;
-    color: colors.$color-muted;
+    opacity: 0.8;
   }
 
   &__header-actions {
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
     gap: globals.$spacing-sm;
   }
@@ -68,7 +69,7 @@
     padding-top: globals.$spacing-md;
 
     h3 {
-      font-size: typography.$font-size-small;
+      font-size: 0.85rem;
       font-weight: typography.$font-weight-black;
       text-transform: uppercase;
       margin-bottom: globals.$spacing-sm;
@@ -87,28 +88,21 @@
   }
 
   &__product {
-    background-color: colors.$color-background;
+    background-color: colors.$color-surface;
     border: globals.$border-utility;
-    border-radius: globals.$radius-pill;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    font-size: typography.$font-size-xs;
-    font-weight: typography.$font-weight-bold;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: typography.$font-weight-black;
     color: colors.$color-text;
     text-transform: uppercase;
-    letter-spacing: 0.025em;
-    min-height: globals.$target-size-min;
-    display: inline-flex;
-    align-items: center;
+    box-shadow: 0.125rem 0.125rem 0px colors.$color-text;
   }
 
   &__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
     padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
     font-weight: typography.$font-weight-black;
-    font-size: typography.$font-size-xs;
+    font-size: 0.75rem;
     text-transform: uppercase;
     box-shadow: globals.$shadow-utility;
     transition: all 0.1s ease-in-out;
@@ -117,7 +111,7 @@
     border: globals.$border-utility;
     text-decoration: none;
 
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    @include mixins.mechanical-press(globals.$shadow-active, 0.125rem);
 
     &--primary {
       background-color: colors.$color-primary;
@@ -138,36 +132,33 @@
     }
 
     &--danger {
-      background-color: colors.$color-background;
-      color: colors.$color-accent;
-      border-color: colors.$color-accent;
-      box-shadow: 0.25rem 0.25rem 0px colors.$color-accent;
+      background-color: colors.$color-accent;
+      color: colors.$color-background;
 
       &:hover {
-        background-color: color.adjust(colors.$color-accent, $lightness: 55%);
+        background-color: color.adjust(colors.$color-accent, $lightness: 5%);
       }
     }
   }
 
   &__close {
-    display: inline-flex;
-    align-items: center;
+    display: inline-block;
     padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
-    background-color: transparent;
+    background-color: colors.$color-secondary;
     color: colors.$color-text;
-    border: globals.$border-width-utility solid transparent;
-    font-size: typography.$font-size-xs;
+    border: globals.$border-utility;
+    font-size: 0.75rem;
     font-weight: typography.$font-weight-black;
     text-transform: uppercase;
     cursor: pointer;
+    box-shadow: globals.$shadow-utility;
     flex-shrink: 0;
     transition: all 0.1s ease-in-out;
-    margin-left: auto;
 
     &:hover {
-      text-decoration: underline;
-      text-underline-offset: 0.25rem;
+      background-color: color.adjust(colors.$color-secondary, $lightness: 5%);
     }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.125rem);
   }
 }

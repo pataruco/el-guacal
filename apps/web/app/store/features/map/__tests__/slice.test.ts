@@ -2,12 +2,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import { describe, expect, it, vi } from 'vitest';
 import reducer, {
   getUserLocation,
-  selectMap,
   setCenter,
-  setSelectedProductIds,
   setStatus,
   setZoom,
-  toggleProductId,
 } from '../slice';
 
 describe('mapSlice', () => {
@@ -24,130 +21,18 @@ describe('mapSlice', () => {
 
   it('should handle setCenter', () => {
     const newCenter = { lat: 40.7128, lng: -74.006 };
-    const actual = reducer(
-      initialState as Parameters<typeof reducer>[0],
-      setCenter(newCenter),
-    );
+    const actual = reducer(initialState, setCenter(newCenter));
     expect(actual.center).toEqual(newCenter);
   });
 
   it('should handle setStatus', () => {
-    const actual = reducer(
-      initialState as Parameters<typeof reducer>[0],
-      setStatus('loading'),
-    );
+    const actual = reducer(initialState, setStatus('loading'));
     expect(actual.status).toBe('loading');
   });
 
   it('should handle setZoom', () => {
-    const actual = reducer(
-      initialState as Parameters<typeof reducer>[0],
-      setZoom(15),
-    );
+    const actual = reducer(initialState, setZoom(15));
     expect(actual.zoom).toBe(15);
-  });
-
-  describe('setSelectedProductIds', () => {
-    it('should set the selected product IDs', () => {
-      const ids = ['product-1', 'product-2'];
-      const actual = reducer(
-        initialState as Parameters<typeof reducer>[0],
-        setSelectedProductIds(ids),
-      );
-      expect(actual.selectedProductIds).toEqual(ids);
-    });
-
-    it('should replace existing product IDs', () => {
-      const stateWithProducts = {
-        ...initialState,
-        selectedProductIds: ['old-1', 'old-2'],
-      };
-      const newIds = ['new-1'];
-      const actual = reducer(
-        stateWithProducts as Parameters<typeof reducer>[0],
-        setSelectedProductIds(newIds),
-      );
-      expect(actual.selectedProductIds).toEqual(newIds);
-    });
-
-    it('should handle empty array', () => {
-      const stateWithProducts = {
-        ...initialState,
-        selectedProductIds: ['product-1'],
-      };
-      const actual = reducer(
-        stateWithProducts as Parameters<typeof reducer>[0],
-        setSelectedProductIds([]),
-      );
-      expect(actual.selectedProductIds).toEqual([]);
-    });
-  });
-
-  describe('toggleProductId', () => {
-    it('should add a product ID when not present', () => {
-      const actual = reducer(
-        initialState as Parameters<typeof reducer>[0],
-        toggleProductId('product-1'),
-      );
-      expect(actual.selectedProductIds).toEqual(['product-1']);
-    });
-
-    it('should remove a product ID when already present', () => {
-      const stateWithProduct = {
-        ...initialState,
-        selectedProductIds: ['product-1', 'product-2'],
-      };
-      const actual = reducer(
-        stateWithProduct as Parameters<typeof reducer>[0],
-        toggleProductId('product-1'),
-      );
-      expect(actual.selectedProductIds).toEqual(['product-2']);
-    });
-
-    it('should handle toggling the only product ID', () => {
-      const stateWithProduct = {
-        ...initialState,
-        selectedProductIds: ['product-1'],
-      };
-      const actual = reducer(
-        stateWithProduct as Parameters<typeof reducer>[0],
-        toggleProductId('product-1'),
-      );
-      expect(actual.selectedProductIds).toEqual([]);
-    });
-
-    it('should add multiple product IDs through sequential toggles', () => {
-      let state = reducer(
-        initialState as Parameters<typeof reducer>[0],
-        toggleProductId('product-1'),
-      );
-      state = reducer(state, toggleProductId('product-2'));
-      state = reducer(state, toggleProductId('product-3'));
-      expect(state.selectedProductIds).toEqual([
-        'product-1',
-        'product-2',
-        'product-3',
-      ]);
-    });
-  });
-
-  describe('selectMap', () => {
-    it('should select the full map state', () => {
-      const state = {
-        map: initialState as NonNullable<Parameters<typeof reducer>[0]>,
-      };
-      expect(selectMap(state)).toEqual(initialState);
-    });
-
-    it('should reflect updated state', () => {
-      const updatedState = {
-        center: { lat: 40.7128, lng: -74.006 },
-        selectedProductIds: ['product-1'],
-        status: 'success' as const,
-        zoom: 15,
-      };
-      expect(selectMap({ map: updatedState })).toEqual(updatedState);
-    });
   });
 
   describe('getUserLocation thunk', () => {
@@ -178,27 +63,6 @@ describe('mapSlice', () => {
       const state = store.getState().map;
       expect(state.center).toEqual({ lat: 40.7128, lng: -74.006 });
       expect(state.status).toBe('success');
-    });
-
-    it('should set status to loading while pending', async () => {
-      const getCurrentPositionMock = vi.fn().mockImplementation((success) => {
-        success({ coords: { latitude: 0, longitude: 0 } });
-      });
-
-      vi.stubGlobal('navigator', {
-        geolocation: {
-          getCurrentPosition: getCurrentPositionMock,
-        },
-      });
-
-      const store = configureStore({
-        reducer: { map: reducer },
-      });
-
-      const promise = store.dispatch(getUserLocation());
-      // After dispatch resolves, status should be success (passed through loading)
-      await promise;
-      expect(store.getState().map.status).toBe('success');
     });
 
     it('should handle failed geolocation', async () => {

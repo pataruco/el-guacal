@@ -52,35 +52,6 @@ const Store: React.FC = () => {
           </div>
 
           <div className={styles['c-store__header-actions']}>
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${styles['c-store__btn']} ${styles['c-store__btn--primary']}`}
-              aria-label={`${t('store.directions')} (${t('store.opensInNewTab')})`}
-            >
-              {t('store.directions')}
-              <span aria-hidden="true"> ↗</span>
-            </a>
-
-            {isAuthenticated && (
-              <>
-                <Link
-                  to={`/stores/${id}/edit`}
-                  className={`${styles['c-store__btn']} ${styles['c-store__btn--secondary']}`}
-                >
-                  {t('store.edit')}
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                  className={`${styles['c-store__btn']} ${styles['c-store__btn--danger']}`}
-                >
-                  {t('store.delete')}
-                </button>
-              </>
-            )}
-
             <button
               type="button"
               onClick={handleOnClose}
@@ -89,6 +60,32 @@ const Store: React.FC = () => {
             >
               {t('store.close')}
             </button>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.lat)},${encodeURIComponent(location.lng)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${styles['c-store__btn']} ${styles['c-store__btn--primary']}`}
+            >
+              {t('store.directions')}
+            </a>
+
+            {isAuthenticated && (
+              <>
+                <Link
+                  to={`/stores/${id}/edit`}
+                  className={`${styles['c-store__btn']} ${styles['c-store__btn--secondary']}`}
+                >
+                  Edit
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  className={`${styles['c-store__btn']} ${styles['c-store__btn--danger']}`}
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
 

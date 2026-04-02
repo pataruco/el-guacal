@@ -34,10 +34,10 @@
   }
 
   &__label {
-    font-size: typography.$font-size-xs;
+    font-size: 0.75rem; // 12px
     font-weight: typography.$font-weight-bold;
     text-transform: uppercase;
-    margin-bottom: globals.$spacing-xs;
+    margin-bottom: 0.25rem; // 4px
     color: colors.$color-text;
   }
 
@@ -47,20 +47,19 @@
     border: globals.$border-utility;
     background-color: colors.$color-background;
     margin-bottom: globals.$spacing-md;
+    outline: none;
     font-family: inherit;
 
-    &:focus-visible {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: 0.125rem;
+    &:focus {
+      box-shadow: globals.$shadow-active;
     }
   }
 
   &__submit-btn {
     background-color: colors.$color-primary;
-    color: colors.$color-background;
+    color: colors.$color-text;
     border: globals.$border-utility;
     padding: globals.$spacing-sm;
-    min-height: globals.$target-size-min;
     font-weight: typography.$font-weight-bold;
     text-transform: uppercase;
     box-shadow: globals.$shadow-utility;
@@ -75,9 +74,7 @@
     @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
 
     &:disabled {
-      background-color: colors.$color-surface;
-      color: colors.$color-muted;
-      border-color: colors.$color-muted;
+      opacity: 0.5;
       cursor: not-allowed;
       box-shadow: none;
       transform: none;
@@ -91,7 +88,6 @@
     color: colors.$color-text;
     border: globals.$border-utility;
     padding: globals.$spacing-sm;
-    min-height: globals.$target-size-min;
     font-weight: typography.$font-weight-bold;
     text-transform: uppercase;
     box-shadow: globals.$shadow-utility;
@@ -117,15 +113,16 @@
     align-items: center;
     margin: globals.$spacing-md 0;
     color: colors.$color-muted;
-    font-size: typography.$font-size-xs;
+    font-size: 0.75rem; // 12px
     text-transform: uppercase;
 
     &::before,
     &::after {
       content: '';
       flex: 1;
-      height: globals.$border-width-utility;
-      background-color: colors.$color-muted;
+      height: 0.125rem; // 2px
+      background-color: colors.$color-text;
+      opacity: 0.1;
     }
 
     span {
@@ -152,7 +149,7 @@
       font-weight: typography.$font-weight-bold;
       text-transform: uppercase;
       padding: 0;
-      margin-left: globals.$spacing-xs;
+      margin-left: 0.25rem; // 4px
       cursor: pointer;
 
       &:hover {

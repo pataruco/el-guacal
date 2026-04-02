@@ -47,20 +47,24 @@ const ProductFilter = () => {
                   </div>
                 )}
                 {productsData?.allProducts.map((product) => (
-                  <label
+                  <button
                     key={product.productId}
                     className={styles['c-product-filter__item']}
+                    onClick={() => handleToggle(product.productId)}
+                    type="button"
                   >
-                    <input
-                      type="checkbox"
-                      checked={selectedProductIds.includes(product.productId)}
-                      onChange={() => handleToggle(product.productId)}
+                    <div
                       className={styles['c-product-filter__checkbox']}
+                      data-state={
+                        selectedProductIds.includes(product.productId)
+                          ? 'checked'
+                          : 'unchecked'
+                      }
                     />
                     <span className={styles['c-product-filter__item-label']}>
                       {product.name}
                     </span>
-                  </label>
+                  </button>
                 ))}
               </div>
             </Popover.Popup>

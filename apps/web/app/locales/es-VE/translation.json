@@ -11,28 +11,16 @@
     "signInWithGoogle": "Ingresar con Google",
     "signUp": "Registrarse"
   },
-  "common": {
-    "loading": "Cargando...",
-    "notFound": "No encontrado"
-  },
-  "deleteDialog": {
-    "cancel": "Cancelar",
-    "confirm": "Eliminar",
-    "confirmPrompt": "Escribe el nombre para confirmar:",
-    "inputLabel": "Escribe el nombre del {{type}} para confirmar la eliminación",
-    "inputPlaceholder": "Escribe el nombre del {{type}}",
-    "title": "Eliminar {{type}}",
-    "warning": "Esta acción no se puede deshacer. Todos los datos asociados con este {{type}} serán eliminados permanentemente."
-  },
   "footer": {},
   "map": {
-    "locateMe": "Buscar mi ubicación"
+    "locateMe": "Buscar un baño cerca de mí"
   },
   "nav": {
     "about": "Nosotros",
     "addStore": "Agregar Tienda",
     "close": "Cerrar",
     "dataset": "Datos",
+    "home": "Inicio",
     "login": "Ingresar",
     "logout": "Salir",
     "menu": "Menú"
@@ -54,7 +42,6 @@
   },
   "search": {
     "filterByProducts": "Filtrar por productos",
-    "loading": "Cargando resultados de búsqueda",
     "placeholder": "Buscar una ubicación",
     "productsSelected": "{{count}} productos seleccionados",
     "productsSelected_one": "1 producto seleccionado"
@@ -62,11 +49,8 @@
   "store": {
     "address": "Dirección",
     "close": "Cerrar",
-    "delete": "Eliminar",
     "directions": "Cómo llegar",
-    "edit": "Editar",
     "lastUpdated": "Última actualización",
-    "opensInNewTab": "se abre en nueva pestaña",
     "products": "Productos"
   },
   "storeForm": {
