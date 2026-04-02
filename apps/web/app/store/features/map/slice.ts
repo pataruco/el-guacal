@@ -10,10 +10,12 @@ export type MapSliceState = {
   };
   status: 'idle' | 'loading' | 'failed' | 'success';
   zoom: number;
+  selectedProductIds: string[];
 };
 
 const initialState: MapSliceState = {
   center: LONDON,
+  selectedProductIds: [],
   status: 'idle',
   zoom: 10,
 };
@@ -55,6 +57,11 @@ export const mapSlice = createAppSlice({
         state.center = action.payload;
       },
     ),
+    setSelectedProductIds: create.reducer(
+      (state, action: PayloadAction<string[]>) => {
+        state.selectedProductIds = action.payload;
+      },
+    ),
     setStatus: create.reducer(
       (state, action: PayloadAction<MapSliceState['status']>) => {
         state.status = action.payload;
@@ -65,6 +72,14 @@ export const mapSlice = createAppSlice({
         state.zoom = action.payload;
       },
     ),
+    toggleProductId: create.reducer((state, action: PayloadAction<string>) => {
+      const index = state.selectedProductIds.indexOf(action.payload);
+      if (index === -1) {
+        state.selectedProductIds.push(action.payload);
+      } else {
+        state.selectedProductIds.splice(index, 1);
+      }
+    }),
   }),
   selectors: {
     selectMap: (state) => state,
@@ -73,7 +88,13 @@ export const mapSlice = createAppSlice({
 
 export const { selectMap } = mapSlice.selectors;
 
-export const { setStatus, setCenter, setZoom, getUserLocation } =
-  mapSlice.actions;
+export const {
+  setStatus,
+  setCenter,
+  setZoom,
+  getUserLocation,
+  setSelectedProductIds,
+  toggleProductId,
+} = mapSlice.actions;
 
 export default mapSlice.reducer;

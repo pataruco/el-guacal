@@ -96,6 +96,7 @@ export type QueryGetStoreByIdArgs = {
 
 export type QueryStoresNearArgs = {
   location: LocationInput;
+  productIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   radius: Radius;
 };
 

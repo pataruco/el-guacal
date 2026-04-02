@@ -10,6 +10,7 @@ import reducer, {
 describe('mapSlice', () => {
   const initialState = {
     center: { lat: 51.51044, lng: -0.11564 },
+    selectedProductIds: [],
     status: 'idle',
     zoom: 10,
   };

@@ -27,7 +27,7 @@
     @media (min-width: 768px) {
       top: 0;
       left: 0;
-      right: 0;
+      right: auto;
       width: 400px;
       min-width: 400px;
       height: 100%;
@@ -56,6 +56,7 @@
 
   &__search-wrapper {
     display: flex;
+    flex-direction: column;
     gap: globals.$spacing-sm;
   }
 

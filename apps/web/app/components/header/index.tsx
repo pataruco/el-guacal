@@ -60,7 +60,7 @@ const LanguageSelector = () => {
 };
 
 const Header = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
