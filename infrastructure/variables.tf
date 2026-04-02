@@ -32,3 +32,9 @@ variable "google_oauth_client_secret" {
   description = "Google OAuth 2.0 Client Secret for Google Sign-In"
   sensitive   = true
 }
+
+variable "domain_name" {
+  type        = string
+  description = "The custom domain name for the application (e.g., elguacal.com)"
+  default     = "elguacal.com"
+}

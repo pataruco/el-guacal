@@ -9,8 +9,18 @@ output "cloud_run_api_url" {
 }
 
 output "firebase_hosting_url" {
-  description = "The public URL of El Guacal Web App"
+  description = "The Firebase default URL of El Guacal Web App"
   value       = "https://${google_firebase_hosting_site.default.site_id}.web.app"
+}
+
+output "custom_domain_url" {
+  description = "The custom domain URL of El Guacal Web App"
+  value       = "https://${var.domain_name}"
+}
+
+output "api_custom_domain_url" {
+  description = "The custom domain URL of El Guacal API"
+  value       = "https://server.${var.domain_name}"
 }
 
 output "database_url" {
