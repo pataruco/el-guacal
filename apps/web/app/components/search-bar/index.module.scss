@@ -18,6 +18,7 @@
   &__input {
     width: 100%;
     padding: globals.$spacing-sm globals.$spacing-md;
+    min-height: globals.$target-size-min;
     font-family: typography.$font-stack;
     font-size: typography.$font-size-base;
     font-weight: typography.$font-weight-bold;
@@ -27,8 +28,8 @@
     box-shadow: globals.$shadow-utility;
     transition: all 0.1s ease-in-out;
 
-    &:focus {
-      outline: none;
+    &:focus-visible {
+      outline-offset: 0;
       @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
     }
 
@@ -41,7 +42,7 @@
   &__loading {
     position: absolute;
     right: globals.$spacing-md;
-    font-size: 0.8rem;
+    font-size: typography.$font-size-small;
     color: colors.$color-text;
   }
 
@@ -65,6 +66,7 @@
 
   &__suggestion {
     padding: globals.$spacing-sm globals.$spacing-md;
+    min-height: globals.$target-size-min;
     font-size: typography.$font-size-small;
     font-weight: typography.$font-weight-bold;
     cursor: pointer;
@@ -78,7 +80,6 @@
 
     &[data-highlighted] {
       background-color: colors.$color-surface;
-      outline: none;
     }
 
     &:hover {

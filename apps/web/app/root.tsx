@@ -35,6 +35,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <Provider store={store}>
           <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
         </Provider>
