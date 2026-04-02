@@ -54,6 +54,11 @@ impl Radius {
             Self::Zoom22 => 22.0,
         };
 
+        // Web Mercator resolution formula: converts a map zoom level to meters-per-pixel.
+        // 156_543.03392 = Earth's circumference (40_075_016.686m) / 256px (one tile at zoom 0).
+        // cos(lat) corrects for Mercator distortion at higher latitudes.
+        // 2^zoom halves the resolution per zoom level.
+        // Multiplied by 1280px (viewport width) to get the search radius in meters.
         let meters_per_pixel = (lat.to_radians().cos() * 156_543.033_92) / 2.0_f64.powf(zoom);
         meters_per_pixel * 1280.0
     }
