@@ -1,4 +1,5 @@
 @use '../settings/settings.colors' as colors;
+@use '../settings/settings.globals' as globals;
 @use '../settings/settings.typography' as typography;
 
 html,
@@ -48,4 +49,34 @@ button,
 textarea,
 select {
   font: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role='checkbox']:focus-visible,
+[role='tab']:focus-visible,
+[tabindex]:focus-visible {
+  outline: 0.1875rem solid colors.$color-focus;
+  outline-offset: 0.125rem;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: globals.$spacing-md;
+  z-index: 10000;
+  padding: globals.$spacing-sm globals.$spacing-md;
+  background-color: colors.$color-primary;
+  color: colors.$color-background;
+  font-weight: typography.$font-weight-bold;
+  text-transform: uppercase;
+  border: globals.$border-utility;
+  text-decoration: none;
+
+  &:focus {
+    top: globals.$spacing-md;
+  }
 }

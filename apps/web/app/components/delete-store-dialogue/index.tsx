@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './index.module.scss';
 
 interface DeleteConfirmationDialogProps {
@@ -16,6 +17,7 @@ const DeleteConfirmationDialog = ({
   itemName,
   itemType,
 }: DeleteConfirmationDialogProps) => {
+  const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [inputValue, setInputValue] = useState('');
 
@@ -58,20 +60,31 @@ const DeleteConfirmationDialog = ({
       onClose={onClose}
       onKeyDown={handleKeyDown}
     >
-      <h2 className={styles['c-dialog__title']}>Delete {itemType}</h2>
+      <h2 className={styles['c-dialog__title']}>
+        {t('deleteDialog.title', { type: itemType })}
+      </h2>
       <p className={styles['c-dialog__warning']}>
-        This action cannot be undone. All data associated with this{' '}
-        {itemType.toLowerCase()} will be permanently removed.
+        {t('deleteDialog.warning', { type: itemType.toLowerCase() })}
       </p>
-      <p className={styles['c-dialog__suggestion']}>
-        Please type <strong>{itemName}</strong> to confirm.
+      <p
+        id="delete-confirm-description"
+        className={styles['c-dialog__suggestion']}
+      >
+        {t('deleteDialog.confirmPrompt')} <strong>{itemName}</strong>
       </p>
+      <label htmlFor="delete-confirm-input" className="sr-only">
+        {t('deleteDialog.inputLabel', { type: itemType.toLowerCase() })}
+      </label>
       <input
+        id="delete-confirm-input"
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder={`Type the ${itemType.toLowerCase()} name`}
+        placeholder={t('deleteDialog.inputPlaceholder', {
+          type: itemType.toLowerCase(),
+        })}
         className={styles['c-dialog__input']}
+        aria-describedby="delete-confirm-description"
         autoFocus
       />
       <div className={styles['c-dialog__actions']}>
@@ -80,7 +93,7 @@ const DeleteConfirmationDialog = ({
           onClick={handleCancel}
           className={`${styles['c-dialog__btn']} ${styles['c-dialog__btn--cancel']}`}
         >
-          Cancel
+          {t('deleteDialog.cancel')}
         </button>
         <button
           type="button"
@@ -88,7 +101,7 @@ const DeleteConfirmationDialog = ({
           disabled={inputValue !== itemName}
           className={`${styles['c-dialog__btn']} ${styles['c-dialog__btn--delete']}`}
         >
-          Delete
+          {t('deleteDialog.confirm')}
         </button>
       </div>
     </dialog>

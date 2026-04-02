@@ -7,7 +7,7 @@ export interface AutocompleteSuggestion {
 
 export const googleMapsApiSlice = createApi({
   baseQuery: async (args: {
-    type: 'autocomplete' | 'geocode';
+    type: 'autocomplete' | 'geocode' | 'reverse-geocode';
     input: string;
   }) => {
     // Wait for Google Maps SDK to be available
@@ -40,6 +40,24 @@ export const googleMapsApiSlice = createApi({
         });
       }
 
+      if (args.type === 'reverse-geocode') {
+        const [lat, lng] = args.input.split(',').map(Number);
+        const geocoder = new google.maps.Geocoder();
+        return new Promise((resolve) => {
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            if (status !== google.maps.GeocoderStatus.OK || !results) {
+              resolve({ data: null });
+              return;
+            }
+            if (results.length > 0) {
+              resolve({ data: results[0].formatted_address });
+            } else {
+              resolve({ data: null });
+            }
+          });
+        });
+      }
+
       const geocoder = new google.maps.Geocoder();
       return new Promise((resolve) => {
         geocoder.geocode({ placeId: args.input }, (results, status) => {
@@ -68,9 +86,15 @@ export const googleMapsApiSlice = createApi({
     getGeocode: builder.query<{ lat: number; lng: number } | null, string>({
       query: (placeId) => ({ input: placeId, type: 'geocode' }),
     }),
+    getReverseGeocode: builder.query<string | null, string>({
+      query: (latLng) => ({ input: latLng, type: 'reverse-geocode' }),
+    }),
   }),
   reducerPath: 'googleMapsApi',
 });
 
-export const { useGetAutocompleteSuggestionsQuery, useLazyGetGeocodeQuery } =
-  googleMapsApiSlice;
+export const {
+  useGetAutocompleteSuggestionsQuery,
+  useLazyGetGeocodeQuery,
+  useLazyGetReverseGeocodeQuery,
+} = googleMapsApiSlice;

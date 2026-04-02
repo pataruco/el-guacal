@@ -23,8 +23,18 @@ const EditStorePage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!data?.getStoreById) return <div>Store not found</div>;
+  if (isLoading)
+    return (
+      <Page>
+        <output aria-live="polite">{t('common.loading')}</output>
+      </Page>
+    );
+  if (!data?.getStoreById)
+    return (
+      <Page>
+        <div role="alert">{t('common.notFound')}</div>
+      </Page>
+    );
 
   const store = data.getStoreById;
   const initialValues = {
