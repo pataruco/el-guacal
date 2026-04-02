@@ -210,7 +210,7 @@ resource "google_identity_platform_config" "auth" {
     "${var.project_id}.web.app",
     var.domain_name,
     "www.${var.domain_name}",
-    "graphql.${var.domain_name}",
+    "server.${var.domain_name}",
   ]
 
   sign_in {
@@ -266,7 +266,7 @@ resource "google_firebase_hosting_custom_domain" "www" {
 
 resource "google_cloud_run_domain_mapping" "api" {
   location = var.region
-  name     = "graphql.${var.domain_name}"
+  name     = "server.${var.domain_name}"
 
   metadata {
     namespace = var.project_id
