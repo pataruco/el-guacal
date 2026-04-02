@@ -208,6 +208,8 @@ resource "google_identity_platform_config" "auth" {
     "localhost",
     "${var.project_id}.firebaseapp.com",
     "${var.project_id}.web.app",
+    var.domain_name,
+    "www.${var.domain_name}"
   ]
 
   sign_in {
@@ -242,4 +244,37 @@ resource "google_firebase_web_app" "web" {
 data "google_firebase_web_app_config" "web" {
   provider   = google-beta
   web_app_id = google_firebase_web_app.web.app_id
+}
+
+# ---------------------------------------------------------
+# 9. Custom Domains
+# ---------------------------------------------------------
+resource "google_firebase_hosting_custom_domain" "main" {
+  provider      = google-beta
+  project       = var.project_id
+  site_id       = google_firebase_hosting_site.default.site_id
+  custom_domain = var.domain_name
+}
+
+resource "google_firebase_hosting_custom_domain" "www" {
+  provider      = google-beta
+  project       = var.project_id
+  site_id       = google_firebase_hosting_site.default.site_id
+  custom_domain = "www.${var.domain_name}"
+}
+
+# ---------------------------------------------------------
+# 10. API Firebase Hosting (Proxy to Cloud Run)
+# ---------------------------------------------------------
+resource "google_firebase_hosting_site" "api" {
+  provider = google-beta
+  project  = google_firebase_project.default.project
+  site_id  = "${var.project_id}-api"
+}
+
+resource "google_firebase_hosting_custom_domain" "api" {
+  provider      = google-beta
+  project       = var.project_id
+  site_id       = google_firebase_hosting_site.api.site_id
+  custom_domain = "server.${var.domain_name}"
 }

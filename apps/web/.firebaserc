@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "el-guacal"
+  },
+  "targets": {
+    "el-guacal": {
+      "hosting": {
+        "web": [
+          "el-guacal"
+        ],
+        "api": [
+          "el-guacal-api"
+        ]
+      }
+    }
   }
 }
