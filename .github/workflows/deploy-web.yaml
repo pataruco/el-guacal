@@ -26,7 +26,8 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.tag }}
@@ -54,7 +55,8 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.tag }}
@@ -79,7 +81,8 @@ jobs:
 
       - name: Authenticate to Google Cloud
         id: auth
-        uses: google-github-actions/auth@v3
+        # v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
@@ -100,15 +103,13 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.tag }}
 
       - name: Check jobs for errors
-        uses: actions/github-script@v8
+        uses: ./.github/actions/ci-validation
         with:
-          script: |
-            const { default: checkJobsForErrors } = await import('${{ github.workspace }}/.github/scripts/check-for-errors.mjs');
-            const jobs = ${{ toJSON(needs) }};
-            checkJobsForErrors({ core, jobs });
+          jobs: ${{ toJSON(needs) }}

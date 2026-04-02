@@ -3,11 +3,14 @@ description: 'Set environment and install dependencies'
 runs:
   using: composite
   steps:
-    - uses: pnpm/action-setup@v4
+    # v5
+    - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
       with:
         run_install: false
+        cache: true
 
-    - uses: actions/setup-node@v6
+    # v6.30
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
       with:
         node-version-file: .nvmrc
         cache: pnpm
@@ -17,7 +20,10 @@ runs:
       run: pnpm install
 
     - name: Install Rust 🦀
-      uses: dtolnay/rust-toolchain@stable
+      uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+      with:
+        toolchain: stable
 
     - name: Run sccache-cache
-      uses: mozilla-actions/sccache-action@v0.0.9
+      # v0.0.9
+      uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad
