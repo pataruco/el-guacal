@@ -45,7 +45,7 @@ jobs:
     needs: [test]
     environment:
       name: el-guacal-web
-      url: "https://el-guacal.web.app/"
+      url: "https://elguacal.com/"
 
     # Required permissions for Workload Identity Federation
     permissions:

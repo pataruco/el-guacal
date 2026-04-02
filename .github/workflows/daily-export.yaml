@@ -24,7 +24,7 @@ jobs:
 
       - name: 📦 Download export from server
         run: |
-          curl -L -o el-guacal-db-${{ steps.date.outputs.date }}.zip https://el-guacal-api-2m7hvbqwdq-nw.a.run.app/api/export/zip
+          curl -L -o el-guacal-db-${{ steps.date.outputs.date }}.zip https://graphql.elguacal.com/api/export/zip
 
       - name: 🚀 Release
         run: |

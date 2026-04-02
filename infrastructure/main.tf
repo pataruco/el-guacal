@@ -204,10 +204,13 @@ resource "google_identity_platform_config" "auth" {
   depends_on = [google_project_service.apis]
 
   # Optional: Configure authorized domains for OAuth redirects
-  authorized_domains = [
+    authorized_domains = [
     "localhost",
     "${var.project_id}.firebaseapp.com",
     "${var.project_id}.web.app",
+    var.domain_name,
+    "www.${var.domain_name}",
+    "graphql.${var.domain_name}",
   ]
 
   sign_in {
@@ -242,4 +245,34 @@ resource "google_firebase_web_app" "web" {
 data "google_firebase_web_app_config" "web" {
   provider   = google-beta
   web_app_id = google_firebase_web_app.web.app_id
+}
+
+# ---------------------------------------------------------
+# 9. Custom Domains
+# ---------------------------------------------------------
+resource "google_firebase_hosting_custom_domain" "main" {
+  provider = google-beta
+  project  = var.project_id
+  site_id  = google_firebase_hosting_site.default.site_id
+  custom_domain = var.domain_name
+}
+
+resource "google_firebase_hosting_custom_domain" "www" {
+  provider = google-beta
+  project  = var.project_id
+  site_id  = google_firebase_hosting_site.default.site_id
+  custom_domain = "www.${var.domain_name}"
+}
+
+resource "google_cloud_run_domain_mapping" "api" {
+  location = var.region
+  name     = "graphql.${var.domain_name}"
+
+  metadata {
+    namespace = var.project_id
+  }
+
+  spec {
+    route_name = google_cloud_run_v2_service.api.name
+  }
 }
