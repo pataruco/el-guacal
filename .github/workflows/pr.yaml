@@ -29,7 +29,8 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -49,12 +50,14 @@ jobs:
       server: ${{ steps.filter.outputs.server }}
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
       - name: Detect file changes
-        uses: actions/github-script@v8
+        #v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         id: filter
         with:
           script: |
@@ -70,7 +73,8 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -91,7 +95,8 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -112,7 +117,8 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -133,7 +139,8 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -156,12 +163,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Check jobs for errors
-        uses: actions/github-script@v8
+        uses: ./.github/actions/ci-validation
         with:
-          script: |
-            const { default: checkJobsForErrors } = await import('${{ github.workspace }}/.github/scripts/check-for-errors.mjs');
-            const jobs = ${{ toJSON(needs) }};
-            checkJobsForErrors({ core, jobs });
+          jobs: ${{ toJSON(needs) }}
