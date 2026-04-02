@@ -11,16 +11,28 @@
     "signInWithGoogle": "Sign in with Google",
     "signUp": "Sign Up"
   },
+  "common": {
+    "loading": "Loading...",
+    "notFound": "Not found"
+  },
+  "deleteDialog": {
+    "cancel": "Cancel",
+    "confirm": "Delete",
+    "confirmPrompt": "Please type the name to confirm:",
+    "inputLabel": "Type the {{type}} name to confirm deletion",
+    "inputPlaceholder": "Type the {{type}} name",
+    "title": "Delete {{type}}",
+    "warning": "This action cannot be undone. All data associated with this {{type}} will be permanently removed."
+  },
   "footer": {},
   "map": {
-    "locateMe": "Find a toilet near me"
+    "locateMe": "Find my location"
   },
   "nav": {
     "about": "About",
     "addStore": "Add Store",
     "close": "Close",
     "dataset": "Dataset",
-    "home": "Home",
     "login": "Login",
     "logout": "Logout",
     "menu": "Menu"
@@ -42,6 +54,7 @@
   },
   "search": {
     "filterByProducts": "Filter by products",
+    "loading": "Loading search results",
     "placeholder": "Search for a location",
     "productsSelected": "{{count}} products selected",
     "productsSelected_one": "1 product selected"
@@ -49,8 +62,11 @@
   "store": {
     "address": "Address",
     "close": "Close",
+    "delete": "Delete",
     "directions": "Directions",
+    "edit": "Edit",
     "lastUpdated": "Last updated at",
+    "opensInNewTab": "opens in new tab",
     "products": "Products"
   },
   "storeForm": {

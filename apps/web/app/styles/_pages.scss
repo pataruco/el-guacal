@@ -11,7 +11,7 @@
   width: 100%;
 
   &__title {
-    font-size: 2.5rem;
+    font-size: typography.$font-size-display;
     color: colors.$color-text;
     text-transform: uppercase;
     letter-spacing: -0.05em;
@@ -24,7 +24,7 @@
   &__text {
     line-height: 1.6;
     margin-bottom: globals.$spacing-md;
-    font-size: 1.125rem;
+    font-size: typography.$font-size-body-lg;
     color: colors.$color-text;
   }
 
@@ -63,9 +63,11 @@
   }
 
   &__btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: globals.$target-size-min;
     background-color: colors.$color-primary;
-    color: colors.$color-text;
+    color: colors.$color-background;
     border: globals.$border-utility;
     padding: globals.$spacing-sm globals.$spacing-lg;
     font-weight: typography.$font-weight-bold;
