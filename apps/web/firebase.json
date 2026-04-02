@@ -1,12 +1,29 @@
 {
-  "hosting": {
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "public": "build/client",
-    "rewrites": [
-      {
-        "destination": "/__spa-fallback.html",
-        "source": "**"
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "public": "build/client",
+      "rewrites": [
+        {
+          "destination": "/__spa-fallback.html",
+          "source": "**"
+        }
+      ],
+      "target": "web"
+    },
+    {
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "public": "public",
+      "rewrites": [
+        {
+          "run": {
+            "region": "europe-west2",
+            "serviceId": "el-guacal-api"
+          },
+          "source": "**"
+        }
+      ],
+      "target": "api"
+    }
+  ]
 }
