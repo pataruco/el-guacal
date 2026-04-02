@@ -1,5 +1,9 @@
-query GetStoresNear($location: LocationInput!, $radius: Radius!) {
-  storesNear(location: $location, radius: $radius) {
+query GetStoresNear(
+  $location: LocationInput!
+  $radius: Radius!
+  $productIds: [UUID!]
+) {
+  storesNear(location: $location, radius: $radius, productIds: $productIds) {
     name
     storeId
     location {

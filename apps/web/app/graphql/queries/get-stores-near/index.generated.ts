@@ -4,6 +4,7 @@ import { gualcalGraphqlApiSlice } from '@/store/features/guacal-api/base';
 export type GetStoresNearQueryVariables = Types.Exact<{
   location: Types.LocationInput;
   radius: Types.Radius;
+  productIds?: Types.InputMaybe<Array<Types.Scalars['UUID']['input']> | Types.Scalars['UUID']['input']>;
 }>;
 
 
@@ -11,8 +12,8 @@ export type GetStoresNearQuery = { __typename?: 'Query', storesNear: Array<{ __t
 
 
 export const GetStoresNearDocument = `
-    query GetStoresNear($location: LocationInput!, $radius: Radius!) {
-  storesNear(location: $location, radius: $radius) {
+    query GetStoresNear($location: LocationInput!, $radius: Radius!, $productIds: [UUID!]) {
+  storesNear(location: $location, radius: $radius, productIds: $productIds) {
     name
     storeId
     location {

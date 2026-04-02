@@ -1,5 +1,6 @@
 import MapComponent from '../components/map';
 import Page from '../components/page';
+import ProductFilter from '../components/product-filter';
 import SearchBar from '../components/search-bar';
 import StoreComponent from '../components/store';
 import styles from './index.module.scss';
@@ -11,6 +12,7 @@ export default function Home() {
         <div className={styles['p-home__controls']}>
           <div className={styles['p-home__search-wrapper']}>
             <SearchBar />
+            <ProductFilter />
           </div>
         </div>
       </aside>

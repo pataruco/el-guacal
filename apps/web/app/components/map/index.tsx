@@ -20,7 +20,7 @@ const GOOGLE_MAPS_ID = import.meta.env.VITE_GOOGLE_MAPS_ID;
 
 const MapComponent = () => {
   const dispatch = useAppDispatch();
-  const { center, zoom } = useAppSelector(selectMap);
+  const { center, zoom, selectedProductIds } = useAppSelector(selectMap);
 
   const roundedZoom = Math.round(zoom);
   const skip = roundedZoom < 11 || roundedZoom > 22;
@@ -29,6 +29,8 @@ const MapComponent = () => {
   const { data, isLoading } = useGetStoresNearQuery(
     {
       location: center,
+      productIds:
+        selectedProductIds.length > 0 ? selectedProductIds : undefined,
       radius,
     },
     { skip },

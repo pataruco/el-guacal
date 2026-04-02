@@ -41,7 +41,10 @@
     }
   },
   "search": {
-    "placeholder": "Buscar una ubicación"
+    "filterByProducts": "Filtrar por productos",
+    "placeholder": "Buscar una ubicación",
+    "productsSelected": "{{count}} productos seleccionados",
+    "productsSelected_one": "1 producto seleccionado"
   },
   "store": {
     "address": "Dirección",
