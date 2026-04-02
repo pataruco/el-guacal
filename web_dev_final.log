@@ -1,0 +1,13 @@
+
+> web@1.8.0 dev /app/apps/web
+> react-router dev
+
+11:54:24 AM [vite] warning: `esbuild` option was specified by "react-router" plugin. This option is deprecated, please use `oxc` instead.
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+11:54:39 AM [vite] (client) ✨ new dependencies optimized: @base-ui/react/combobox, @base-ui/react/popover, @base-ui/react/select, @reduxjs/toolkit, @reduxjs/toolkit/query, @reduxjs/toolkit/query/react, @rtk-query/graphql-request-base-query, @vis.gl/react-google-maps, firebase/app, firebase/auth, graphql-request, i18next-browser-languagedetector, i18next, react-i18next, react-redux
+11:54:39 AM [vite] (client) ✨ optimized dependencies changed. reloading
+/app/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  web@1.8.0 dev: `react-router dev`
+Exit status 143

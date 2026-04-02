@@ -1,0 +1,11 @@
+
+> web@1.8.0 dev /app/apps/web
+> react-router dev
+
+11:53:06 AM [vite] warning: `esbuild` option was specified by "react-router" plugin. This option is deprecated, please use `oxc` instead.
+Port 5173 is in use, trying another one...
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: use --host to expose
+/app/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  web@1.8.0 dev: `react-router dev`
+Exit status 143
