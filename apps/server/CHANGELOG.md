@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/pataruco/el-guacal/compare/server-v0.8.0...server-v0.9.0) (2026-04-02)
+
+
+### Features
+
+* upgrade server ([fd6fd1c](https://github.com/pataruco/el-guacal/commit/fd6fd1c9155a38a139af5c47252c6f03bcf3b647))
+* upgrade server ([#126](https://github.com/pataruco/el-guacal/issues/126)) ([3778432](https://github.com/pataruco/el-guacal/commit/3778432ff0057cc58275447871c5f947f5a6daee))
+
 ## [0.8.0](https://github.com/pataruco/el-guacal/compare/server-v0.7.0...server-v0.8.0) (2026-04-01)
 
 
