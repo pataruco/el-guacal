@@ -97,6 +97,18 @@ const Header = () => {
             )}
             <li className={styles['c-header__nav-item']}>
               <Link
+                to={`/${currentLocale}/dataset`}
+                className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/dataset`) ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={
+                  isActive(`/${currentLocale}/dataset`) ? 'page' : undefined
+                }
+                aria-label={t('nav.dataset')}
+              >
+                {t('nav.dataset')}
+              </Link>
+            </li>
+            <li className={styles['c-header__nav-item']}>
+              <Link
                 to={`/${currentLocale}/blog`}
                 className={`${styles['c-header__nav-link']} ${location.pathname.startsWith(`/${currentLocale}/blog`) ? styles['c-header__nav-link--active'] : ''}`}
                 aria-current={
@@ -107,18 +119,6 @@ const Header = () => {
                 aria-label={t('nav.blog')}
               >
                 {t('nav.blog')}
-              </Link>
-            </li>
-            <li className={styles['c-header__nav-item']}>
-              <Link
-                to={`/${currentLocale}/dataset`}
-                className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/dataset`) ? styles['c-header__nav-link--active'] : ''}`}
-                aria-current={
-                  isActive(`/${currentLocale}/dataset`) ? 'page' : undefined
-                }
-                aria-label={t('nav.dataset')}
-              >
-                {t('nav.dataset')}
               </Link>
             </li>
             <li className={styles['c-header__nav-item']}>
@@ -172,18 +172,18 @@ const Header = () => {
             </Link>
           )}
           <Link
-            to={`/${currentLocale}/blog`}
-            onClick={toggleMenu}
-            className={styles['c-header__mobile-nav-link']}
-          >
-            {t('nav.blog')}
-          </Link>
-          <Link
             to={`/${currentLocale}/dataset`}
             onClick={toggleMenu}
             className={styles['c-header__mobile-nav-link']}
           >
             {t('nav.dataset')}
+          </Link>
+          <Link
+            to={`/${currentLocale}/blog`}
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
+            {t('nav.blog')}
           </Link>
           <Link
             to={`/${currentLocale}/about`}

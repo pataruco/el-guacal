@@ -64,8 +64,8 @@ const SearchBar = () => {
         <div className={styles['c-search__input-wrapper']}>
           <Combobox.Input
             className={`o-select__trigger ${styles['c-search__input']}`}
-            placeholder={t('search.placeholder') || 'Search for a location...'}
-            aria-label={t('search.placeholder') || 'Search for a location...'}
+            placeholder={t('search.placeholder')}
+            aria-label={t('search.placeholder')}
           />
           {isLoading && (
             <output className={styles['c-search__loading']} aria-live="polite">
@@ -75,23 +75,28 @@ const SearchBar = () => {
           )}
         </div>
 
-        <Combobox.Portal>
-          <Combobox.Positioner sideOffset={8} className="o-select__positioner">
-            <Combobox.Popup className="o-select__popup">
-              <Combobox.List className={styles['c-search__suggestions']}>
-                {(suggestion: Suggestion) => (
-                  <Combobox.Item
-                    key={suggestion.place_id}
-                    value={suggestion}
-                    className="o-select__item"
-                  >
-                    <span>{suggestion.description}</span>
-                  </Combobox.Item>
-                )}
-              </Combobox.List>
-            </Combobox.Popup>
-          </Combobox.Positioner>
-        </Combobox.Portal>
+        {suggestions && suggestions.length > 0 && (
+          <Combobox.Portal>
+            <Combobox.Positioner
+              sideOffset={8}
+              className="o-select__positioner"
+            >
+              <Combobox.Popup className="o-select__popup">
+                <Combobox.List className={styles['c-search__suggestions']}>
+                  {(suggestion: Suggestion) => (
+                    <Combobox.Item
+                      key={suggestion.place_id}
+                      value={suggestion}
+                      className="o-select__item"
+                    >
+                      <span>{suggestion.description}</span>
+                    </Combobox.Item>
+                  )}
+                </Combobox.List>
+              </Combobox.Popup>
+            </Combobox.Positioner>
+          </Combobox.Portal>
+        )}
       </Combobox.Root>
     </div>
   );

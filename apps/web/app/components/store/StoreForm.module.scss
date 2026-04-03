@@ -116,6 +116,14 @@
     z-index: 10;
   }
 
+  &__map-hint {
+    padding: globals.$spacing-sm globals.$spacing-md;
+    margin: 0;
+    font-size: typography.$font-size-xs;
+    color: colors.$color-muted;
+    font-style: italic;
+  }
+
   &__combobox-wrapper {
     display: flex;
     flex-direction: column;

@@ -3,26 +3,26 @@
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?",
     "email": "Email",
-    "emailPlaceholder": "Enter your email",
-    "login": "Login",
+    "emailPlaceholder": "name@example.com",
+    "login": "Log in",
     "or": "or",
     "password": "Password",
-    "passwordPlaceholder": "Enter your password",
+    "passwordPlaceholder": "Your password",
     "signInWithGoogle": "Sign in with Google",
-    "signUp": "Sign Up"
+    "signUp": "Sign up"
   },
   "common": {
     "loading": "Loading...",
-    "notFound": "Not found"
+    "notFound": "Page not found"
   },
   "deleteDialog": {
     "cancel": "Cancel",
     "confirm": "Delete",
-    "confirmPrompt": "Please type the name to confirm:",
+    "confirmPrompt": "Type the name to confirm:",
     "inputLabel": "Type the {{type}} name to confirm deletion",
     "inputPlaceholder": "Type the {{type}} name",
     "title": "Delete {{type}}",
-    "warning": "This action cannot be undone. All data associated with this {{type}} will be permanently removed."
+    "warning": "This action cannot be undone. All data associated with this {{type}} will be permanently deleted."
   },
   "footer": {},
   "map": {
@@ -30,13 +30,13 @@
   },
   "nav": {
     "about": "About",
-    "addStore": "Add Store",
+    "addStore": "Add store",
     "blog": "Blog",
     "close": "Close",
-    "dataset": "Dataset",
-    "login": "Login",
+    "dataset": "Open data",
     "languageSelector": "Select language",
-    "logout": "Logout",
+    "login": "Log in",
+    "logout": "Log out",
     "menu": "Menu"
   },
   "pages": {
@@ -47,11 +47,11 @@
     },
     "dataset": {
       "dataJson": "A complete JSON export of all stores and products.",
-      "description": "You can download the latest version of the El Guacal dataset here. The dataset is updated daily and includes information about all stores and products.",
-      "download": "Download Dataset",
+      "description": "All El Guacal data is open and free to download. Updated daily with every store, product, and location.",
+      "download": "Download dataset",
       "productsCsv": "A list of all products with their names and brands.",
       "storesCsv": "A list of all stores with their names, addresses, coordinates, and associated product IDs.",
-      "title": "Dataset",
+      "title": "Open data",
       "whatsIncluded": "What's included?"
     }
   },
@@ -68,22 +68,27 @@
     "delete": "Delete",
     "directions": "Directions",
     "edit": "Edit",
-    "lastUpdated": "Last updated at",
+    "lastUpdated": "Last updated",
     "opensInNewTab": "opens in new tab",
     "products": "Products"
   },
   "storeForm": {
     "address": "Address",
-    "addTitle": "Add New Store",
+    "addressPlaceholder": "e.g., 123 High Street, London",
+    "addTitle": "Add new store",
     "cancel": "Cancel",
-    "editTitle": "Edit Store",
+    "editTitle": "Edit store",
+    "locateMe": "Find my location",
     "location": "Location",
+    "mapHintAddress": "The address fills in automatically. You can also edit it.",
+    "mapHintLocation": "Drag the map to position the crosshair on the store.",
     "noProductsFound": "No products found",
-    "removeProduct": "Remove product",
     "products": "Products",
-    "saveStore": "Save Store",
+    "removeProduct": "Remove product",
+    "saveStore": "Save store",
     "searchProducts": "Search products...",
-    "storeName": "Store Name",
+    "storeName": "Store name",
+    "storeNamePlaceholder": "e.g., Bodega La Esquina",
     "validation": {
       "addressRequired": "Address is required",
       "nameRequired": "Name is required",

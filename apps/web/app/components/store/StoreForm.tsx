@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import LocateMeButton from '@/components/locate-me-button';
 import { useAllProductsQuery } from '@/graphql/queries/all-products/index.generated';
 import { useLazyGetReverseGeocodeQuery } from '@/store/features/google-maps/api';
 import { selectMap, setCenter } from '@/store/features/map/slice';
@@ -120,10 +121,16 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   />
                   <div className={styles['c-form__crosshair']}>+</div>
                 </APIProvider>
+                <LocateMeButton />
               </div>
               <div className={styles['c-form__coordinates']}>
                 Lat: {values.lat.toFixed(6)}, Lng: {values.lng.toFixed(6)}
               </div>
+              <p className={styles['c-form__map-hint']}>
+                {t('storeForm.mapHintLocation')}
+                <br />
+                {t('storeForm.mapHintAddress')}
+              </p>
             </div>
 
             <div className={styles['c-form-container']}>
@@ -134,7 +141,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   <Field
                     id="name"
                     name="name"
-                    placeholder={t('storeForm.storeName')}
+                    placeholder={t('storeForm.storeNamePlaceholder')}
                   />
                   {errors.name && touched.name && (
                     <div className={styles['c-form__error']} role="alert">
@@ -148,7 +155,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   <Field
                     id="address"
                     name="address"
-                    placeholder={t('storeForm.address')}
+                    placeholder={t('storeForm.addressPlaceholder')}
                   />
                   {errors.address && touched.address && (
                     <div className={styles['c-form__error']} role="alert">
@@ -194,7 +201,10 @@ const StoreForm: React.FC<StoreFormProps> = ({
                               </Combobox.Trigger>
                             </div>
                             <Combobox.Portal>
-                              <Combobox.Positioner sideOffset={8} className="o-select__positioner">
+                              <Combobox.Positioner
+                                sideOffset={8}
+                                className="o-select__positioner"
+                              >
                                 <Combobox.Popup className="o-select__popup">
                                   <Combobox.List>
                                     {filteredProducts?.map((product) => (
@@ -211,9 +221,11 @@ const StoreForm: React.FC<StoreFormProps> = ({
                                     ))}
                                   </Combobox.List>
                                   {filteredProducts?.length === 0 && (
-                                    <div className={styles['c-form__no-results']} role="status">
+                                    <output
+                                      className={styles['c-form__no-results']}
+                                    >
                                       {t('storeForm.noProductsFound')}
-                                    </div>
+                                    </output>
                                   )}
                                 </Combobox.Popup>
                               </Combobox.Positioner>

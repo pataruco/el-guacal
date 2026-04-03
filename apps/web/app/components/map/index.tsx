@@ -12,6 +12,7 @@ import {
   setZoom,
 } from '../../store/features/map/slice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import LocateMeButton from '../locate-me-button';
 import CustomMarker from '../marker';
 import styles from './index.module.scss';
 
@@ -71,6 +72,7 @@ const MapComponent = () => {
             />
           ))}
         </GoogleMap>
+        <LocateMeButton />
       </APIProvider>
     </div>
   );
