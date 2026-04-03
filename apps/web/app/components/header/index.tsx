@@ -1,58 +1,49 @@
 import { Select } from '@base-ui/react/select';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router';
-import { ENGLISH, type Language, SPANISH } from '@/locales/i18n';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { type ContentLocale, SUPPORTED_LOCALES } from '@/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
 import { useFocusTrap } from '@/utils/use-focus-trap';
 import styles from './index.module.scss';
 
+const languageLabels: Record<ContentLocale, string> = {
+  en: 'English',
+  es: 'Español',
+};
+
 const LanguageSelector = () => {
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { locale } = useParams<{ locale: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentLocale = (locale as ContentLocale) || 'en';
 
-  const handleLanguageChange = (newLang: Language) => {
-    i18n.changeLanguage(newLang);
-    localStorage.setItem('i18nextLng', newLang);
-  };
-
-  const languageLabels: Record<Language, string> = {
-    [ENGLISH]: 'English',
-    [SPANISH]: 'Español',
+  const handleLanguageChange = (newLocale: ContentLocale | null) => {
+    if (!newLocale) return;
+    const newPath = location.pathname.replace(/^\/(en|es)/, `/${newLocale}`);
+    navigate(newPath);
   };
 
   return (
-    <Select.Root
-      value={i18n.language as Language}
-      onValueChange={handleLanguageChange}
-    >
-      <Select.Trigger className={styles['c-header__lang-select-trigger']}>
-        <Select.Value>
-          {languageLabels[i18n.language as Language] || i18n.language}
-        </Select.Value>
-        <Select.Icon className={styles['c-header__lang-select-icon']}>
-          ▼
-        </Select.Icon>
+    <Select.Root value={currentLocale} onValueChange={handleLanguageChange}>
+      <Select.Trigger
+        className="o-select__trigger"
+        aria-label={t('nav.languageSelector')}
+      >
+        <Select.Value>{languageLabels[currentLocale]}</Select.Value>
+        <Select.Icon className="o-select__icon">▼</Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Positioner
-          sideOffset={8}
-          className={styles['c-header__lang-select-positioner']}
-        >
-          <Select.Popup className={styles['c-header__lang-select-popup']}>
-            <Select.Item
-              value={ENGLISH}
-              className={styles['c-header__lang-select-item']}
-            >
-              English
-            </Select.Item>
-            <Select.Item
-              value={SPANISH}
-              className={styles['c-header__lang-select-item']}
-            >
-              Español
-            </Select.Item>
+        <Select.Positioner sideOffset={8} className="o-select__positioner">
+          <Select.Popup className="o-select__popup">
+            {SUPPORTED_LOCALES.map((loc) => (
+              <Select.Item key={loc} value={loc} className="o-select__item">
+                {languageLabels[loc]}
+              </Select.Item>
+            ))}
           </Select.Popup>
         </Select.Positioner>
       </Select.Portal>
@@ -64,9 +55,12 @@ const Header = () => {
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const location = useLocation();
+  const { locale } = useParams<{ locale: string }>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   useFocusTrap(mobileMenuRef, isMenuOpen);
+
+  const currentLocale = (locale as ContentLocale) || 'en';
 
   const handleLogout = () => {
     auth.signOut();
@@ -80,7 +74,7 @@ const Header = () => {
   return (
     <header className={styles['c-header']}>
       <div className={styles['c-header__branding']}>
-        <Link to="/" className={styles['c-header__logo']}>
+        <Link to={`/${currentLocale}`} className={styles['c-header__logo']}>
           <h1>El Guacal</h1>
         </Link>
         <nav className={styles['c-header__nav']}>
@@ -88,9 +82,13 @@ const Header = () => {
             {isAuthenticated && (
               <li className={styles['c-header__nav-item']}>
                 <Link
-                  to="/stores/new"
-                  className={`${styles['c-header__nav-link']} ${isActive('/stores/new') ? styles['c-header__nav-link--active'] : ''}`}
-                  aria-current={isActive('/stores/new') ? 'page' : undefined}
+                  to={`/${currentLocale}/stores/new`}
+                  className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/stores/new`) ? styles['c-header__nav-link--active'] : ''}`}
+                  aria-current={
+                    isActive(`/${currentLocale}/stores/new`)
+                      ? 'page'
+                      : undefined
+                  }
                   aria-label={t('nav.addStore')}
                 >
                   {t('nav.addStore')}
@@ -99,9 +97,11 @@ const Header = () => {
             )}
             <li className={styles['c-header__nav-item']}>
               <Link
-                to="/dataset"
-                className={`${styles['c-header__nav-link']} ${isActive('/dataset') ? styles['c-header__nav-link--active'] : ''}`}
-                aria-current={isActive('/dataset') ? 'page' : undefined}
+                to={`/${currentLocale}/dataset`}
+                className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/dataset`) ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={
+                  isActive(`/${currentLocale}/dataset`) ? 'page' : undefined
+                }
                 aria-label={t('nav.dataset')}
               >
                 {t('nav.dataset')}
@@ -109,9 +109,25 @@ const Header = () => {
             </li>
             <li className={styles['c-header__nav-item']}>
               <Link
-                to="/about"
-                className={`${styles['c-header__nav-link']} ${isActive('/about') ? styles['c-header__nav-link--active'] : ''}`}
-                aria-current={isActive('/about') ? 'page' : undefined}
+                to={`/${currentLocale}/blog`}
+                className={`${styles['c-header__nav-link']} ${location.pathname.startsWith(`/${currentLocale}/blog`) ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={
+                  location.pathname.startsWith(`/${currentLocale}/blog`)
+                    ? 'page'
+                    : undefined
+                }
+                aria-label={t('nav.blog')}
+              >
+                {t('nav.blog')}
+              </Link>
+            </li>
+            <li className={styles['c-header__nav-item']}>
+              <Link
+                to={`/${currentLocale}/about`}
+                className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/about`) ? styles['c-header__nav-link--active'] : ''}`}
+                aria-current={
+                  isActive(`/${currentLocale}/about`) ? 'page' : undefined
+                }
                 aria-label={t('nav.about')}
               >
                 {t('nav.about')}
@@ -123,7 +139,7 @@ const Header = () => {
 
       <button
         type="button"
-        aria-label="Close menu"
+        aria-label={t('nav.close')}
         className={`${styles['c-header__mobile-overlay']} ${isMenuOpen ? styles['c-header__mobile-overlay--open'] : ''}`}
         onClick={toggleMenu}
       />
@@ -148,7 +164,7 @@ const Header = () => {
         <nav className={styles['c-header__mobile-nav']}>
           {isAuthenticated && (
             <Link
-              to="/stores/new"
+              to={`/${currentLocale}/stores/new`}
               onClick={toggleMenu}
               className={styles['c-header__mobile-nav-link']}
             >
@@ -156,14 +172,21 @@ const Header = () => {
             </Link>
           )}
           <Link
-            to="/dataset"
+            to={`/${currentLocale}/dataset`}
             onClick={toggleMenu}
             className={styles['c-header__mobile-nav-link']}
           >
             {t('nav.dataset')}
           </Link>
           <Link
-            to="/about"
+            to={`/${currentLocale}/blog`}
+            onClick={toggleMenu}
+            className={styles['c-header__mobile-nav-link']}
+          >
+            {t('nav.blog')}
+          </Link>
+          <Link
+            to={`/${currentLocale}/about`}
             onClick={toggleMenu}
             className={styles['c-header__mobile-nav-link']}
           >
@@ -180,7 +203,7 @@ const Header = () => {
             </button>
           ) : (
             <Link
-              to="/auth"
+              to={`/${currentLocale}/auth`}
               onClick={toggleMenu}
               className={styles['c-header__mobile-nav-link']}
             >
@@ -216,7 +239,10 @@ const Header = () => {
             {t('nav.logout')}
           </button>
         ) : (
-          <Link to="/auth" className={styles['c-header__auth-link']}>
+          <Link
+            to={`/${currentLocale}/auth`}
+            className={styles['c-header__auth-link']}
+          >
             {t('nav.login')}
           </Link>
         )}

@@ -3,17 +3,17 @@
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "dontHaveAccount": "¿No tienes una cuenta?",
     "email": "Correo",
-    "emailPlaceholder": "Ingresa tu correo",
+    "emailPlaceholder": "nombre@ejemplo.com",
     "login": "Ingresar",
     "or": "o",
-    "password": "Clave",
-    "passwordPlaceholder": "Ingresa tu clave",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Tu contraseña",
     "signInWithGoogle": "Ingresar con Google",
     "signUp": "Registrarse"
   },
   "common": {
     "loading": "Cargando...",
-    "notFound": "No encontrado"
+    "notFound": "Página no encontrada"
   },
   "deleteDialog": {
     "cancel": "Cancelar",
@@ -30,25 +30,28 @@
   },
   "nav": {
     "about": "Nosotros",
-    "addStore": "Agregar Tienda",
+    "addStore": "Agregar tienda",
+    "blog": "Blog",
     "close": "Cerrar",
-    "dataset": "Datos",
+    "dataset": "Datos abiertos",
+    "languageSelector": "Seleccionar idioma",
     "login": "Ingresar",
     "logout": "Salir",
     "menu": "Menú"
   },
   "pages": {
-    "about": {
-      "body": "Este es un espacio reservado para la página sobre nosotros.",
-      "title": "Sobre El Guacal"
+    "blog": {
+      "backToList": "Volver al blog",
+      "noPosts": "Aún no hay publicaciones.",
+      "title": "Blog"
     },
     "dataset": {
       "dataJson": "Una exportación JSON completa de todas las tiendas y productos.",
-      "description": "Puedes descargar la última versión del conjunto de datos de El Guacal aquí. El conjunto de datos se actualiza diariamente e incluye información sobre todas las tiendas y productos.",
-      "download": "Descargar Datos",
+      "description": "Todos los datos de El Guacal son abiertos y gratuitos. Se actualizan diariamente con cada tienda, producto y ubicación.",
+      "download": "Descargar datos",
       "productsCsv": "Una lista de todos los productos con sus nombres y marcas.",
-      "storesCsv": "Una lista de todas las tiendas con sus nombres, direcciones, coordenadas e IDs de productos asociados.",
-      "title": "Conjunto de Datos",
+      "storesCsv": "Una lista de todas las tiendas con sus nombres, direcciones, coordenadas e identificadores de productos asociados.",
+      "title": "Datos abiertos",
       "whatsIncluded": "¿Qué incluye?"
     }
   },
@@ -71,15 +74,21 @@
   },
   "storeForm": {
     "address": "Dirección",
-    "addTitle": "Agregar Nueva Tienda",
+    "addressPlaceholder": "ej., Av. Libertador, Caracas",
+    "addTitle": "Agregar nueva tienda",
     "cancel": "Cancelar",
-    "editTitle": "Editar Tienda",
+    "editTitle": "Editar tienda",
+    "locateMe": "Buscar mi ubicación",
     "location": "Ubicación",
+    "mapHintAddress": "La dirección se completa automáticamente. También puedes editarla.",
+    "mapHintLocation": "Arrastra el mapa para posicionar la cruz sobre la tienda.",
     "noProductsFound": "No se encontraron productos",
     "products": "Productos",
-    "saveStore": "Guardar Tienda",
+    "removeProduct": "Eliminar producto",
+    "saveStore": "Guardar tienda",
     "searchProducts": "Buscar productos...",
-    "storeName": "Nombre de la Tienda",
+    "storeName": "Nombre de la tienda",
+    "storeNamePlaceholder": "ej., Bodega La Esquina",
     "validation": {
       "addressRequired": "La dirección es obligatoria",
       "nameRequired": "El nombre es obligatorio",

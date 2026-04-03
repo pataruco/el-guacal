@@ -10,7 +10,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from 'react-router';
-import i18n, { ENGLISH } from './locales/i18n';
+import { ENGLISH, i18n } from './i18n';
 import { clearAuth, setAuth } from './store/features/auth/slice';
 import { useAppDispatch } from './store/hooks';
 import { store } from './store/store';

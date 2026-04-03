@@ -2,8 +2,8 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
-import enGB from './en-GB/translation.json';
-import esVE from './es-VE/translation.json';
+import enGB from './translations/en-GB.json';
+import esVE from './translations/es-VE.json';
 
 export const Language = {
   ENGLISH: 'en-GB',

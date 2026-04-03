@@ -1,4 +1,4 @@
-import type { Language } from '@/locales/i18n';
+import type { Language } from './config';
 
 interface FormatDate {
   date: Date;

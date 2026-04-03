@@ -20,22 +20,24 @@ const ProductFilter = () => {
   return (
     <div className={styles['c-product-filter']}>
       <Popover.Root>
-        <Popover.Trigger className={styles['c-product-filter__trigger']}>
+        <Popover.Trigger
+          className={`o-select__trigger ${styles['c-product-filter__trigger']}`}
+        >
           <span>
             {selectedCount > 0
               ? t('search.productsSelected', { count: selectedCount })
               : t('search.filterByProducts')}
           </span>
-          <span className={styles['c-product-filter__trigger-icon']}>▼</span>
+          <span className="o-select__icon">▼</span>
         </Popover.Trigger>
 
         <Popover.Portal>
-          <Popover.Positioner
-            sideOffset={4}
-            className={styles['c-product-filter__positioner']}
-          >
-            <Popover.Popup className={styles['c-product-filter__popup']}>
-              <div className={styles['c-product-filter__list']}>
+          <Popover.Positioner sideOffset={4} className="o-select__positioner">
+            <Popover.Popup className="o-select__popup">
+              <fieldset
+                className={styles['c-product-filter__list']}
+                aria-label={t('search.filterByProducts')}
+              >
                 {isLoading && (
                   <div className={styles['c-product-filter__empty']}>
                     {t('storeForm.searchProducts')}
@@ -47,22 +49,19 @@ const ProductFilter = () => {
                   </div>
                 )}
                 {productsData?.allProducts.map((product) => (
-                  <label
-                    key={product.productId}
-                    className={styles['c-product-filter__item']}
-                  >
+                  <label key={product.productId} className="o-select__item">
                     <input
                       type="checkbox"
                       checked={selectedProductIds.includes(product.productId)}
                       onChange={() => handleToggle(product.productId)}
-                      className={styles['c-product-filter__checkbox']}
+                      className="o-select__checkbox"
                     />
                     <span className={styles['c-product-filter__item-label']}>
                       {product.name}
                     </span>
                   </label>
                 ))}
-              </div>
+              </fieldset>
             </Popover.Popup>
           </Popover.Positioner>
         </Popover.Portal>

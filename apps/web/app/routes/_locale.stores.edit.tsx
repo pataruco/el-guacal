@@ -9,7 +9,7 @@ import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 
 const EditStorePage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, locale } = useParams<{ id: string; locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
@@ -19,9 +19,9 @@ const EditStorePage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/auth');
+      navigate(`/${locale}/auth`);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, locale]);
 
   if (isLoading)
     return (
@@ -63,7 +63,7 @@ const EditStorePage = () => {
           storeId: id as string,
         },
       }).unwrap();
-      navigate('/');
+      navigate(`/${locale}`);
     } catch (error) {
       console.error('Failed to update store:', error);
     }

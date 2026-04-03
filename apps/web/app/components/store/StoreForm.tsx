@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import LocateMeButton from '@/components/locate-me-button';
 import { useAllProductsQuery } from '@/graphql/queries/all-products/index.generated';
 import { useLazyGetReverseGeocodeQuery } from '@/store/features/google-maps/api';
 import { selectMap, setCenter } from '@/store/features/map/slice';
@@ -120,10 +121,16 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   />
                   <div className={styles['c-form__crosshair']}>+</div>
                 </APIProvider>
+                <LocateMeButton />
               </div>
               <div className={styles['c-form__coordinates']}>
                 Lat: {values.lat.toFixed(6)}, Lng: {values.lng.toFixed(6)}
               </div>
+              <p className={styles['c-form__map-hint']}>
+                {t('storeForm.mapHintLocation')}
+                <br />
+                {t('storeForm.mapHintAddress')}
+              </p>
             </div>
 
             <div className={styles['c-form-container']}>
@@ -134,7 +141,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   <Field
                     id="name"
                     name="name"
-                    placeholder={t('storeForm.storeName')}
+                    placeholder={t('storeForm.storeNamePlaceholder')}
                   />
                   {errors.name && touched.name && (
                     <div className={styles['c-form__error']} role="alert">
@@ -148,7 +155,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   <Field
                     id="address"
                     name="address"
-                    placeholder={t('storeForm.address')}
+                    placeholder={t('storeForm.addressPlaceholder')}
                   />
                   {errors.address && touched.address && (
                     <div className={styles['c-form__error']} role="alert">
@@ -183,41 +190,42 @@ const StoreForm: React.FC<StoreFormProps> = ({
                             onInputValueChange={setSearchValue}
                             multiple
                           >
-                            <div className={styles['c-form__combobox-control']}>
+                            <div className="o-select__control">
                               <Combobox.Input
                                 id={comboboxId}
-                                className={styles['c-form__combobox-input']}
+                                className="o-select__input"
                                 placeholder={t('storeForm.searchProducts')}
                               />
-                              <Combobox.Trigger
-                                className={styles['c-form__combobox-trigger']}
-                              >
+                              <Combobox.Trigger className="o-select__control-trigger">
                                 ▼
                               </Combobox.Trigger>
                             </div>
                             <Combobox.Portal>
                               <Combobox.Positioner
-                                className={styles['c-form__select-positioner']}
+                                sideOffset={8}
+                                className="o-select__positioner"
                               >
-                                <Combobox.Popup
-                                  className={styles['c-form__select-popup']}
-                                >
-                                  {filteredProducts?.map((product) => (
-                                    <Combobox.Item
-                                      key={product.productId}
-                                      value={product.productId}
-                                      className={styles['c-form__select-item']}
-                                    >
-                                      {product.name}
-                                      <Combobox.ItemIndicator>
-                                        ✓
-                                      </Combobox.ItemIndicator>
-                                    </Combobox.Item>
-                                  ))}
+                                <Combobox.Popup className="o-select__popup">
+                                  <Combobox.List>
+                                    {filteredProducts?.map((product) => (
+                                      <Combobox.Item
+                                        key={product.productId}
+                                        value={product.productId}
+                                        className="o-select__item"
+                                      >
+                                        {product.name}
+                                        <Combobox.ItemIndicator>
+                                          ✓
+                                        </Combobox.ItemIndicator>
+                                      </Combobox.Item>
+                                    ))}
+                                  </Combobox.List>
                                   {filteredProducts?.length === 0 && (
-                                    <div className={styles.noResults}>
+                                    <output
+                                      className={styles['c-form__no-results']}
+                                    >
                                       {t('storeForm.noProductsFound')}
-                                    </div>
+                                    </output>
                                   )}
                                 </Combobox.Popup>
                               </Combobox.Positioner>
@@ -234,6 +242,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                                   <span>{product.name}</span>
                                   <button
                                     type="button"
+                                    aria-label={`${t('storeForm.removeProduct')}: ${product.name}`}
                                     onClick={() =>
                                       form.setFieldValue(
                                         field.name,

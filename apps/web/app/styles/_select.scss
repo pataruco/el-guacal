@@ -1,0 +1,226 @@
+@use 'sass:color';
+@use 'settings/settings.colors' as colors;
+@use 'settings/settings.globals' as globals;
+@use 'settings/settings.typography' as typography;
+@use 'tools/tools.mixins' as mixins;
+
+// Shared styles for Select, Combobox, and Popover dropdown components.
+// Apply these classes alongside component-specific BEM classes.
+//
+// State design (WCAG AAA):
+//   Hover  → left navy border (19.47:1) + surface bg (multi-cue)
+//   Focus  → navy bg + white text (19.47:1) — keyboard navigation
+//   Selected → surface bg + left navy border (persistent indicator)
+//   Selected + Focus → navy bg + white text
+
+.o-select {
+  // Trigger button that opens the dropdown
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: globals.$spacing-sm;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    min-height: globals.$target-size-min;
+    font-family: typography.$font-stack;
+    font-size: typography.$font-size-small;
+    font-weight: typography.$font-weight-black;
+    text-transform: uppercase;
+    color: colors.$color-text;
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+
+    &:hover {
+      background-color: colors.$color-surface;
+    }
+
+    &[data-expanded],
+    &[data-state='open'] {
+      background-color: colors.$color-surface;
+    }
+
+    &:focus-visible {
+      outline: 0.1875rem solid colors.$color-focus;
+      outline-offset: 0.125rem;
+    }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+  }
+
+  // Chevron icon inside the trigger
+  &__icon {
+    font-size: typography.$font-size-xs;
+    transition: transform 0.2s ease-in-out;
+
+    [data-expanded] &,
+    [data-state='open'] & {
+      transform: rotate(180deg);
+    }
+  }
+
+  // Popup panel (the dropdown itself)
+  &__popup {
+    background-color: colors.$color-background;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    max-height: 20rem; // 320px
+    overflow-y: auto;
+    padding: globals.$spacing-xs 0;
+    width: var(--anchor-width, 100%);
+  }
+
+  // Individual item inside the popup
+  // Unified states: hover, focus (highlighted), selected, checked
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: globals.$spacing-sm;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    min-height: globals.$target-size-min;
+    font-size: typography.$font-size-small;
+    font-weight: typography.$font-weight-bold;
+    text-transform: uppercase;
+    color: colors.$color-text;
+    cursor: pointer;
+    border-left: 0.1875rem solid transparent; // Reserve space for hover/selected border
+    transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out;
+
+    // Hover: left border accent + surface bg (multi-cue, 19.47:1 border contrast)
+    &:hover {
+      background-color: colors.$color-surface;
+      border-left-color: colors.$color-text;
+    }
+
+    // Keyboard focus: full inversion (19.47:1)
+    &[data-highlighted] {
+      background-color: colors.$color-primary;
+      color: colors.$color-background;
+      border-left-color: colors.$color-background;
+    }
+
+    // Selected state: persistent left border indicator + surface bg
+    &[data-selected],
+    &:has(> input:checked) {
+      background-color: colors.$color-surface;
+      border-left-color: colors.$color-text;
+      font-weight: typography.$font-weight-black;
+
+      // Selected + keyboard focus
+      &[data-highlighted],
+      &:hover {
+        background-color: colors.$color-primary;
+        color: colors.$color-background;
+        border-left-color: colors.$color-background;
+      }
+    }
+  }
+
+  // Checkbox indicator used in multi-select
+  // Supports both native <input type="checkbox"> and custom elements
+  &__checkbox {
+    width: 1rem;
+    height: 1rem;
+    border: globals.$border-utility;
+    background-color: colors.$color-background;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+
+    // Custom element checked state
+    &[data-state='checked'] {
+      background-color: colors.$color-primary;
+      color: colors.$color-background;
+
+      &::after {
+        content: '✓';
+        font-size: typography.$font-size-small;
+      }
+    }
+
+    // Native input checked state
+    &:checked {
+      background-color: colors.$color-primary;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+      background-size: 0.75rem;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    // Invert checkbox colors when parent item is keyboard-highlighted
+    [data-highlighted] & {
+      border-color: colors.$color-background;
+    }
+
+    [data-highlighted] &:checked,
+    [data-highlighted] &[data-state='checked'] {
+      background-color: colors.$color-background;
+      color: colors.$color-primary;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000042'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+    }
+  }
+
+  // Combobox-specific: input + trigger wrapper
+  &__control {
+    display: flex;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    background-color: colors.$color-background;
+
+    &:focus-within {
+      outline: 0.1875rem solid colors.$color-focus;
+      outline-offset: 0.125rem;
+    }
+  }
+
+  // Combobox-specific: search input inside control
+  &__input {
+    flex: 1;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    min-height: globals.$target-size-min;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: typography.$font-size-small;
+    font-weight: typography.$font-weight-bold;
+    color: colors.$color-text;
+
+    &::placeholder {
+      color: colors.$color-muted;
+      font-style: italic;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  // Combobox-specific: trigger inside control (the ▼ button)
+  &__control-trigger {
+    background: transparent;
+    border: none;
+    border-left: globals.$border-utility;
+    padding: globals.$spacing-sm globals.$spacing-md;
+    min-width: globals.$target-size-min;
+    cursor: pointer;
+    color: colors.$color-text;
+    font-size: typography.$font-size-small;
+
+    &:focus-visible {
+      outline: 0.1875rem solid colors.$color-focus;
+      outline-offset: -0.1875rem;
+    }
+  }
+
+  // Positioner (z-index layer)
+  &__positioner {
+    z-index: 400;
+  }
+}

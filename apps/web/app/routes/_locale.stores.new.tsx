@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import Page from '@/components/page';
 import StoreForm from '@/components/store/StoreForm';
 import { useCreateStoreMutation } from '@/graphql/mutations/create-store/index.generated';
@@ -8,6 +8,7 @@ import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 
 const NewStorePage = () => {
+  const { locale } = useParams<{ locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
@@ -15,9 +16,9 @@ const NewStorePage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/auth');
+      navigate(`/${locale}/auth`);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, locale]);
 
   const handleSubmit = async (values: {
     address: string;
@@ -36,7 +37,7 @@ const NewStorePage = () => {
           productIds: values.productIds,
         },
       }).unwrap();
-      navigate('/');
+      navigate(`/${locale}`);
     } catch (error) {
       console.error('Failed to create store:', error);
     }
