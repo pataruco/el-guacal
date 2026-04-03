@@ -1,25 +1,7 @@
-import MapComponent from '../components/map';
-import Page from '../components/page';
-import ProductFilter from '../components/product-filter';
-import SearchBar from '../components/search-bar';
-import StoreComponent from '../components/store';
-import styles from './index.module.scss';
+import { Navigate } from 'react-router';
+import { detectLocale } from '@/i18n';
 
-export default function Home() {
-  return (
-    <Page className={styles['p-home']} isHome>
-      <aside className={styles['p-home__sidebar']}>
-        <div className={styles['p-home__controls']}>
-          <div className={styles['p-home__search-wrapper']}>
-            <SearchBar />
-            <ProductFilter />
-          </div>
-        </div>
-      </aside>
-      <div className={styles['p-home__map-container']}>
-        <MapComponent />
-      </div>
-      <StoreComponent />
-    </Page>
-  );
+export default function RootRedirect() {
+  const locale = detectLocale();
+  return <Navigate to={`/${locale}`} replace />;
 }

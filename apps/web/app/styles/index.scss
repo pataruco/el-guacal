@@ -14,6 +14,7 @@
 
 /* ITCSS Layer: Pages (Global page styles) */
 @use 'pages' as pages;
+@use 'blog' as blog;
 
 /* ITCSS Layer: Utilities */
 @use 'utilities/utilities.helpers' as helpers;

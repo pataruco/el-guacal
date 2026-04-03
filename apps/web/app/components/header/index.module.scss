@@ -205,92 +205,27 @@
     gap: globals.$spacing-sm;
   }
 
-  &__lang-selector {
+  &__lang-link {
     display: none;
 
     @media (min-width: 768px) {
-      display: block;
-    }
-  }
-
-  &__mobile-lang-selector {
-    margin-top: globals.$spacing-md;
-  }
-
-  &__lang-select {
-    &-trigger {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      gap: globals.$spacing-sm;
-      background: colors.$color-background;
+      background: transparent;
       border: globals.$border-utility;
       box-shadow: globals.$shadow-utility;
       padding: globals.$spacing-sm globals.$spacing-md;
       min-height: globals.$target-size-min;
-      font-family: inherit;
       font-size: typography.$font-size-small;
       font-weight: typography.$font-weight-black;
       text-transform: uppercase;
-      cursor: pointer;
       color: colors.$color-text;
-      min-width: 120px;
+      text-decoration: none;
 
       @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
 
       &:hover {
         background-color: colors.$color-surface;
-      }
-
-      &[data-expanded] {
-        background-color: colors.$color-surface;
-      }
-    }
-
-    &-icon {
-      font-size: typography.$font-size-xs;
-      transition: transform 0.2s ease-in-out;
-
-      [data-expanded] & {
-        transform: rotate(180deg);
-      }
-    }
-
-    &-positioner {
-      z-index: 1000;
-    }
-
-    &-popup {
-      background: colors.$color-background;
-      border: globals.$border-utility;
-      box-shadow: globals.$shadow-utility;
-      min-width: 120px;
-      padding: globals.$spacing-xs 0;
-    }
-
-    &-item {
-      padding: globals.$spacing-sm globals.$spacing-md;
-      min-height: globals.$target-size-min;
-      font-size: typography.$font-size-small;
-      font-weight: typography.$font-weight-bold;
-      text-transform: uppercase;
-      cursor: pointer;
-      color: colors.$color-text;
-
-      &:hover,
-      &[data-highlighted] {
-        background-color: colors.$color-primary;
-        color: colors.$color-background;
-      }
-
-      &[data-selected] {
-        background-color: colors.$color-surface;
-        color: colors.$color-text;
-
-        &[data-highlighted] {
-          background-color: colors.$color-primary;
-          color: colors.$color-background;
-        }
       }
     }
   }

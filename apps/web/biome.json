@@ -54,6 +54,21 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "app/routes/_locale.about.tsx",
+        "app/routes/_locale.blog.$slug.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
+          }
+        }
+      }
+    }
+  ],
   "root": true,
   "vcs": {
     "clientKind": "git",

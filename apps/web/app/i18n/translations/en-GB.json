@@ -31,6 +31,7 @@
   "nav": {
     "about": "About",
     "addStore": "Add Store",
+    "blog": "Blog",
     "close": "Close",
     "dataset": "Dataset",
     "login": "Login",
@@ -38,9 +39,10 @@
     "menu": "Menu"
   },
   "pages": {
-    "about": {
-      "body": "This is a placeholder for the about page.",
-      "title": "About El Guacal"
+    "blog": {
+      "backToList": "Back to blog",
+      "noPosts": "No posts yet.",
+      "title": "Blog"
     },
     "dataset": {
       "dataJson": "A complete JSON export of all stores and products.",

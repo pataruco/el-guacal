@@ -6,7 +6,7 @@ import {
 } from 'firebase/auth';
 import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
@@ -15,6 +15,7 @@ import styles from './auth.module.scss';
 const googleProvider = new GoogleAuthProvider();
 
 const AuthPage = () => {
+  const { locale } = useParams<{ locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
@@ -26,9 +27,9 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      navigate(`/${locale}`);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, locale]);
 
   const handleGoogleSignIn = async () => {
     try {
