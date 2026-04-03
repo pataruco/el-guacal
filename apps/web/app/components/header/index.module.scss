@@ -205,30 +205,18 @@
     gap: globals.$spacing-sm;
   }
 
-  &__lang-link {
+  &__lang-selector {
     display: none;
 
     @media (min-width: 768px) {
-      display: inline-flex;
-      align-items: center;
-      background: transparent;
-      border: globals.$border-utility;
-      box-shadow: globals.$shadow-utility;
-      padding: globals.$spacing-sm globals.$spacing-md;
-      min-height: globals.$target-size-min;
-      font-size: typography.$font-size-small;
-      font-weight: typography.$font-weight-black;
-      text-transform: uppercase;
-      color: colors.$color-text;
-      text-decoration: none;
-
-      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-
-      &:hover {
-        background-color: colors.$color-surface;
-      }
+      display: block;
     }
   }
+
+  &__mobile-lang-selector {
+    margin-top: globals.$spacing-md;
+  }
+
 
   &__auth-link {
     display: none;

@@ -1,7 +1,8 @@
+import { Select } from '@base-ui/react/select';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useParams } from 'react-router';
-import { type ContentLocale, getOtherLocale } from '@/i18n';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { type ContentLocale, SUPPORTED_LOCALES } from '@/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
@@ -11,6 +12,43 @@ import styles from './index.module.scss';
 const languageLabels: Record<ContentLocale, string> = {
   en: 'English',
   es: 'Español',
+};
+
+const LanguageSelector = () => {
+  const { t } = useTranslation();
+  const { locale } = useParams<{ locale: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentLocale = (locale as ContentLocale) || 'en';
+
+  const handleLanguageChange = (newLocale: ContentLocale | null) => {
+    if (!newLocale) return;
+    const newPath = location.pathname.replace(/^\/(en|es)/, `/${newLocale}`);
+    navigate(newPath);
+  };
+
+  return (
+    <Select.Root value={currentLocale} onValueChange={handleLanguageChange}>
+      <Select.Trigger
+        className="o-select__trigger"
+        aria-label={t('nav.languageSelector')}
+      >
+        <Select.Value>{languageLabels[currentLocale]}</Select.Value>
+        <Select.Icon className="o-select__icon">▼</Select.Icon>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner sideOffset={8} className="o-select__positioner">
+          <Select.Popup className="o-select__popup">
+            {SUPPORTED_LOCALES.map((loc) => (
+              <Select.Item key={loc} value={loc} className="o-select__item">
+                {languageLabels[loc]}
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
 };
 
 const Header = () => {
@@ -23,11 +61,6 @@ const Header = () => {
   useFocusTrap(mobileMenuRef, isMenuOpen);
 
   const currentLocale = (locale as ContentLocale) || 'en';
-  const otherLocale = getOtherLocale(currentLocale);
-  const switchLocalePath = location.pathname.replace(
-    /^\/(en|es)/,
-    `/${otherLocale}`,
-  );
 
   const handleLogout = () => {
     auth.signOut();
@@ -178,13 +211,9 @@ const Header = () => {
             </Link>
           )}
           <hr className={styles['c-header__mobile-menu-divider']} />
-          <Link
-            to={switchLocalePath}
-            onClick={toggleMenu}
-            className={styles['c-header__mobile-nav-link']}
-          >
-            {languageLabels[otherLocale]}
-          </Link>
+          <div className={styles['c-header__mobile-lang-selector']}>
+            <LanguageSelector />
+          </div>
         </nav>
       </div>
 
@@ -197,13 +226,9 @@ const Header = () => {
         >
           {t('nav.menu')}
         </button>
-        <Link
-          to={switchLocalePath}
-          className={styles['c-header__lang-link']}
-          aria-label={languageLabels[otherLocale]}
-        >
-          {languageLabels[otherLocale]}
-        </Link>
+        <div className={styles['c-header__lang-selector']}>
+          <LanguageSelector />
+        </div>
 
         {isAuthenticated ? (
           <button

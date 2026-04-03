@@ -183,39 +183,35 @@ const StoreForm: React.FC<StoreFormProps> = ({
                             onInputValueChange={setSearchValue}
                             multiple
                           >
-                            <div className={styles['c-form__combobox-control']}>
+                            <div className="o-select__control">
                               <Combobox.Input
                                 id={comboboxId}
-                                className={styles['c-form__combobox-input']}
+                                className="o-select__input"
                                 placeholder={t('storeForm.searchProducts')}
                               />
-                              <Combobox.Trigger
-                                className={styles['c-form__combobox-trigger']}
-                              >
+                              <Combobox.Trigger className="o-select__control-trigger">
                                 ▼
                               </Combobox.Trigger>
                             </div>
                             <Combobox.Portal>
-                              <Combobox.Positioner
-                                className={styles['c-form__select-positioner']}
-                              >
-                                <Combobox.Popup
-                                  className={styles['c-form__select-popup']}
-                                >
-                                  {filteredProducts?.map((product) => (
-                                    <Combobox.Item
-                                      key={product.productId}
-                                      value={product.productId}
-                                      className={styles['c-form__select-item']}
-                                    >
-                                      {product.name}
-                                      <Combobox.ItemIndicator>
-                                        ✓
-                                      </Combobox.ItemIndicator>
-                                    </Combobox.Item>
-                                  ))}
+                              <Combobox.Positioner sideOffset={8} className="o-select__positioner">
+                                <Combobox.Popup className="o-select__popup">
+                                  <Combobox.List>
+                                    {filteredProducts?.map((product) => (
+                                      <Combobox.Item
+                                        key={product.productId}
+                                        value={product.productId}
+                                        className="o-select__item"
+                                      >
+                                        {product.name}
+                                        <Combobox.ItemIndicator>
+                                          ✓
+                                        </Combobox.ItemIndicator>
+                                      </Combobox.Item>
+                                    ))}
+                                  </Combobox.List>
                                   {filteredProducts?.length === 0 && (
-                                    <div className={styles.noResults}>
+                                    <div className={styles['c-form__no-results']} role="status">
                                       {t('storeForm.noProductsFound')}
                                     </div>
                                   )}
@@ -234,6 +230,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
                                   <span>{product.name}</span>
                                   <button
                                     type="button"
+                                    aria-label={`${t('storeForm.removeProduct')}: ${product.name}`}
                                     onClick={() =>
                                       form.setFieldValue(
                                         field.name,

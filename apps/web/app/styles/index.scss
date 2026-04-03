@@ -12,6 +12,9 @@
 /* ITCSS Layer: Base */
 @use 'base/base.page' as page;
 
+/* ITCSS Layer: Objects (Reusable patterns) */
+@use 'select' as select;
+
 /* ITCSS Layer: Pages (Global page styles) */
 @use 'pages' as pages;
 @use 'blog' as blog;

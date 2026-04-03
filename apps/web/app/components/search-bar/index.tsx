@@ -63,7 +63,7 @@ const SearchBar = () => {
       >
         <div className={styles['c-search__input-wrapper']}>
           <Combobox.Input
-            className={styles['c-search__input']}
+            className={`o-select__trigger ${styles['c-search__input']}`}
             placeholder={t('search.placeholder') || 'Search for a location...'}
             aria-label={t('search.placeholder') || 'Search for a location...'}
           />
@@ -76,17 +76,14 @@ const SearchBar = () => {
         </div>
 
         <Combobox.Portal>
-          <Combobox.Positioner
-            sideOffset={8}
-            className={styles['c-search__positioner']}
-          >
-            <Combobox.Popup className={styles['c-search__popup']}>
+          <Combobox.Positioner sideOffset={8} className="o-select__positioner">
+            <Combobox.Popup className="o-select__popup">
               <Combobox.List className={styles['c-search__suggestions']}>
                 {(suggestion: Suggestion) => (
                   <Combobox.Item
                     key={suggestion.place_id}
                     value={suggestion}
-                    className={styles['c-search__suggestion']}
+                    className="o-select__item"
                   >
                     <span>{suggestion.description}</span>
                   </Combobox.Item>

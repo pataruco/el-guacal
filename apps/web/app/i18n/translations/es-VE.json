@@ -35,6 +35,7 @@
     "close": "Cerrar",
     "dataset": "Datos",
     "login": "Ingresar",
+    "languageSelector": "Seleccionar idioma",
     "logout": "Salir",
     "menu": "Menú"
   },
@@ -78,6 +79,7 @@
     "editTitle": "Editar Tienda",
     "location": "Ubicación",
     "noProductsFound": "No se encontraron productos",
+    "removeProduct": "Eliminar producto",
     "products": "Productos",
     "saveStore": "Guardar Tienda",
     "searchProducts": "Buscar productos...",

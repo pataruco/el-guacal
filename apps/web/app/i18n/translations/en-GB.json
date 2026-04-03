@@ -35,6 +35,7 @@
     "close": "Close",
     "dataset": "Dataset",
     "login": "Login",
+    "languageSelector": "Select language",
     "logout": "Logout",
     "menu": "Menu"
   },
@@ -78,6 +79,7 @@
     "editTitle": "Edit Store",
     "location": "Location",
     "noProductsFound": "No products found",
+    "removeProduct": "Remove product",
     "products": "Products",
     "saveStore": "Save Store",
     "searchProducts": "Search products...",

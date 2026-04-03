@@ -2,61 +2,15 @@
 @use '../../styles/settings/settings.colors' as colors;
 @use '../../styles/settings/settings.globals' as globals;
 @use '../../styles/settings/settings.typography' as typography;
-@use '../../styles/tools/tools.mixins' as mixins;
 
 .c-product-filter {
   position: relative;
   width: 100%;
   margin-top: globals.$spacing-sm;
 
+  // Override trigger to be full-width
   &__trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     width: 100%;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
-    font-family: typography.$font-stack;
-    font-size: typography.$font-size-small;
-    font-weight: typography.$font-weight-bold;
-    color: colors.$color-text;
-    background-color: colors.$color-background;
-    border: globals.$border-utility;
-    box-shadow: globals.$shadow-utility;
-    cursor: pointer;
-    transition: all 0.1s ease-in-out;
-
-    &:focus-visible {
-      outline-offset: 0;
-      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-    }
-
-    &[data-state='open'] {
-      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-    }
-  }
-
-  &__trigger-icon {
-    font-size: typography.$font-size-small;
-    transition: transform 0.2s ease;
-
-    [data-state='open'] & {
-      transform: rotate(180deg);
-    }
-  }
-
-  &__positioner {
-    z-index: 400;
-  }
-
-  &__popup {
-    background-color: colors.$color-background;
-    border: globals.$border-utility;
-    box-shadow: globals.$shadow-utility;
-    width: var(--anchor-width);
-    max-height: 400px;
-    overflow-y: auto;
-    padding: globals.$spacing-sm 0;
   }
 
   &__list {
@@ -64,52 +18,6 @@
     flex-direction: column;
     padding: 0;
     margin: 0;
-  }
-
-  &__item {
-    display: flex;
-    align-items: center;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
-    font-family: typography.$font-stack;
-    font-size: typography.$font-size-small;
-    font-weight: typography.$font-weight-bold;
-    cursor: pointer;
-    color: colors.$color-text;
-    gap: globals.$spacing-sm;
-    background: transparent;
-    border: none;
-    text-align: left;
-    width: 100%;
-
-    &:hover {
-      background-color: colors.$color-surface;
-    }
-
-    &:focus-visible {
-      background-color: colors.$color-surface;
-    }
-  }
-
-  &__checkbox {
-    width: 1rem;
-    height: 1rem;
-    border: globals.$border-utility;
-    background-color: colors.$color-background;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    &[data-state='checked'] {
-      background-color: colors.$color-primary;
-      color: colors.$color-background;
-
-      &::after {
-        content: '✓';
-        font-size: typography.$font-size-small;
-      }
-    }
   }
 
   &__item-label {
@@ -124,6 +32,6 @@
     text-align: center;
     font-size: typography.$font-size-small;
     font-style: italic;
-    color: color.adjust(colors.$color-text, $alpha: -0.5);
+    color: colors.$color-muted;
   }
 }

@@ -122,94 +122,12 @@
     gap: globals.$spacing-sm;
   }
 
-  &__combobox-control {
-    display: flex;
-    border: globals.$border-utility;
-    background-color: colors.$color-background;
-
-    &:focus-within {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: 0.125rem;
-    }
-  }
-
-  &__combobox-input {
-    flex: 1;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
-    border: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: typography.$font-size-base;
-    color: colors.$color-text;
-
-    &::placeholder {
-      color: colors.$color-muted;
-      font-style: italic;
-    }
-
-    &:focus-visible {
-      outline: none;
-    }
-  }
-
-  &__combobox-trigger {
-    background: transparent;
-    border: none;
-    border-left: globals.$border-utility;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-width: globals.$target-size-min;
-    cursor: pointer;
-    color: colors.$color-text;
-    font-size: typography.$font-size-small;
-
-    &:focus-visible {
-      outline: none;
-    }
-  }
-
-  &__select-positioner {
-    z-index: 100;
-  }
-
-  &__select-popup {
-    background-color: colors.$color-background;
-    border: globals.$border-utility;
-    box-shadow: globals.$shadow-utility;
-    max-height: 15rem; // 240px
-    overflow-y: auto;
-    width: var(--anchor-width, 100%);
-  }
-
-  &__select-item {
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
-    cursor: pointer;
-    font-size: typography.$font-size-small;
-    font-weight: typography.$font-weight-bold;
-    color: colors.$color-text;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: globals.$border-width-utility solid
-      color.adjust(colors.$color-text, $alpha: -0.9);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &:hover {
-      background-color: colors.$color-surface;
-    }
-
-    &[data-highlighted] {
-      background-color: colors.$color-primary;
-      color: colors.$color-background;
-    }
-
-    &[data-selected] {
-      font-weight: typography.$font-weight-bold;
-    }
+  &__no-results {
+    padding: globals.$spacing-md;
+    text-align: center;
+    font-size: typography.$font-size-xs;
+    font-style: italic;
+    color: colors.$color-muted;
   }
 
   &__selected-list {
