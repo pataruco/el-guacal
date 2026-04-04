@@ -6,13 +6,13 @@ import styles from './index.module.scss';
 const LocateMeButton = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status } = useAppSelector(selectMap);
+  const { userLocationStatus } = useAppSelector(selectMap);
 
   const handleLocateMe = () => {
     dispatch(getUserLocation());
   };
 
-  const isLoading = status === 'loading';
+  const isLoading = userLocationStatus === 'loading';
 
   return (
     <button
@@ -69,7 +69,6 @@ const LocateMeButton = () => {
           strokeLinecap="round"
         />
       </svg>
-      {isLoading ? '...' : ''}
     </button>
   );
 };
