@@ -18,6 +18,7 @@ export default {
 
     return [
       '/',
+      '/sitemap.xml',
       ...locales.flatMap((l) => [
         ...pages.map((p) => `/${l}${p}`),
         ...blogPages.map((p) => `/${l}${p}`),
