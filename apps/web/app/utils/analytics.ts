@@ -1,4 +1,4 @@
-export const GA_ID = 'GTM-N8JW7VZF';
+export const GA_ID = 'GTM-TKQ877L3';
 export const LOCAL_STORAGE_KEY_TRACKING_KEY = 'tracking_consent';
 
 export const TRACKING_CONSENT = {

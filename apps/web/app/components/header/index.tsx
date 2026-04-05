@@ -2,11 +2,11 @@ import { Select } from '@base-ui/react/select';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 import { type ContentLocale, SUPPORTED_LOCALES } from '@/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
-import { useFocusTrap } from '@/utils/use-focus-trap';
 import styles from './index.module.scss';
 
 const languageLabels: Record<ContentLocale, string> = {

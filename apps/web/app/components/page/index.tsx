@@ -1,5 +1,6 @@
 import CookieBanner from '../cookie-banner';
 import Footer from '../footer';
+import { GoogleTag } from '../google-tag-manager';
 import Header from '../header';
 
 interface PageProps {
@@ -20,6 +21,7 @@ const Page = ({ children, className, isHome = false }: PageProps) => {
         width: '100vw',
       }}
     >
+      <GoogleTag />
       <CookieBanner />
       <Header />
       <main
