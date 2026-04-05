@@ -9,10 +9,12 @@ export default function Home() {
   return (
     <Page className={styles['p-home']} isHome>
       <aside className={styles['p-home__sidebar']}>
-        <div className={styles['p-home__controls']}>
-          <div className={styles['p-home__search-wrapper']}>
-            <SearchBar />
-            <ProductFilter />
+        <div className={styles['p-home__sidebar__container']}>
+          <div className={styles['p-home__controls']}>
+            <div className={styles['p-home__search-wrapper']}>
+              <SearchBar />
+              <ProductFilter />
+            </div>
           </div>
         </div>
       </aside>
