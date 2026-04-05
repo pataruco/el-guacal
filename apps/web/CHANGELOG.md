@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0](https://github.com/pataruco/el-guacal/compare/web-v1.10.0...web-v1.11.0) (2026-04-05)
+
+
+### Features
+
+* add licence ([d74475d](https://github.com/pataruco/el-guacal/commit/d74475db5c2e42c96c1b121ef20a643f80dd3545))
+* add licence ([#135](https://github.com/pataruco/el-guacal/issues/135)) ([af47e8d](https://github.com/pataruco/el-guacal/commit/af47e8da5d7b119f7037c68a25703f81bb77de05))
+
+
+### Bug Fixes
+
+* set google tag manager in the head ([15666fc](https://github.com/pataruco/el-guacal/commit/15666fc381d64ed344f8b641f5c8f4afbdc14129))
+* set google tag manager in the head ([#133](https://github.com/pataruco/el-guacal/issues/133)) ([a84bc1a](https://github.com/pataruco/el-guacal/commit/a84bc1a7a87f1b08668939561b8bdb86cdda5daa))
+
 ## [1.10.0](https://github.com/pataruco/el-guacal/compare/web-v1.9.0...web-v1.10.0) (2026-04-05)
 
 
