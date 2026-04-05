@@ -16,6 +16,7 @@ import { useAppDispatch } from './store/hooks';
 import { store } from './store/store';
 import { auth } from './utils/firebase';
 import './styles/index.scss';
+import { GoogleTag } from './components/google-tag-manager';
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,6 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang={i18n.language || ENGLISH}>
       <head>
+        <GoogleTag />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/vite.svg" type="image/svg+xml" />
