@@ -15,18 +15,25 @@
   z-index: 250;
 
   &__container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     width: 100%;
     max-width: globals.$content-max-width;
     margin: 0 auto;
   }
 
-  &__text {
-    margin: 0;
-    font-weight: typography.$font-weight-semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  & p {
+    margin-block-end: 0.25rem;
+  }
+
+  & a {
+    text-decoration: underline;
+  }
+
+  &__cc {
+    display: flex;
+    gap: 0.25rem;
+
+    & > * {
+      flex-basis: 1rem;
+    }
   }
 }
