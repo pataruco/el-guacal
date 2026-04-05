@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.1](https://github.com/pataruco/el-guacal/compare/web-v1.11.0...web-v1.11.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* gtm ([b2d6ab5](https://github.com/pataruco/el-guacal/commit/b2d6ab5db4d0d6cb6565180ce077dae62d1cd8d9))
+* gtm ([#136](https://github.com/pataruco/el-guacal/issues/136)) ([d23ea68](https://github.com/pataruco/el-guacal/commit/d23ea68377e95926a7bd933ea56260f02a014222))
+
 ## [1.11.0](https://github.com/pataruco/el-guacal/compare/web-v1.10.0...web-v1.11.0) (2026-04-05)
 
 
