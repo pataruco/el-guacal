@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.10.0](https://github.com/pataruco/el-guacal/compare/web-v1.9.0...web-v1.10.0) (2026-04-05)
+
+
+### Features
+
+* add analytics ([#131](https://github.com/pataruco/el-guacal/issues/131)) ([f61e668](https://github.com/pataruco/el-guacal/commit/f61e66899088ebe1b82f430690718a74d253f2f3))
+* analytics ([16487f2](https://github.com/pataruco/el-guacal/commit/16487f2271c676ba616ac1c465806ef70c656d56))
+* change content ([a6a5148](https://github.com/pataruco/el-guacal/commit/a6a5148e4512e69785ebf7d7a42c3893ad1ef6b5))
+* filter positiioning ([3718ea8](https://github.com/pataruco/el-guacal/commit/3718ea82f3f32a9e7b3aec64e48d4d7a03ff6ca5))
+* filter positiioning ([#132](https://github.com/pataruco/el-guacal/issues/132)) ([e02f0af](https://github.com/pataruco/el-guacal/commit/e02f0aff265e40e5a5af42dc485e3848f90c463b))
+* google tag manager ([1eafeda](https://github.com/pataruco/el-guacal/commit/1eafedab794c760c8906af6de41d8d806e0fa7ba))
+* i18n slug ([#129](https://github.com/pataruco/el-guacal/issues/129)) ([4d5b6fa](https://github.com/pataruco/el-guacal/commit/4d5b6fa8b21b1e7c4e02f8a4796ec7b6cad5a7fa))
+* set path locale ([a770808](https://github.com/pataruco/el-guacal/commit/a7708082de9babb155dc9f96ea9fc799f63a70a5))
+
+
+### Bug Fixes
+
+* styles ([4468165](https://github.com/pataruco/el-guacal/commit/446816559b2afe2e7d12aa508248cb1f70ad81de))
+
 ## [1.9.0](https://github.com/pataruco/el-guacal/compare/web-v1.8.0...web-v1.9.0) (2026-04-02)
 
 
