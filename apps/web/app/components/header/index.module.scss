@@ -5,17 +5,21 @@
 @use '../../styles/tools/tools.mixins' as mixins;
 
 .c-header {
-  position: sticky;
-  top: 0;
   width: 100%;
-  z-index: 500; // Increased to be above everything else
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+
   padding: globals.$spacing-sm globals.$spacing-lg;
   background-color: colors.$color-background;
   border-bottom: globals.$border-utility;
   box-shadow: globals.$shadow-utility;
+
+  &__container {
+    max-width: globals.$content-max-width;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   &__branding {
     display: flex;
@@ -216,7 +220,6 @@
   &__mobile-lang-selector {
     margin-top: globals.$spacing-md;
   }
-
 
   &__auth-link {
     display: none;
