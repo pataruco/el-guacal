@@ -5,10 +5,7 @@
 @use '../../styles/tools/tools.mixins' as mixins;
 
 .c-header {
-  position: sticky;
-  top: 0;
   width: 100%;
-  z-index: 500; // Increased to be above everything else
 
   padding: globals.$spacing-sm globals.$spacing-lg;
   background-color: colors.$color-background;

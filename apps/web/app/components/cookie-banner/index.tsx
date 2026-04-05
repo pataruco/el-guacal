@@ -4,6 +4,7 @@ import {
   LOCAL_STORAGE_KEY_TRACKING_KEY,
   TRACKING_CONSENT,
 } from '@/utils/analytics';
+import styles from './index.module.scss';
 
 const CookieBanner = () => {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -22,30 +23,36 @@ const CookieBanner = () => {
   }
 
   return (
-    <section>
-      <h2>Cookies on El Guacal</h2>
-      <p>
-        We use essential cookies to improve your browsing experience on our
-        website, analyse site traffic, and understand where our audience is
-        coming from. To learn more, please read our privacy policy.
-      </p>
+    <section className={styles['c-cookie-banner']} aria-label="Cookie consent">
+      <div className={styles['c-cookie-banner__container']}>
+        <div className={styles['c-cookie-banner__content']}>
+          <h2 className={styles['c-cookie-banner__title']}>
+            Cookies on El Guacal
+          </h2>
+          <p className={styles['c-cookie-banner__body']}>
+            We use essential cookies to improve your browsing experience on our
+            website, analyse site traffic, and understand where our audience is
+            coming from. To learn more, please read our privacy policy.
+          </p>
+        </div>
 
-      <menu>
-        <button
-          type="button"
-          className="button button--on-light"
-          onClick={() => setConsent(TRACKING_CONSENT.GRANTED)}
-        >
-          Accept
-        </button>
-        <button
-          type="button"
-          className="button button--on-dark"
-          onClick={() => setConsent(TRACKING_CONSENT.DENIED)}
-        >
-          Reject
-        </button>
-      </menu>
+        <menu className={styles['c-cookie-banner__actions']}>
+          <button
+            type="button"
+            className={`${styles['c-cookie-banner__btn']} ${styles['c-cookie-banner__btn--accept']}`}
+            onClick={() => setConsent(TRACKING_CONSENT.GRANTED)}
+          >
+            Accept
+          </button>
+          <button
+            type="button"
+            className={`${styles['c-cookie-banner__btn']} ${styles['c-cookie-banner__btn--reject']}`}
+            onClick={() => setConsent(TRACKING_CONSENT.DENIED)}
+          >
+            Reject
+          </button>
+        </menu>
+      </div>
     </section>
   );
 };

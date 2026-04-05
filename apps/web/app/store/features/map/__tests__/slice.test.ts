@@ -15,6 +15,7 @@ describe('mapSlice', () => {
     center: { lat: 51.51044, lng: -0.11564 },
     selectedProductIds: [],
     status: 'idle',
+    userLocationStatus: 'idle',
     zoom: 10,
   };
 
@@ -144,6 +145,7 @@ describe('mapSlice', () => {
         center: { lat: 40.7128, lng: -74.006 },
         selectedProductIds: ['product-1'],
         status: 'success' as const,
+        userLocationStatus: 'success' as const,
         zoom: 15,
       };
       expect(selectMap({ map: updatedState })).toEqual(updatedState);
@@ -177,10 +179,10 @@ describe('mapSlice', () => {
 
       const state = store.getState().map;
       expect(state.center).toEqual({ lat: 40.7128, lng: -74.006 });
-      expect(state.status).toBe('success');
+      expect(state.userLocationStatus).toBe('success');
     });
 
-    it('should set status to loading while pending', async () => {
+    it('should set userLocationStatus to loading while pending', async () => {
       const getCurrentPositionMock = vi.fn().mockImplementation((success) => {
         success({ coords: { latitude: 0, longitude: 0 } });
       });
@@ -196,9 +198,9 @@ describe('mapSlice', () => {
       });
 
       const promise = store.dispatch(getUserLocation());
-      // After dispatch resolves, status should be success (passed through loading)
+      // After dispatch resolves, userLocationStatus should be success (passed through loading)
       await promise;
-      expect(store.getState().map.status).toBe('success');
+      expect(store.getState().map.userLocationStatus).toBe('success');
     });
 
     it('should handle failed geolocation', async () => {
@@ -223,7 +225,7 @@ describe('mapSlice', () => {
 
       const state = store.getState().map;
       expect(state.center).toEqual(initialState.center);
-      expect(state.status).toBe('failed');
+      expect(state.userLocationStatus).toBe('failed');
     });
   });
 });

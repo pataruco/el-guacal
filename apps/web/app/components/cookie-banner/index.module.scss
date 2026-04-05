@@ -1,0 +1,95 @@
+@use '../../styles/settings/settings.colors' as colors;
+@use '../../styles/settings/settings.globals' as globals;
+@use '../../styles/settings/settings.typography' as typography;
+@use '../../styles/tools/tools.mixins' as mixins;
+
+.c-cookie-banner {
+  width: 100%;
+  padding: 0 globals.$spacing-lg;
+  background-color: colors.$color-background;
+  border-bottom: globals.$border-utility;
+  box-shadow: 0 0.25rem 0 colors.$color-secondary; // 4px orange accent bar below navy border
+
+  &__container {
+    width: 100%;
+    max-width: globals.$content-max-width;
+    margin: 0 auto;
+    padding: globals.$spacing-md 0;
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-md;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: globals.$spacing-xl;
+      padding: globals.$spacing-lg 0;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: globals.$spacing-sm;
+    max-width: 60ch;
+  }
+
+  &__title {
+    font-size: typography.$font-size-medium;
+    font-weight: typography.$font-weight-bold;
+    color: colors.$color-text;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+  }
+
+  &__body {
+    font-size: typography.$font-size-small;
+    color: colors.$color-muted;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: row;
+    gap: globals.$spacing-md;
+    flex-shrink: 0;
+
+    @media (max-width: 767px) {
+      width: 100%;
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: globals.$spacing-sm globals.$spacing-lg;
+    min-height: globals.$target-size-min;
+    border: globals.$border-utility;
+    box-shadow: globals.$shadow-utility;
+    font-size: typography.$font-size-xs;
+    font-weight: typography.$font-weight-black;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+
+    @media (max-width: 767px) {
+      flex: 1;
+    }
+
+    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+
+    &--accept {
+      background-color: colors.$color-primary;
+      color: colors.$color-background;
+    }
+
+    &--reject {
+      background-color: colors.$color-background;
+      color: colors.$color-text;
+    }
+  }
+}
