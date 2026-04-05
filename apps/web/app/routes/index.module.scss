@@ -15,28 +15,31 @@
 
   &__sidebar {
     position: absolute;
-    top: globals.$spacing-md;
     left: globals.$spacing-md;
-    right: globals.$spacing-md;
     z-index: 150;
     pointer-events: none;
     display: flex;
     flex-direction: column;
     gap: globals.$spacing-md;
+    width: 100%;
 
     @media (min-width: 768px) {
       top: 0;
       left: 0;
       right: auto;
-      width: 400px;
-      min-width: 400px;
       height: 100%;
       background: transparent;
       pointer-events: all;
       padding: 0;
       overflow-y: auto;
-      display: flex;
+      padding: 0 1.5rem;
       flex-direction: column;
+    }
+
+    &__container {
+      width: 100%;
+      max-width: globals.$content-max-width;
+      margin: 0 auto;
     }
   }
 
@@ -45,7 +48,9 @@
     flex-direction: column;
     gap: globals.$spacing-sm;
     pointer-events: all;
-    padding: globals.$spacing-md;
+    padding: globals.$spacing-md 0;
+    /* max-width: max-content; */
+    width: 21rem;
 
     @media (min-width: 768px) {
       border: none;
