@@ -1,3 +1,4 @@
+import CookieBanner from '../cookie-banner';
 import Footer from '../footer';
 import Header from '../header';
 
@@ -19,6 +20,7 @@ const Page = ({ children, className, isHome = false }: PageProps) => {
         width: '100vw',
       }}
     >
+      <CookieBanner />
       <Header />
       <main
         id="main-content"
