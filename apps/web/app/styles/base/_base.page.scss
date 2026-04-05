@@ -80,3 +80,9 @@ select:focus-visible,
     top: globals.$spacing-md;
   }
 }
+
+img,
+picture {
+  display: block;
+  max-width: 100%;
+}
