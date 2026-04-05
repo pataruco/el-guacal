@@ -1,34 +1,28 @@
-import { useLocalStorage } from '@/hooks/use-local-storage';
-import { GA_ID, LOCAL_STORAGE_KEY_TRACKING_KEY } from '@/utils/analytics';
+import { GTM_ID } from '@/utils/analytics';
 
 export const GoogleTag = () => {
-  const [consent] = useLocalStorage(LOCAL_STORAGE_KEY_TRACKING_KEY);
-
-  if (!consent) return null;
-
   return (
-    <>
-      <script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-      <script
-        id="google-tag-manager"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: we must provide the script content
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('consent', 'default', {
-              'ad_storage': '${consent}',
-              'ad_user_data': '${consent}',
-              'ad_personalization': '${consent}',
-              'analytics_storage': '${consent}'
-            });
-            gtag('config', '${GA_ID}', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
-    </>
+    <script
+      id="google-tag-manager"
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: GTM bootstrap snippet
+      dangerouslySetInnerHTML={{
+        __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'analytics_storage': 'denied',
+            'wait_for_update': 500
+          });
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','${GTM_ID}');
+        `,
+      }}
+    />
   );
 };
