@@ -7,6 +7,7 @@ import {
 
 export default [
   index('routes/_index.tsx'),
+  route('sitemap.xml', 'routes/sitemap[.]xml.ts'),
   layout('routes/_locale.tsx', [
     route(':locale', 'routes/_locale._index.tsx'),
     route(':locale/about', 'routes/_locale.about.tsx'),
