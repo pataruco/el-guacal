@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../styles/settings/settings.colors' as colors;
 @use '../../styles/settings/settings.globals' as globals;
 @use '../../styles/settings/settings.typography' as typography;
@@ -15,24 +16,21 @@
     max-width: globals.$content-max-width;
     margin: 0 auto;
     padding: globals.$spacing-md 0;
-    display: flex;
-    flex-direction: column;
     gap: globals.$spacing-md;
 
     @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
       gap: globals.$spacing-xl;
       padding: globals.$spacing-lg 0;
     }
   }
 
   &__content {
-    display: flex;
-    flex-direction: column;
-    gap: globals.$spacing-sm;
     max-width: 60ch;
+    margin-block-end: globals.$spacing-md;
+
+    & h2 {
+      margin-block-end: globals.$spacing-sm;
+    }
   }
 
   &__title {
@@ -54,7 +52,8 @@
     display: flex;
     flex-direction: row;
     gap: globals.$spacing-md;
-    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
 
     @media (max-width: 767px) {
       width: 100%;
@@ -85,11 +84,22 @@
     &--accept {
       background-color: colors.$color-primary;
       color: colors.$color-background;
+      order: 1;
+
+      &:hover {
+        background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+      }
     }
 
     &--reject {
       background-color: colors.$color-background;
-      color: colors.$color-text;
+      color: colors.$color-accent;
+      border-color: colors.$color-accent;
+      box-shadow: 0.25rem 0.25rem 0px colors.$color-accent;
+
+      &:hover {
+        background-color: color.adjust(colors.$color-accent, $lightness: 55%);
+      }
     }
   }
 }
