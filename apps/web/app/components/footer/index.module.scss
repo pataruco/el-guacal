@@ -7,12 +7,9 @@
   padding: globals.$spacing-md globals.$spacing-lg;
   background-color: colors.$color-surface;
   border-top: globals.$border-utility;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   font-size: typography.$font-size-xs;
   color: colors.$color-muted;
-  z-index: 250;
+  /* z-index: 250; */
 
   &__container {
     width: 100%;
@@ -28,12 +25,12 @@
     text-decoration: underline;
   }
 
-  &__cc {
+  /* &__cc {
     display: flex;
     gap: 0.25rem;
 
     & > * {
       flex-basis: 1rem;
     }
-  }
+  } */
 }
