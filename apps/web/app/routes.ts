@@ -17,6 +17,7 @@ export default [
     route(':locale/auth', 'routes/_locale.auth.tsx'),
     route(':locale/stores/new', 'routes/_locale.stores.new.tsx'),
     route(':locale/stores/:id/edit', 'routes/_locale.stores.edit.tsx'),
+    route(':locale/privacy-policy', 'routes/_locale.privacy-policy.tsx'),
   ]),
   route('*', 'routes/$.tsx'),
 ] satisfies RouteConfig;
