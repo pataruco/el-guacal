@@ -45,6 +45,7 @@
     "globals": "^16.5.0",
     "jsdom": "^28.1.0",
     "sass": "^1.97.3",
+    "schema-dts": "^2.0.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.0-beta.13",
     "vite-tsconfig-paths": "^6.1.1",

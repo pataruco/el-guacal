@@ -62,6 +62,42 @@
     "productsSelected": "{{count}} products selected",
     "productsSelected_one": "1 product selected"
   },
+  "seo": {
+    "about": {
+      "description": "Learn more about El Guacal and our mission to map local stores and products.",
+      "title": "About - El Guacal"
+    },
+    "auth": {
+      "login": {
+        "description": "Log in to El Guacal to contribute to our community-driven store map.",
+        "title": "Log in - El Guacal"
+      },
+      "signup": {
+        "description": "Join El Guacal to start adding and updating local stores and products.",
+        "title": "Sign up - El Guacal"
+      }
+    },
+    "blog": {
+      "description": "Read the latest updates, stories, and news from the El Guacal team.",
+      "title": "Blog - El Guacal"
+    },
+    "dataset": {
+      "description": "Explore and download the El Guacal open dataset of local stores and products.",
+      "title": "Open Data - El Guacal"
+    },
+    "home": {
+      "description": "Find local stores and products in Venezuela. Community-driven map of bodegas, supermarkets, and more.",
+      "title": "El Guacal - Local Store Finder"
+    },
+    "stores": {
+      "edit": {
+        "title": "Edit Store - El Guacal"
+      },
+      "new": {
+        "title": "Add New Store - El Guacal"
+      }
+    }
+  },
   "store": {
     "address": "Address",
     "close": "Close",

@@ -1,12 +1,24 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { type MetaFunction, useNavigate, useParams } from 'react-router';
 import Page from '@/components/page';
 import StoreForm from '@/components/store/StoreForm';
 import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
+import i18n from '@/i18n/config';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
+import { getSeoMeta } from '@/utils/seo';
+
+export const meta: MetaFunction = ({ params }) => {
+  const { id, locale = 'en-GB' } = params;
+  return getSeoMeta({
+    description: i18n.t('seo.home.description', { lng: locale }),
+    locale,
+    path: `/${locale}/stores/${id}/edit`,
+    title: i18n.t('seo.stores.edit.title', { lng: locale }),
+  });
+};
 
 const EditStorePage = () => {
   const { id, locale } = useParams<{ id: string; locale: string }>();
