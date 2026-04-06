@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.1](https://github.com/pataruco/el-guacal/compare/web-v1.12.0...web-v1.12.1) (2026-04-06)
+
+
+### Bug Fixes
+
+* cookie banner styles ([4497b35](https://github.com/pataruco/el-guacal/commit/4497b3555a05f56cb66bd6dbb26b7663b6d26c31))
+* cookie banner styles ([#140](https://github.com/pataruco/el-guacal/issues/140)) ([3c42618](https://github.com/pataruco/el-guacal/commit/3c42618f13b5e5498c116e516185a2f9a18bff09))
+
 ## [1.12.0](https://github.com/pataruco/el-guacal/compare/web-v1.11.1...web-v1.12.0) (2026-04-05)
 
 
