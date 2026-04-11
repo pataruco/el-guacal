@@ -1,83 +1,116 @@
-@use '../settings/settings.colors' as colors;
-@use '../settings/settings.globals' as globals;
-@use '../settings/settings.typography' as typography;
+// Utility helpers — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Zero SCSS
+// imports.
+//
+// Wrapped in `@layer utilities` so these helpers beat component
+// styles when applied as override classes — that's the whole point
+// of ITCSS utilities. The `tokens.css @layer utilities` rule for
+// `:focus-visible` coexists here; it targets a pseudo-class,
+// helpers target regular class names, so they don't collide.
+//
+// Class names stay as-is (API stability — they're referenced as
+// string literals in tsx files), but their VALUES are translated
+// to the new token palette. A few visible shifts:
+//
+//   · `.u-bg-primary` — was old red-ish, now flag yellow
+//   · `.u-text-accent` — was old red, now --color-danger
+//   · `.u-text-black` — was font-weight 900, now 700 (the new
+//     token scale tops at bold; the "black" name is kept for
+//     class-name stability)
+//   · `.u-radius-standard` — was ~8px, now --radius-md (2px)
 
-.u-margin-b-xs {
-  margin-bottom: globals.$spacing-xs;
-}
+@layer utilities {
+  .u-margin-b-xs {
+    margin-bottom: var(--space-1);
+  }
 
-.u-margin-b-sm {
-  margin-bottom: globals.$spacing-sm;
-}
+  .u-margin-b-sm {
+    margin-bottom: var(--space-2);
+  }
 
-.u-margin-b-md {
-  margin-bottom: globals.$spacing-md;
-}
+  .u-margin-b-md {
+    margin-bottom: var(--space-4);
+  }
 
-.u-margin-b-lg {
-  margin-bottom: globals.$spacing-lg;
-}
+  .u-margin-b-lg {
+    margin-bottom: var(--space-5);
+  }
 
-.u-text-uppercase {
-  text-transform: uppercase;
-}
+  .u-text-uppercase {
+    text-transform: uppercase;
+  }
 
-.u-text-bold {
-  font-weight: typography.$font-weight-bold;
-}
+  .u-text-bold {
+    font-weight: var(--weight-bold);
+  }
 
-.u-text-black {
-  font-weight: typography.$font-weight-black;
-}
+  // Kept the "black" class name for API stability. The VALUE
+  // steps down from 900 to 700 because the new token scale tops at
+  // --weight-bold; no 900 is registered against the Google Fonts
+  // Inter request in root.tsx. If some text truly needs 900, the
+  // fix is to add `--weight-black: 900` to tokens.css and add the
+  // weight to the Inter URL.
+  .u-text-black {
+    font-weight: var(--weight-bold);
+  }
 
-.u-text-center {
-  text-align: center;
-}
+  .u-text-center {
+    text-align: center;
+  }
 
-.u-bg-primary {
-  background-color: colors.$color-primary;
-}
+  .u-bg-primary {
+    background-color: var(--color-primary);
+  }
 
-.u-bg-surface {
-  background-color: colors.$color-surface;
-}
+  .u-bg-surface {
+    background-color: var(--color-surface-sunken);
+  }
 
-.u-text-accent {
-  color: colors.$color-accent;
-}
+  .u-text-accent {
+    color: var(--color-danger);
+  }
 
-.u-text-muted {
-  color: colors.$color-muted;
-}
+  .u-text-muted {
+    color: var(--color-ink-muted);
+  }
 
-.u-text-navy {
-  color: colors.$color-text;
-}
+  // "navy" was the old name for the ink text color. Kept the
+  // class name for API stability; value translates to ink.
+  .u-text-navy {
+    color: var(--color-ink);
+  }
 
-.u-shadow-utility {
-  box-shadow: globals.$shadow-utility;
-}
+  .u-shadow-utility {
+    box-shadow: var(--elevation-1);
+  }
 
-.u-border-utility {
-  border: globals.$border-utility;
-}
+  .u-border-utility {
+    border: var(--border-width-structural) solid var(--color-border-strong);
+  }
 
-.u-radius-standard {
-  border-radius: globals.$radius-standard;
-}
+  // "standard" radius was ~8px in the old system. The new system
+  // shrinks radii to 0–4px for gov.uk sensibility; --radius-md
+  // (2px) is the closest match. Visible shift: corners get
+  // crisper.
+  .u-radius-standard {
+    border-radius: var(--radius-md);
+  }
 
-.u-radius-pill {
-  border-radius: globals.$radius-pill;
-}
+  .u-radius-pill {
+    border-radius: var(--radius-full);
+  }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  // Visually hidden but accessible to screen readers. Standard
+  // WebAIM pattern — no tokens involved, pure layout.
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }

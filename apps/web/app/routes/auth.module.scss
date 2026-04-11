@@ -1,162 +1,275 @@
-@use 'sass:color';
-@use '../styles/settings/settings.colors' as colors;
-@use '../styles/settings/settings.globals' as globals;
-@use '../styles/settings/settings.typography' as typography;
-@use '../styles/tools/tools.mixins' as mixins;
-
-.c-auth {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 4rem); // 64px
-  padding: globals.$spacing-lg;
-  background-color: colors.$color-background;
-
-  &__title {
-    font-size: typography.$font-size-heading-large;
-    font-weight: typography.$font-weight-black;
-    text-transform: uppercase;
-    margin-bottom: globals.$spacing-lg;
-    color: colors.$color-text;
-    letter-spacing: -0.05em;
-  }
-
-  &__form {
-    width: 100%;
-    max-width: 25rem; // 400px
-    background-color: colors.$color-surface;
-    border: globals.$border-utility;
-    padding: globals.$spacing-lg;
-    box-shadow: globals.$shadow-utility;
+// Auth page — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). First route-level
+// file ported (previous eleven ports were per-component modules).
+// Zero SCSS imports.
+//
+// The React component (see `./_locale.auth.tsx`) renders a vertical
+// stack of:
+//
+//   · .c-auth__title         → h1 "Sign in" / "Sign up"
+//   · .c-auth__provider-btn  → Google OAuth secondary button
+//   · .c-auth__divider       → horizontal "or" divider
+//   · .c-auth__form          → the email/password form card
+//     · .c-auth__label       → field labels
+//     · .c-auth__input       → email and password inputs
+//     · .c-auth__submit-btn  → yellow primary submit
+//   · .c-auth__error         → error message
+//   · .c-auth__toggle        → "already have an account?" text
+//     · .c-auth__toggle-btn  → the sign-in/sign-up swap link
+//
+// The provider button, divider, and form card are siblings of the
+// `.c-auth` wrapper flex column, so they all share `max-width: 25rem`
+// to keep vertical alignment.
+//
+// Wrapped in `@layer components` — same architectural reason as
+// every other ported module. See `header/index.module.scss` for
+// the full rationale.
+@layer components {
+  .c-auth {
     display: flex;
     flex-direction: column;
-  }
-
-  &__label {
-    font-size: typography.$font-size-xs;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    margin-bottom: globals.$spacing-xs;
-    color: colors.$color-text;
-  }
-
-  &__input {
-    width: 100%;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    border: globals.$border-utility;
-    background-color: colors.$color-background;
-    margin-bottom: globals.$spacing-md;
-    font-family: inherit;
-
-    &:focus-visible {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: 0.125rem;
-    }
-  }
-
-  &__submit-btn {
-    background-color: colors.$color-primary;
-    color: colors.$color-background;
-    border: globals.$border-utility;
-    padding: globals.$spacing-sm;
-    min-height: globals.$target-size-min;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
-    margin-top: globals.$spacing-sm;
-    cursor: pointer;
-
-    &:hover {
-      background-color: color.adjust(colors.$color-primary, $lightness: 5%);
-    }
-
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-
-    &:disabled {
-      background-color: colors.$color-surface;
-      color: colors.$color-muted;
-      border-color: colors.$color-muted;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-  }
-
-  &__provider-btn {
-    width: 100%;
-    max-width: 25rem; // 400px
-    background-color: colors.$color-background;
-    color: colors.$color-text;
-    border: globals.$border-utility;
-    padding: globals.$spacing-sm;
-    min-height: globals.$target-size-min;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
-    margin-bottom: globals.$spacing-md;
-    display: flex;
     align-items: center;
     justify-content: center;
-    gap: globals.$spacing-sm;
-    cursor: pointer;
+    // 4rem = header height. Kept as a literal because there's no
+    // `--header-height` token in the system and inventing one for a
+    // single use case isn't worth it.
+    min-height: calc(100vh - 4rem);
+    padding: var(--space-5);
+    background-color: var(--color-surface-page);
 
-    &:hover {
-      background-color: colors.$color-surface;
-    }
-
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-  }
-
-  &__divider {
-    width: 100%;
-    max-width: 25rem; // 400px
-    display: flex;
-    align-items: center;
-    margin: globals.$spacing-md 0;
-    color: colors.$color-muted;
-    font-size: typography.$font-size-xs;
-    text-transform: uppercase;
-
-    &::before,
-    &::after {
-      content: '';
-      flex: 1;
-      height: globals.$border-width-utility;
-      background-color: colors.$color-muted;
-    }
-
-    span {
-      padding: 0 globals.$spacing-md;
-    }
-  }
-
-  &__error {
-    color: colors.$color-accent;
-    font-size: typography.$font-size-small;
-    margin-top: globals.$spacing-md;
-    font-weight: typography.$font-weight-semibold;
-  }
-
-  &__toggle {
-    margin-top: globals.$spacing-lg;
-    font-size: typography.$font-size-small;
-    color: colors.$color-muted;
-
-    &-btn {
-      background: none;
-      border: none;
-      color: colors.$color-text;
-      font-weight: typography.$font-weight-bold;
+    // Page heading. Matches the StoreForm h1 treatment: uppercase
+    // ink bold with tight tracking and the largest type scale.
+    // Font-weight steps down from the old `font-weight-black` (900)
+    // to `--weight-bold` (700) — same step-down applied in every
+    // ported heading so we don't register a 900 weight against the
+    // Google Fonts Inter request in root.tsx.
+    &__title {
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
-      padding: 0;
-      margin-left: globals.$spacing-xs;
-      cursor: pointer;
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
+      color: var(--color-ink);
+      margin-bottom: var(--space-5);
+    }
 
-      &:hover {
-        text-decoration: underline;
+    // The email/password form card. Same surface as `.c-form` in
+    // StoreForm.module.scss: white fill, 2px ink border, NO
+    // box-shadow (forms are flat, buttons are elevated). 25rem
+    // (400px) is narrower than the StoreForm's 600px because auth
+    // has fewer fields and the narrower column reads as "compact
+    // sign-in" rather than "data entry".
+    &__form {
+      width: 100%;
+      max-width: 25rem;
+      background-color: var(--color-surface-page);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    // Field labels. Same as StoreForm's form labels — xs uppercase
+    // bold ink. The small gap to the input below is handled via
+    // margin on the input, not flex gap, because the form card
+    // doesn't use a flex gap.
+    &__label {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-ink);
+      margin-bottom: var(--space-1);
+    }
+
+    // Text inputs. Same pattern as StoreForm `&__field input`: 2px
+    // ink border on white, ink text, italic muted placeholder. No
+    // component-level `:focus-visible` override — the universal
+    // ring in @layer utilities handles focus.
+    &__input {
+      width: 100%;
+      padding: var(--space-2) var(--space-3);
+      min-height: var(--target-min);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      background-color: var(--color-surface-page);
+      color: var(--color-ink);
+      font-family: inherit;
+      font-size: var(--text-base);
+      margin-bottom: var(--space-4);
+
+      &::placeholder {
+        color: var(--color-ink-muted);
+        font-style: italic;
+      }
+    }
+
+    // Primary submit button. Yellow + ink border + elevation-1
+    // strip + gov.uk press affordance. Same exact pattern as every
+    // primary button in the system.
+    //
+    // Disabled state follows the delete-dialog / locate-me-button
+    // convention: sunken surface, ink-muted text, keep the 2px ink
+    // border (structural, don't grey it out), strip collapsed,
+    // cursor not-allowed.
+    &__submit-btn {
+      background-color: var(--color-primary);
+      color: var(--color-primary-ink);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      box-shadow: var(--elevation-1);
+      padding: var(--space-2) var(--space-5);
+      min-height: var(--target-min);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-tight);
+      text-transform: uppercase;
+      margin-top: var(--space-2);
+      cursor: pointer;
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard);
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-primary-hover);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(2px);
+        box-shadow: var(--elevation-0);
+      }
+
+      &:disabled {
+        background-color: var(--color-surface-sunken);
+        color: var(--color-ink-muted);
+        box-shadow: var(--elevation-0);
+        cursor: not-allowed;
+      }
+    }
+
+    // Google OAuth provider button. Positioned ABOVE the form card
+    // as a "shortcut" to bypass the email/password flow. Styled as
+    // the secondary pattern (white + 2px ink border + elevation-1
+    // strip + press affordance) — quieter than the yellow primary
+    // because the primary action is still "fill out the form".
+    //
+    // If you want the two buttons equally prominent (both yellow,
+    // à la cookie banner), swap `background-color` and `color` to
+    // match the submit-btn variant. Flagged in the summary.
+    &__provider-btn {
+      width: 100%;
+      max-width: 25rem;
+      background-color: var(--color-surface-page);
+      color: var(--color-ink);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      box-shadow: var(--elevation-1);
+      padding: var(--space-2) var(--space-5);
+      min-height: var(--target-min);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-tight);
+      text-transform: uppercase;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      cursor: pointer;
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard);
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-surface-hover);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(2px);
+        box-shadow: var(--elevation-0);
+      }
+
+      &:disabled {
+        background-color: var(--color-surface-sunken);
+        color: var(--color-ink-muted);
+        box-shadow: var(--elevation-0);
+        cursor: not-allowed;
+      }
+    }
+
+    // "or" divider with horizontal hairlines on either side of the
+    // text. Hairline (1px) instead of structural (2px) because the
+    // divider is a decorative "here's an alternative" separator,
+    // not a structural content boundary. gov.uk uses hairlines for
+    // this exact pattern.
+    //
+    // `--color-border` is the hairline decorative token; it's a
+    // softer oklch 82% gray, distinct from `--color-border-strong`
+    // (ink) used on form fields and buttons.
+    &__divider {
+      width: 100%;
+      max-width: 25rem;
+      display: flex;
+      align-items: center;
+      margin: var(--space-4) 0;
+      color: var(--color-ink-muted);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-wide);
+      text-transform: uppercase;
+
+      &::before,
+      &::after {
+        content: '';
+        flex: 1;
+        height: var(--border-width-hairline);
+        background-color: var(--color-border);
+      }
+
+      span {
+        padding: 0 var(--space-4);
+      }
+    }
+
+    // Error message below the form. Using ink + bold weight, NOT
+    // red — same rationale as StoreForm `&__error`. `--color-danger`
+    // on white is AA but not AAA, violating the ADR's mandate. If
+    // you approve adding `--color-danger-ink` to tokens.css, both
+    // this and the StoreForm equivalent retrofit to red in one
+    // pass.
+    &__error {
+      color: var(--color-ink);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
+      margin-top: var(--space-4);
+    }
+
+    // "Already have an account?" line at the bottom. Muted wrapper
+    // with an ink+bold toggle button inline. The button uses the
+    // same underline-on-hover pattern as every text-link in the
+    // system (c-store__close, c-header__auth-link, c-footer a).
+    &__toggle {
+      margin-top: var(--space-5);
+      font-size: var(--text-sm);
+      color: var(--color-ink-muted);
+
+      &-btn {
+        background: transparent;
+        border: 0;
+        padding: 0;
+        margin-left: var(--space-1);
+        color: var(--color-ink);
+        font-size: inherit;
+        font-weight: var(--weight-bold);
+        letter-spacing: var(--tracking-tight);
+        text-transform: uppercase;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+          text-underline-offset: 0.25rem;
+          text-decoration-thickness: 2px;
+        }
       }
     }
   }

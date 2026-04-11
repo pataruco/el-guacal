@@ -1,100 +1,170 @@
-@use 'sass:color';
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
-@use '../../styles/tools/tools.mixins' as mixins;
+// Delete confirmation dialog — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Third component to
+// be ported after the header and the store card. This file
+// deliberately no longer imports `settings.colors`, `settings.globals`,
+// `settings.typography` or `tools.mixins`.
+//
+// The React component (see `./index.tsx`) uses a native HTMLDialogElement
+// via `dialog.showModal()`, so focus trap, Esc-to-dismiss, centering
+// and inert-ing of the rest of the page all come from the UA — there
+// is nothing in this file faking a modal layer.
 
+// Wrapped in `@layer components` so the universal `:focus-visible`
+// rule in `@layer utilities` (tokens.css) beats the `box-shadow`
+// declarations inside this file. See header/index.module.scss for
+// the full architectural rationale.
+@layer components {
 .c-dialog {
-  padding: globals.$spacing-lg;
-  border: globals.$border-utility;
-  border-radius: globals.$radius-standard;
-  background-color: colors.$color-background;
-  box-shadow: globals.$shadow-utility;
-  max-width: 25rem; // 400px
+  padding: var(--space-5);
+  // Structural ink border + downward strip — same pair as
+  // `c-header__hamburger` and `c-store__btn`. A dialog is a surface
+  // hanging over the page; it needs the same boundary language as
+  // everything else in the system, not a soft shadow.
+  border: var(--border-width-structural) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-page);
+  box-shadow: var(--elevation-1);
+  max-width: 25rem;
   width: 100%;
 
+  // Scrim. The native `::backdrop` pseudo-element is the platform's
+  // modal scrim — we do not build our own overlay div. Fill matches
+  // `c-header__mobile-overlay`: ink token at 50% via color-mix. The
+  // old file had `backdrop-filter: blur(2px)` on top of this; dropped
+  // deliberately because ADR 0014 commits to flat gov.uk sensibility
+  // ("elevation is delivered as flat solid box-shadow strips rather
+  // than soft gaussian blur shadows"). If you want the blur back,
+  // shout and we'll document it as a documented exception.
   &::backdrop {
-    background-color: rgba(10, 25, 49, 0.4);
-    backdrop-filter: blur(2px);
+    background-color: color-mix(in oklch, var(--color-ink) 50%, transparent);
   }
 
   &__title {
-    font-size: typography.$font-size-heading;
-    color: colors.$color-text;
+    font-size: var(--text-2xl);
+    color: var(--color-ink);
     text-transform: uppercase;
-    margin-bottom: globals.$spacing-md;
-    font-weight: typography.$font-weight-bold;
+    margin-bottom: var(--space-4);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
   }
 
   &__warning {
-    color: colors.$color-muted;
-    font-size: typography.$font-size-small;
-    margin-bottom: globals.$spacing-md;
+    color: var(--color-ink-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+    line-height: var(--leading-normal);
   }
 
   &__suggestion {
-    font-size: typography.$font-size-small;
-    margin-bottom: globals.$spacing-sm;
+    font-size: var(--text-sm);
+    color: var(--color-ink);
+    margin-bottom: var(--space-2);
+    line-height: var(--leading-normal);
 
+    // Emphasise the store name the user has to retype. Old design
+    // used `$color-accent` (red) for this emphasis; I'm leaving it as
+    // full ink and letting the `<strong>` weight do the semantic job.
+    // Why: `--color-danger` sits at oklch 40% lightness and hits
+    // ~5.7:1 on white — AA normal but not AAA, and ADR 0014 mandates
+    // AAA for every text pair in the system. Ink stays AAA trivially
+    // (18:1). If you want the red back, we need a new token
+    // (`--color-danger-ink` at ~25% lightness) — flagged for pushback.
     strong {
-      color: colors.$color-accent;
+      color: var(--color-ink);
+      font-weight: var(--weight-bold);
     }
   }
 
+  // Text input. No component-level `:focus-visible` override — the
+  // universal ring in `@layer utilities` (tokens.css) handles focus
+  // for every element in the system. Component-level focus rules are
+  // exactly the anti-pattern the cascade-layer architecture exists to
+  // eliminate.
   &__input {
     width: 100%;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    border: globals.$border-utility;
-    background-color: colors.$color-surface;
+    padding: var(--space-2) var(--space-3);
+    min-height: var(--target-min);
+    border: var(--border-width-structural) solid var(--color-border-strong);
+    background-color: var(--color-surface-page);
+    color: var(--color-ink);
     font-family: inherit;
-    margin-bottom: globals.$spacing-lg;
-    &:focus-visible {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: 0.125rem;
-    }
+    font-size: var(--text-base);
+    margin-bottom: var(--space-5);
   }
 
   &__actions {
     display: flex;
     justify-content: flex-end;
-    gap: globals.$spacing-md;
+    gap: var(--space-4);
   }
 
   &__btn {
-    padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
-    font-weight: typography.$font-weight-bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-5);
+    min-height: var(--target-min);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
     text-transform: uppercase;
-    transition: all 0.1s ease-in-out;
     cursor: pointer;
+    // Explicit list of animated properties — never `all`.
+    // `prefers-reduced-motion` collapses the duration token upstream.
+    transition:
+      transform var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
 
+    // Cancel — text-only dismiss. Same pattern as `c-store__close`
+    // and `c-header__auth-link`. Transparent border so the focus ring
+    // has somewhere to land without shifting the baseline.
     &--cancel {
       background-color: transparent;
-      border: none;
+      color: var(--color-ink);
+      border: var(--border-width-structural) solid transparent;
 
       &:hover {
         text-decoration: underline;
+        text-underline-offset: 0.25rem;
+        text-decoration-thickness: 2px;
       }
     }
 
+    // Confirm delete — the `c-store__btn--danger` pattern, because
+    // the user just came from there. Darkened flag red fill, white
+    // ink, 2px ink border, downward strip, gov.uk press affordance.
     &--delete {
-      background-color: colors.$color-accent;
-      color: colors.$color-background;
-      border: globals.$border-utility;
-      box-shadow: globals.$shadow-utility;
+      background-color: var(--color-danger);
+      color: var(--color-ink-inverse);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      box-shadow: var(--elevation-1);
 
-      &:disabled {
-        background-color: colors.$color-surface;
-        color: colors.$color-muted;
-        border-color: colors.$color-muted;
-        cursor: not-allowed;
-        box-shadow: none;
-        transform: none;
+      &:hover:not(:disabled) {
+        background-color: var(--color-danger-hover);
       }
 
-      &:not(:disabled):active {
-        @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+      &:active:not(:disabled) {
+        transform: translateY(2px);
+        box-shadow: var(--elevation-0);
+      }
+
+      // Disabled state. The button stays in the layout with its
+      // shape intact (2px ink border, strip collapsed, no transform)
+      // because users look at this state to verify they typed the
+      // store name correctly. Fill drops to the sunken surface token
+      // and the label moves to `--color-ink-muted` — 9.6:1 on sunken
+      // is still AAA, just visibly inert. Cursor and pointer-events
+      // communicate unavailability.
+      &:disabled {
+        background-color: var(--color-surface-sunken);
+        color: var(--color-ink-muted);
+        box-shadow: var(--elevation-0);
+        cursor: not-allowed;
       }
     }
   }
+}
 }

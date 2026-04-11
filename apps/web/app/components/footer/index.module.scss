@@ -1,36 +1,58 @@
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
+// Footer — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Fifth component
+// ported. Closes the page-chrome loop: after this file, every piece
+// of non-map chrome (header + footer) lives on the new system and
+// only map-surface components, the cookie banner, the search bar /
+// shared `o-select` object, and `product-filter` are left.
+//
+// The React component (see `./index.tsx`) currently renders a single
+// <nav> with one link to the privacy policy. A larger credit-line
+// footer lives in the same file as commented-out code (your commit
+// 64b21bb) — if it comes back, the `p` and `__cc` rules come back
+// with it. This file deliberately styles only the live markup.
 
+// Wrapped in `@layer components` so the universal `:focus-visible`
+// rule in `@layer utilities` (tokens.css) beats any `box-shadow`
+// declarations inside this file. See header/index.module.scss for
+// the full architectural rationale.
+@layer components {
 .c-footer {
   width: 100%;
-  padding: globals.$spacing-md globals.$spacing-lg;
-  background-color: colors.$color-surface;
-  border-top: globals.$border-utility;
-  font-size: typography.$font-size-xs;
-  color: colors.$color-muted;
-  /* z-index: 250; */
+  padding: var(--space-4) var(--space-5);
+  // Sunken surface is the one "not pure white" token in the scale —
+  // it exists for de-emphasised blocks like this footer. Flag blue
+  // links on sunken still clear AAA (~12:1).
+  background-color: var(--color-surface-sunken);
+  // Mirror of the header's structural border. The page now has a
+  // hard top and a hard bottom edge; that's the gov.uk sensibility.
+  // No upward elevation strip — the footer is in document flow, not
+  // hanging off an edge, so the 2px ink line carries it alone.
+  border-top: var(--border-width-structural) solid var(--color-border-strong);
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
 
   &__container {
     width: 100%;
-    max-width: globals.$content-max-width;
+    max-width: var(--content-max);
     margin: 0 auto;
   }
 
-  & p {
-    margin-block-end: 0.25rem;
-  }
-
-  & a {
+  // Privacy-policy link. `--color-link` is flag blue, matching the
+  // header's active-nav indicator and the universal focus ring —
+  // "link", "current page", and "focused" all read as one coherent
+  // blue system. Underline treatment mirrors the hover style used
+  // on `c-header__auth-link`, `c-store__close` and the dialog's
+  // cancel button, so every underlined interactive in the system
+  // lands at the same offset and thickness.
+  a {
+    color: var(--color-link);
     text-decoration: underline;
-  }
+    text-underline-offset: 0.25rem;
+    text-decoration-thickness: 2px;
 
-  /* &__cc {
-    display: flex;
-    gap: 0.25rem;
-
-    & > * {
-      flex-basis: 1rem;
+    &:hover {
+      color: var(--color-link-hover);
     }
-  } */
+  }
+}
 }

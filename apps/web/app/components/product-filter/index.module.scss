@@ -1,37 +1,74 @@
-@use 'sass:color';
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
-
-.c-product-filter {
-  position: relative;
-  width: 100%;
-  margin-top: globals.$spacing-sm;
-
-  // Override trigger to be full-width
-  &__trigger {
+// Product filter — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Sixth component
+// ported. Zero SCSS imports.
+//
+// The React component (see `./index.tsx`) wraps a Base UI <Popover>
+// around a fieldset of native <label><input type="checkbox"> rows.
+// It composes with the shared `o-select` object (see
+// `apps/web/app/styles/_select.scss`) for the trigger, popup, list
+// items and checkbox. The four BEM classes in this file are the
+// product-filter-specific overrides that layer on top:
+//
+//   · c-product-filter           → wrapper div
+//   · c-product-filter__trigger  → stretches `o-select__trigger` to fill
+//   · c-product-filter__list     → flex-column reset on the fieldset
+//   · c-product-filter__item-label → truncation for long product names
+//   · c-product-filter__empty    → loading / no-results message
+//
+// Wrapped in `@layer components`. The `o-select` object lives in
+// `@layer objects`, which sits below `components` in the layer order
+// declared in tokens.css — so the width override on `__trigger` below
+// wins against `o-select__trigger`'s implicit width without needing
+// any specificity tricks. See `header/index.module.scss` for the
+// full architectural rationale.
+@layer components {
+  .c-product-filter {
+    position: relative;
     width: 100%;
-  }
+    margin-top: var(--space-2);
 
-  &__list {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
-  }
+    // Force the composed `o-select__trigger` to fill its parent. The
+    // base object stays `width: auto` so the header language selector
+    // can sit inline with other header actions; product filter is
+    // full-width because it lives in a fixed-column sidebar.
+    &__trigger {
+      width: 100%;
+    }
 
-  &__item-label {
-    flex-grow: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+    // The fieldset wrapping the checkbox rows. Native <fieldset> has
+    // a default border and padding — both reset here. `display: flex`
+    // + `flex-direction: column` stacks the rows; gaps between rows
+    // come from the `o-select__item`'s own `min-height` and border,
+    // so no additional gap is needed.
+    &__list {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
 
-  &__empty {
-    padding: globals.$spacing-md;
-    text-align: center;
-    font-size: typography.$font-size-small;
-    font-style: italic;
-    color: colors.$color-muted;
+    // Product name text inside a checkbox row. Relies on the parent
+    // `o-select__item` having `display: flex` (set in _select.scss),
+    // so `flex-grow: 1` makes this span take the remaining width
+    // after the checkbox, allowing long names to truncate with
+    // ellipsis rather than wrap or overflow.
+    &__item-label {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    // Loading / no-results state. Ink-muted italic — reads as
+    // "meta text" against the white popup surface. 9.6:1 on white is
+    // AAA even for italic caption-weight UI text.
+    &__empty {
+      padding: var(--space-4);
+      text-align: center;
+      font-size: var(--text-sm);
+      font-style: italic;
+      color: var(--color-ink-muted);
+    }
   }
 }

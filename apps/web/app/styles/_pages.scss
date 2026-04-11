@@ -1,86 +1,136 @@
-@use 'sass:color';
-@use 'settings/settings.colors' as colors;
-@use 'settings/settings.globals' as globals;
-@use 'settings/settings.typography' as typography;
-@use 'tools/tools.mixins' as mixins;
+// Page wrapper styles — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Zero SCSS
+// imports.
+//
+// The `.c-page__*` BEM classes are used by the `Page` component
+// wrapper for generic static pages (privacy policy, about, etc.)
+// that don't have a route-specific SCSS module. Classes like
+// `__title`, `__text`, `__section`, `__list`, `__btn` are the
+// default typography and layout primitives for those pages.
+//
+// Wrapped in `@layer components`. Like every other ported
+// component module, this now composes correctly with
+// `tokens.css @layer utilities` for focus and with
+// `tokens.css @layer reset` for element defaults — and it beats
+// the generic reset button/list defaults without needing
+// specificity gymnastics.
 
-.c-page {
-  padding: globals.$spacing-lg;
-  max-width: 50rem; // 800px
-  margin: 0 auto;
-  width: 100%;
+@layer components {
+  .c-page {
+    padding: var(--space-5);
+    max-width: 50rem;
+    margin: 0 auto;
+    width: 100%;
 
-  &__title {
-    font-size: typography.$font-size-display;
-    color: colors.$color-text;
-    text-transform: uppercase;
-    letter-spacing: -0.05em;
-    margin-bottom: globals.$spacing-lg;
-    border-bottom: globals.$border-utility;
-    padding-bottom: globals.$spacing-sm;
-    font-weight: typography.$font-weight-black;
-  }
-
-  &__text {
-    line-height: 1.6;
-    margin-bottom: globals.$spacing-md;
-    font-size: typography.$font-size-body-lg;
-    color: colors.$color-text;
-  }
-
-  &__section {
-    background-color: colors.$color-surface;
-    border: globals.$border-utility;
-    padding: globals.$spacing-lg;
-    box-shadow: globals.$shadow-utility;
-    margin-bottom: globals.$spacing-lg;
-
-    h2 {
-      font-size: typography.$font-size-heading;
-      color: colors.$color-text;
+    &__title {
+      // Display-size title for static pages. `--text-4xl` is the
+      // biggest type size in the scale (clamp(2rem, 1.5rem +
+      // 2.5vw, 3rem)) — larger than the route h1 (`--text-3xl`)
+      // because static pages are pure reading surface with no
+      // competing navigation.
+      font-size: var(--text-4xl);
+      // Stepped down from font-weight-black (900) to bold (700)
+      // — same step applied to every heading in the migration.
+      font-weight: var(--weight-bold);
+      color: var(--color-ink);
       text-transform: uppercase;
-      margin-bottom: globals.$spacing-md;
-      font-weight: typography.$font-weight-bold;
+      // `--tracking-tight` (-0.015em) replaces the old -0.05em.
+      // Minor visual loosening at this size.
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
+      margin-bottom: var(--space-5);
+      padding-bottom: var(--space-2);
+      border-bottom: var(--border-width-structural) solid
+        var(--color-border-strong);
     }
-  }
 
-  &__list {
-    padding: 0;
-    margin-bottom: globals.$spacing-md;
+    &__text {
+      line-height: var(--leading-relaxed);
+      margin-bottom: var(--space-4);
+      font-size: var(--text-lg);
+      color: var(--color-ink);
+    }
 
-    &-item {
-      margin-bottom: globals.$spacing-sm;
-      padding-left: globals.$spacing-md;
-      position: relative;
+    // A callout section inside a static page. White surface, 2px
+    // ink border, flat — same pattern as `.c-form` (StoreForm).
+    // Sections are content containers, not pressable; no
+    // elevation strip.
+    &__section {
+      background-color: var(--color-surface-page);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
 
-      &::before {
-        content: '—' / '';
-        position: absolute;
-        left: 0;
-        color: colors.$color-primary;
+      h2 {
+        font-size: var(--text-2xl);
+        color: var(--color-ink);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-tight);
+        line-height: var(--leading-tight);
+        margin-bottom: var(--space-4);
+        font-weight: var(--weight-bold);
       }
     }
-  }
 
-  &__btn {
-    display: inline-flex;
-    align-items: center;
-    min-height: globals.$target-size-min;
-    background-color: colors.$color-primary;
-    color: colors.$color-background;
-    border: globals.$border-utility;
-    padding: globals.$spacing-sm globals.$spacing-lg;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
-    text-decoration: none;
-    cursor: pointer;
+    // Em-dash list — the `::before` with content '—' replaces
+    // the default list marker with a typographic dash. The
+    // `content: '—' / ''` syntax with slash pair is the CSS
+    // Level 3 pattern for providing a pronounciation hint to
+    // screen readers (alternative text after the slash).
+    &__list {
+      padding: 0;
+      margin-bottom: var(--space-4);
 
-    &:hover {
-      background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+      &-item {
+        margin-bottom: var(--space-2);
+        padding-left: var(--space-4);
+        position: relative;
+        color: var(--color-ink);
+
+        &::before {
+          content: '—' / '';
+          position: absolute;
+          left: 0;
+          // Dash colour goes to ink (not --color-primary) because
+          // on a white page, yellow bullets would be ~1.8:1
+          // against white and effectively invisible. Ink at 18:1
+          // reads as a proper typographic bullet.
+          color: var(--color-ink);
+        }
+      }
     }
 
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    // Primary button. Same pattern as every other yellow primary
+    // in the system: flag yellow fill + ink text + 2px ink
+    // border + elevation-1 strip + gov.uk press affordance.
+    &__btn {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--target-min);
+      background-color: var(--color-primary);
+      color: var(--color-primary-ink);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      padding: var(--space-2) var(--space-5);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-tight);
+      text-transform: uppercase;
+      box-shadow: var(--elevation-1);
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard);
+
+      &:hover {
+        background-color: var(--color-primary-hover);
+      }
+
+      &:active {
+        transform: translateY(2px);
+        box-shadow: var(--elevation-0);
+      }
+    }
   }
 }

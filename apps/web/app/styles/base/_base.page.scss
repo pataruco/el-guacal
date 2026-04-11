@@ -1,88 +1,128 @@
-@use '../settings/settings.colors' as colors;
-@use '../settings/settings.globals' as globals;
-@use '../settings/settings.typography' as typography;
+// Base layer element defaults — restyled against the design tokens
+// in `apps/web/app/styles/tokens.css` (see ADR 0014). Most of the
+// old file's content was redundant with `tokens.css @layer reset`
+// and `@layer base`, and has been deleted. What remains is the
+// layout-specific flex chain (body + body>main) that tokens.css
+// doesn't know about, the heading typography that extends
+// tokens.css, and the `.skip-link` accessibility component.
+//
+// One deletion in particular is load-bearing: the old file had an
+// UNLAYERED `:focus-visible` rule that was silently overriding the
+// dual-ring universal focus rule in `tokens.css @layer utilities`.
+// Per CSS cascade, unlayered styles beat every named layer — so
+// that rule was winning over the deliberately-architected dual
+// blue+ink ring on every focusable element in the app. Deleting it
+// is how the universal focus ring finally takes effect everywhere.
+// If you need per-element focus customization in the future, add
+// it to @layer components or @layer utilities — NEVER unlayered.
+//
+// Split into two layers:
+//   · @layer base       → element defaults (body layout, headings, picture)
+//   · @layer components → the .skip-link accessibility component
 
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  html,
+  body {
+    // `height: 100%` is the only html/body rule not already handled
+    // by tokens.css. Margin and padding are reset by
+    // `tokens.css @layer reset`; font-family / color / background
+    // are set on `html` in `tokens.css @layer base`; body font-size
+    // and line-height are set in the same place. Don't re-declare
+    // here.
+    height: 100%;
+  }
 
-body {
-  font-family: typography.$font-stack;
-  font-size: typography.$font-size-base;
-  color: colors.$color-text;
-  background-color: colors.$color-background;
-  line-height: 1.5;
-  display: flex;
-  flex-direction: column;
-
-  & > main {
+  body {
+    // Makes body a flex column so the direct <main> child can
+    // flex-grow to fill remaining height. The alternative is
+    // `display: grid; grid-template-rows: auto 1fr auto` which
+    // would be cleaner but requires a header/footer/main layout
+    // that the app doesn't universally follow.
     display: flex;
-    flex: 1;
     flex-direction: column;
-    min-height: 0;
+
+    & > main {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      // `min-height: 0` lets the flex child shrink inside a
+      // scrolling parent — this is the classic fix for "nested
+      // flex containers with overflow: hidden that won't scroll".
+      // Needed because the map surface relies on `height: 100%`
+      // propagating through the flex chain to the map container.
+      min-height: 0;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  // `<picture>` wrapper — tokens.css resets `img` and `svg` but
+  // not `picture`. Keeping this one rule so responsive-image
+  // markup (`<picture><source /><img /></picture>`) doesn't pick
+  // up inline-ish layout defaults.
+  picture {
+    display: block;
+    max-width: 100%;
   }
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: typography.$font-weight-bold;
-  line-height: 1.2;
-}
+@layer components {
+  // "Skip to main content" accessibility link. Hidden off-screen
+  // by default; slides into view on focus. This is the first link
+  // a keyboard user hits on every page — it bypasses the header
+  // navigation for users who always want to skip past it.
+  //
+  // Styled as the primary button pattern: flag yellow fill, ink
+  // text, 2px ink border, uppercase bold. The old file had
+  // `color: $color-background` (white) on `$color-primary` (red-
+  // ish), which worked when the old primary was red. With the new
+  // flag-yellow primary, white-on-yellow is ~1.8:1 — fails every
+  // contrast guideline. The fix is `var(--color-primary-ink)`
+  // (ink) on `var(--color-primary)` (yellow) → ~18:1 AAA.
+  //
+  // z-index 10000 is intentionally outside the `--z-*` token
+  // scale. The skip link semantically needs to sit above
+  // everything in the system — dialogs, tooltips, the whole lot —
+  // because if it's obscured on focus, keyboard users lose the
+  // shortcut. 10000 is a defensive literal and should stay a
+  // literal even after the z-scale sweep.
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--space-4);
+    z-index: 10000;
+    padding: var(--space-2) var(--space-3);
+    min-height: var(--target-min);
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--color-primary);
+    color: var(--color-primary-ink);
+    border: var(--border-width-structural) solid var(--color-border-strong);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: top var(--duration-fast) var(--ease-standard);
 
-h1 {
-  font-size: typography.$font-size-heading-large;
-}
-
-h2 {
-  font-size: typography.$font-size-heading;
-}
-
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible,
-[role='checkbox']:focus-visible,
-[role='tab']:focus-visible,
-[tabindex]:focus-visible {
-  outline: 0.1875rem solid colors.$color-focus;
-  outline-offset: 0.125rem;
-}
-
-.skip-link {
-  position: absolute;
-  top: -100%;
-  left: globals.$spacing-md;
-  z-index: 10000;
-  padding: globals.$spacing-sm globals.$spacing-md;
-  background-color: colors.$color-primary;
-  color: colors.$color-background;
-  font-weight: typography.$font-weight-bold;
-  text-transform: uppercase;
-  border: globals.$border-utility;
-  text-decoration: none;
-
-  &:focus {
-    top: globals.$spacing-md;
+    &:focus {
+      top: var(--space-4);
+    }
   }
-}
-
-img,
-picture {
-  display: block;
-  max-width: 100%;
 }

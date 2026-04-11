@@ -1,38 +1,58 @@
-@use 'sass:color';
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
-@use '../../styles/tools/tools.mixins' as mixins;
+// Store card — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). This file no longer
+// imports `settings.colors`, `settings.globals`, `settings.typography`
+// or `tools.mixins`: every design decision comes from CSS custom
+// properties so the token layer can evolve without touching component
+// SCSS. Second component to be ported after the header — the proof
+// that button variants (primary / secondary / danger) all compose
+// against a single focus ring and a single elevation language.
 
+// Wrapped in `@layer components` so the universal `:focus-visible`
+// rule in `@layer utilities` (tokens.css) beats the `box-shadow`
+// declarations inside this file. See header/index.module.scss for
+// the full architectural rationale.
+@layer components {
 .c-store-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  // FIXME-migration: waiting on map/marker/locate-me to move to the
+  // `--z-*` token scale before this becomes `var(--z-dialog)`. Until
+  // then, the raw literal keeps the store sheet above the
+  // locate-me-button (100) and the map layers.
   z-index: 300;
   width: 100%;
 }
 
 .c-store {
-  background-color: colors.$color-background;
-  border-top: globals.$border-utility;
-  box-shadow: 0 -0.25rem 0 0 colors.$color-text;
-  padding: globals.$spacing-md;
+  background-color: var(--color-surface-page);
+  border-top: var(--border-width-structural) solid var(--color-border-strong);
+  // Upward-facing elevation. `--elevation-1` is defined in tokens.css
+  // as a *downward* 2px ink strip; no upward-facing token exists yet,
+  // and this is the first component in the system that needs one. The
+  // 4px depth matches the header's `box-shadow: -4px 0 0 0 ink` on the
+  // mobile menu (which also hangs off an edge). If a second surface
+  // needs the same affordance, promote this to `--elevation-1-top`.
+  box-shadow: 0 -4px 0 0 var(--color-ink);
+  padding: var(--space-4);
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: globals.$spacing-md;
-  max-height: 50vh; // Prevent it from covering too much of the map
-  overflow-y: auto; // Allow internal scrolling if content is long
+  gap: var(--space-4);
+  // Prevent the sheet from covering too much of the map — the map is
+  // the main event, the card is chrome around it. See ADR 0014.
+  max-height: 50vh;
+  overflow-y: auto;
 
   @media (min-width: 768px) {
-    padding: globals.$spacing-lg;
+    padding: var(--space-5);
     max-height: 40vh;
   }
 
   &__header {
     display: flex;
-    gap: globals.$spacing-md;
+    gap: var(--space-4);
     align-items: flex-start;
     justify-content: space-between;
   }
@@ -41,133 +61,177 @@
     flex: 1;
 
     h2 {
-      font-size: typography.$font-size-heading;
-      font-weight: typography.$font-weight-black;
-      color: colors.$color-text;
+      font-size: var(--text-2xl);
+      // Old design called for `font-weight-black` (900). Token scale
+      // tops out at `--weight-bold` (700); Inter at 700 on ink is
+      // visually heavy enough at this size and keeps us inside the
+      // weights already registered on the Google Fonts request in
+      // root.tsx (no extra bytes). Flagged in migration notes.
+      font-weight: var(--weight-bold);
+      color: var(--color-ink);
       text-transform: uppercase;
-      margin-bottom: globals.$spacing-xs;
-      letter-spacing: -0.025em;
+      margin-bottom: var(--space-1);
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
     }
   }
 
   &__address {
-    font-size: typography.$font-size-small;
-    color: colors.$color-text;
-    font-weight: typography.$font-weight-bold;
-    color: colors.$color-muted;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    // Ink-muted hits ~9.6:1 on white — AAA for normal text — and
+    // visibly de-emphasises the address line against the h2 above.
+    color: var(--color-ink-muted);
   }
 
   &__header-actions {
     display: flex;
     align-items: center;
-    gap: globals.$spacing-sm;
+    gap: var(--space-2);
   }
 
   &__products {
-    border-top: globals.$border-utility;
-    padding-top: globals.$spacing-md;
+    border-top: var(--border-width-hairline) solid var(--color-border);
+    padding-top: var(--space-4);
 
     h3 {
-      font-size: typography.$font-size-small;
-      font-weight: typography.$font-weight-black;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
-      margin-bottom: globals.$spacing-sm;
-      color: colors.$color-text;
-      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+      color: var(--color-ink);
+      // Old design used `letter-spacing: 0.05em` on this heading; the
+      // widest tracking token is `--tracking-wide` (0.02em). Small
+      // visual shift — shout if it's noticeable.
+      letter-spacing: var(--tracking-wide);
     }
   }
 
   &__products-list {
     display: flex;
     flex-wrap: wrap;
-    gap: globals.$spacing-sm;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    gap: var(--space-2);
   }
 
+  // Product tag chip. `--radius-full` is explicitly reserved in
+  // tokens.css for tag chips (see the `Radii` block comment), so the
+  // pill shape survives the migration unchanged.
   &__product {
-    background-color: colors.$color-background;
-    border: globals.$border-utility;
-    border-radius: globals.$radius-pill;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    font-size: typography.$font-size-xs;
-    font-weight: typography.$font-weight-bold;
-    color: colors.$color-text;
+    background-color: var(--color-surface-page);
+    border: var(--border-width-structural) solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    color: var(--color-ink);
     text-transform: uppercase;
-    letter-spacing: 0.025em;
-    min-height: globals.$target-size-min;
+    letter-spacing: var(--tracking-wide);
+    min-height: var(--target-min);
     display: inline-flex;
     align-items: center;
   }
 
+  // Shared button surface — the three variants below differ only in
+  // fill colour and text colour. The 2px ink border, the elevation-1
+  // downward strip and the gov.uk press affordance (`translateY(2px)`
+  // + collapsing strip on `:active`) are identical across all three.
+  // This is the same pattern as `c-header__hamburger`.
   &__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
-    font-weight: typography.$font-weight-black;
-    font-size: typography.$font-size-xs;
+    padding: var(--space-2) var(--space-5);
+    min-height: var(--target-min);
+    font-weight: var(--weight-bold);
+    font-size: var(--text-xs);
     text-transform: uppercase;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
+    letter-spacing: var(--tracking-tight);
+    border: var(--border-width-structural) solid var(--color-border-strong);
+    box-shadow: var(--elevation-1);
     text-align: center;
     cursor: pointer;
-    border: globals.$border-utility;
     text-decoration: none;
+    // Only animate the two properties the press affordance touches.
+    // `all` was the old default and burns CPU on colour interpolation
+    // we don't want. `prefers-reduced-motion` collapses the duration
+    // token to 0ms upstream in tokens.css.
+    transition:
+      transform var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard);
 
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    &:active {
+      transform: translateY(2px);
+      box-shadow: var(--elevation-0);
+    }
 
+    // Primary — flag yellow with ink text. This is the Directions
+    // button, which ADR 0014 names as one of the three canonical
+    // primary actions in the product ("Add a store", "Open",
+    // "Directions"). The 2px ink border is *structurally* required
+    // against the white page: yellow-on-white clocks ~1.8:1 and fails
+    // 1.4.11 as a standalone boundary. See ADR 0014 Consequences.
     &--primary {
-      background-color: colors.$color-primary;
-      color: colors.$color-background;
+      background-color: var(--color-primary);
+      color: var(--color-primary-ink);
 
       &:hover {
-        background-color: color.adjust(colors.$color-primary, $lightness: 5%);
+        background-color: var(--color-primary-hover);
       }
     }
 
+    // Secondary — white with ink text. Same surface + border + strip
+    // as `c-header__hamburger`; reads as "neutral action" next to the
+    // yellow CTA. Hover swaps to the sunken-hover surface from the
+    // token scale.
     &--secondary {
-      background-color: colors.$color-background;
-      color: colors.$color-text;
+      background-color: var(--color-surface-page);
+      color: var(--color-ink);
 
       &:hover {
-        background-color: colors.$color-surface;
+        background-color: var(--color-surface-hover);
       }
     }
 
+    // Danger — darkened flag red. `--color-danger` is defined at
+    // `oklch(40% 0.2 27)` specifically so white ink on the fill hits
+    // WCAG AAA (the raw #CF142B flag red does not). The ink border
+    // stays — it keeps Delete visually consistent with the other two
+    // variants and gives the focus ring a surface to sit against.
     &--danger {
-      background-color: colors.$color-background;
-      color: colors.$color-accent;
-      border-color: colors.$color-accent;
-      box-shadow: 0.25rem 0.25rem 0px colors.$color-accent;
+      background-color: var(--color-danger);
+      color: var(--color-ink-inverse);
 
       &:hover {
-        background-color: color.adjust(colors.$color-accent, $lightness: 55%);
+        background-color: var(--color-danger-hover);
       }
     }
   }
 
+  // Close is a text-only action, no border, no strip — it should read
+  // as "dismiss", not "do". Same pattern as `c-header__auth-link`.
   &__close {
     display: inline-flex;
     align-items: center;
-    padding: globals.$spacing-sm globals.$spacing-lg;
-    min-height: globals.$target-size-min;
+    padding: var(--space-2) var(--space-5);
+    min-height: var(--target-min);
     background-color: transparent;
-    color: colors.$color-text;
-    border: globals.$border-width-utility solid transparent;
-    font-size: typography.$font-size-xs;
-    font-weight: typography.$font-weight-black;
+    color: var(--color-ink);
+    border: var(--border-width-structural) solid transparent;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
     text-transform: uppercase;
+    letter-spacing: var(--tracking-tight);
     cursor: pointer;
     flex-shrink: 0;
-    transition: all 0.1s ease-in-out;
     margin-left: auto;
+    transition: color var(--duration-fast) var(--ease-standard);
 
     &:hover {
       text-decoration: underline;
       text-underline-offset: 0.25rem;
+      text-decoration-thickness: 2px;
     }
   }
+}
 }

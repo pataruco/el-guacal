@@ -1,46 +1,92 @@
-@use 'sass:color';
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
-@use '../../styles/tools/tools.mixins' as mixins;
+// Locate-me button — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Fourth component
+// to be ported after the header, the store card and the delete
+// dialog. Zero SCSS imports.
+//
+// This is the first component in the system that does NOT sit on the
+// white page surface — it floats over the map tiles (OSM / Mapbox),
+// whose background is unpredictable (pale cream land, grey road
+// centrelines, green water). The 2px ink border is load-bearing for
+// WCAG 1.4.11: ink on any plausible map surface still clears 3:1, so
+// the control always has a hard boundary regardless of which tile is
+// rendering underneath. Do NOT soften the border to `--color-border`
+// on this component — it would fail non-text UI contrast on pale
+// tiles.
 
+// Wrapped in `@layer components` so the universal `:focus-visible`
+// rule in `@layer utilities` (tokens.css) beats the `box-shadow`
+// declarations inside this file. See header/index.module.scss for
+// the full architectural rationale.
+@layer components {
 .c-locate-me {
   position: absolute;
-  bottom: globals.$spacing-lg;
-  right: globals.$spacing-lg;
-  z-index: 100;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  // New token introduced in this pass — see the z-index block in
+  // tokens.css. Lowest slot in the scale: above map tiles, below all
+  // page chrome.
+  z-index: var(--z-map-overlay);
+  // 56 × 56 — larger than `--target-min` (44px). Map controls live in
+  // a one-handed, outdoor, mobile context where the 44px AAA target
+  // still feels tight; 56px matches Google Maps and Apple Maps
+  // conventions without warranting a new "--target-map" token.
   width: 3.5rem;
   height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: colors.$color-background;
-  border: globals.$border-utility;
-  box-shadow: globals.$shadow-utility;
+  background-color: var(--color-surface-page);
+  color: var(--color-ink);
+  // Sharp corners — 0 radius reads as "map chrome" (Google / Apple /
+  // OSM all use square floating controls). This is the one place in
+  // the system where `--radius-xs` is the most on-brand choice.
+  border: var(--border-width-structural) solid var(--color-border-strong);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--elevation-1);
   cursor: pointer;
-  transition: all 0.1s ease-in-out;
-  color: colors.$color-text;
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
 
   @media (min-width: 768px) {
-    bottom: globals.$spacing-xl;
-    right: globals.$spacing-xl;
+    bottom: var(--space-6);
+    right: var(--space-6);
   }
 
-  &:hover {
-    background-color: colors.$color-surface;
+  &:hover:not(:disabled) {
+    background-color: var(--color-surface-hover);
   }
 
+  // gov.uk press affordance — strip collapses, button moves 2px down.
+  // Same pattern as `c-header__hamburger`, `c-store__btn`, and the
+  // delete-dialog confirm button. `prefers-reduced-motion` collapses
+  // the duration token upstream.
+  &:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: var(--elevation-0);
+  }
+
+  // Disabled state. Same convention as the delete dialog: keep the
+  // 2px ink border (structural, don't grey it out), drop the fill to
+  // the sunken surface, drop the label (here, the SVG stroke via
+  // `currentColor`) to ink-muted. `cursor: not-allowed` + inert strip
+  // communicate unavailability.
   &:disabled {
-    background-color: colors.$color-surface;
-    color: colors.$color-muted;
-    border-color: colors.$color-muted;
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink-muted);
+    box-shadow: var(--elevation-0);
     cursor: not-allowed;
   }
 
-  @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-
+  // The SVG in index.tsx uses `stroke="currentColor"` on every line
+  // and circle, so icon colour follows the `color` property on the
+  // button — we get the disabled-state colour shift for free without
+  // touching the SVG. Only size needs setting here.
   svg {
     width: 2rem;
     height: 2rem;
   }
+}
 }
