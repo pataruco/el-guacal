@@ -6,13 +6,25 @@ import {
 } from 'firebase/auth';
 import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { type MetaFunction, useNavigate, useParams } from 'react-router';
+import i18n from '@/i18n/config';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
+import { getSeoMeta } from '@/utils/seo';
 import styles from './auth.module.scss';
 
-const googleProvider = new GoogleAuthProvider();
+export const meta: MetaFunction = ({ params }) => {
+  const locale = params.locale || 'en-GB';
+  // Auth page can be both login and signup, but we'll use a generic "Log in" or "Auth" meta
+  // Since the UI toggles, maybe a combined one or just default to login
+  return getSeoMeta({
+    description: i18n.t('seo.auth.login.description', { lng: locale }),
+    locale,
+    path: `/${locale}/auth`,
+    title: i18n.t('seo.auth.login.title', { lng: locale }),
+  });
+};
 
 const AuthPage = () => {
   const { locale } = useParams<{ locale: string }>();
@@ -138,5 +150,7 @@ const AuthPage = () => {
     </div>
   );
 };
+
+const googleProvider = new GoogleAuthProvider();
 
 export default AuthPage;

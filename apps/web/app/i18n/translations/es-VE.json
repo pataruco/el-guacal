@@ -62,6 +62,42 @@
     "productsSelected": "{{count}} productos seleccionados",
     "productsSelected_one": "1 producto seleccionado"
   },
+  "seo": {
+    "about": {
+      "description": "Conoce más sobre El Guacal y nuestra misión de mapear tiendas y productos locales.",
+      "title": "Nosotros - El Guacal"
+    },
+    "auth": {
+      "login": {
+        "description": "Ingresa a El Guacal para contribuir a nuestro mapa de tiendas impulsado por la comunidad.",
+        "title": "Ingresar - El Guacal"
+      },
+      "signup": {
+        "description": "Únete a El Guacal para comenzar a agregar y actualizar tiendas y productos locales.",
+        "title": "Registrarse - El Guacal"
+      }
+    },
+    "blog": {
+      "description": "Lee las últimas actualizaciones, historias y noticias del equipo de El Guacal.",
+      "title": "Blog - El Guacal"
+    },
+    "dataset": {
+      "description": "Explora y descarga el conjunto de datos abierto de El Guacal de tiendas y productos locales.",
+      "title": "Datos Abiertos - El Guacal"
+    },
+    "home": {
+      "description": "Encuentra tiendas y productos locales en Venezuela. Mapa de bodegas, supermercados y más.",
+      "title": "El Guacal - Buscador de Tiendas Locales"
+    },
+    "stores": {
+      "edit": {
+        "title": "Editar Tienda - El Guacal"
+      },
+      "new": {
+        "title": "Agregar Nueva Tienda - El Guacal"
+      }
+    }
+  },
   "store": {
     "address": "Dirección",
     "close": "Cerrar",

@@ -1,8 +1,27 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, type MetaFunction, useParams } from 'react-router';
+import type { BlogPosting, WithContext } from 'schema-dts';
+import JsonLd from '@/components/json-ld';
 import Page from '@/components/page';
 import type { ContentLocale } from '@/i18n';
 import { getBlogPost } from '@/utils/blog';
+import { getSeoMeta } from '@/utils/seo';
+
+export const meta: MetaFunction = ({ params }) => {
+  const { slug, locale = 'en-GB' } = params;
+  if (!slug) return [];
+
+  const post = getBlogPost(slug, (locale as ContentLocale) ?? 'en');
+  if (!post) return [{ title: 'Post Not Found - El Guacal' }];
+
+  return getSeoMeta({
+    description: post.excerpt,
+    locale,
+    path: `/${locale}/blog/${slug}`,
+    title: `${post.title} - El Guacal`,
+    type: 'article',
+  });
+};
 
 export default function BlogPost() {
   const { slug, locale } = useParams<{ slug: string; locale: string }>();
@@ -23,9 +42,23 @@ export default function BlogPost() {
     );
   }
 
-  // Content is self-authored markdown bundled at build time, not user input
+  const jsonLd: WithContext<BlogPosting> = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    author: {
+      '@type': 'Organization',
+      name: 'El Guacal',
+    },
+    datePublished: post.date,
+    description: post.excerpt,
+    headline: post.title,
+    inLanguage: locale,
+    url: `https://elguacal.com/${locale}/blog/${post.slug}`,
+  };
+
   return (
     <Page className="c-page">
+      <JsonLd data={jsonLd} />
       <article className="c-blog__post">
         <header className="c-blog__post-header">
           <Link to={`/${locale}/blog`} className="c-blog__back-link">

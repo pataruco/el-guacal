@@ -22,6 +22,8 @@ export const meta: MetaFunction = () => {
   return [
     { title: 'El Guacal' },
     { content: 'El Guacal - Store Finder', name: 'description' },
+    { charSet: 'utf-8' },
+    { content: 'width=device-width, initial-scale=1', name: 'viewport' },
   ];
 };
 
@@ -30,8 +32,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang={i18n.language || ENGLISH}>
       <head>
         <GoogleTag />
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/vite.svg" type="image/svg+xml" />
         <Meta />
         <Links />
