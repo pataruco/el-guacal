@@ -41,15 +41,15 @@ export const meta: MetaFunction = () => {
 // otherwise discover the origin only after parsing the stylesheet.
 // See ADR 0014.
 export const links: LinksFunction = () => [
-  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  { href: 'https://fonts.googleapis.com', rel: 'preconnect' },
   {
-    rel: 'preconnect',
-    href: 'https://fonts.gstatic.com',
     crossOrigin: 'anonymous',
+    href: 'https://fonts.gstatic.com',
+    rel: 'preconnect',
   },
   {
-    rel: 'stylesheet',
     href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
+    rel: 'stylesheet',
   },
 ];
 
@@ -58,6 +58,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang={i18n.language || ENGLISH}>
       <head>
         <GoogleTag />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/vite.svg" type="image/svg+xml" />
         <Meta />
         <Links />

@@ -64,7 +64,9 @@
     --color-success: oklch(38% 0.13 150); /* gov.uk-esque deep green · AAA */
     --color-success-soft: oklch(96% 0.03 150);
 
-    --color-warning: oklch(42% 0.14 65); /* burnt orange, 7.1:1 w/ white · AAA */
+    --color-warning: oklch(
+      42% 0.14 65
+    ); /* burnt orange, 7.1:1 w/ white · AAA */
     --color-warning-hover: oklch(36% 0.14 65);
     --color-warning-soft: oklch(96% 0.04 75);
 
@@ -86,15 +88,14 @@
        generic sans as a last resort. Identity degrades
        gracefully; nothing ever renders in Times. */
     --font-sans:
-      'Inter', system-ui, -apple-system, 'Segoe UI Variable',
-      'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      "Inter", system-ui, -apple-system, "Segoe UI Variable", "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, sans-serif;
     /* Inter stylistic sets:
        cv11 — single-storey 'a'  (cleaner at small sizes)
        ss01 — open digits        (disambiguated 0/O, 1/l/i)
        ss03 — curved 'l'         (kills 1/l confusion on pins)
        cv05 — single-storey 'g'  (pairs with cv11) */
-    --font-feature-default:
-      'cv11' on, 'ss01' on, 'ss03' on, 'cv05' on;
+    --font-feature-default: "cv11" on, "ss01" on, "ss03" on, "cv05" on;
 
     --text-xs: 0.75rem;
     --text-sm: 0.875rem;
@@ -155,8 +156,7 @@
     --elevation-1: 0 2px 0 0 var(--color-ink);
     --elevation-2: 0 4px 0 0 var(--color-ink);
     --elevation-3:
-      0 4px 0 0 var(--color-ink),
-      0 8px 24px oklch(15% 0.01 260 / 0.12);
+      0 4px 0 0 var(--color-ink), 0 8px 24px oklch(15% 0.01 260 / 0.12);
 
     /* ---------- Motion ---------- */
     --duration-fast: 120ms;
@@ -204,16 +204,16 @@
   }
   html,
   body {
-    margin: 0;
     padding: 0;
+    margin: 0;
   }
   button {
+    padding: 0;
     font: inherit;
     color: inherit;
+    cursor: pointer;
     background: none;
     border: 0;
-    padding: 0;
-    cursor: pointer;
   }
   input,
   select,
@@ -228,8 +228,8 @@
   p,
   ul,
   ol {
-    margin: 0;
     padding: 0;
+    margin: 0;
   }
   ul,
   ol {
@@ -245,11 +245,11 @@
 @layer base {
   html {
     font-family: var(--font-sans);
-    font-feature-settings: var(--font-feature-default);
     font-size: 100%;
+    font-feature-settings: var(--font-feature-default);
+    -webkit-font-smoothing: antialiased;
     color: var(--color-ink);
     background: var(--color-surface-page);
-    -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
   body {
