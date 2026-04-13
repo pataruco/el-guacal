@@ -4,7 +4,7 @@ import { getBlogPostList } from '@/utils/blog';
 const BASE_URL = 'https://elguacal.com';
 
 export async function loader() {
-  const pages = ['', '/about', '/blog', '/dataset'];
+  const pages = ['', '/about', '/blog', '/dataset', '/privacy-policy'];
   const locales = SUPPORTED_LOCALES;
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>';

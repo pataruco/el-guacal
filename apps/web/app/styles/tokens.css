@@ -1,0 +1,302 @@
+/* ============================================================
+   El Guacal · Design tokens · Direction A — Quiet Utility (rev 2)
+   ----------------------------------------------------------------
+   Target: GOV.UK Design System sensibility + Venezuelan flag
+   palette (yellow #FCD116, blue #00247D, red #CF142B) on pure
+   white, keeping WCAG 2.2 AAA for text and UI.
+
+   Key shifts from rev 1:
+   - Surface is pure white
+   - Primary action is flag yellow (louder than the amber in rev 1)
+   - Deep flag blue for focus and links
+   - Flag red (darkened) for danger
+   - Radii shrink to 0–4px, borders step up to 2px solid ink
+   - Buttons get a gov.uk-style 2px ink bottom strip
+   - Ink darkens to ~#0b0c0c
+   - Semantic colours still live in a single chroma family
+   ============================================================ */
+
+@layer reset, tokens, base, objects, components, utilities;
+
+/* ----------------------------------------------------------------
+   Inter — loaded from Google Fonts as a true variable font
+   (`wght@100..900`). The <link> tags live in `root.tsx`'s
+   `links()` export so the font request starts as early as
+   possible in the document lifecycle, with a preconnect to
+   fonts.gstatic.com to eliminate the DNS + TLS handshake from
+   the critical path. `display=swap` lets first paint render on
+   system-ui and swap to Inter when the file arrives, so there
+   is never a FOIT. See ADR 0014.
+   ---------------------------------------------------------------- */
+
+@layer tokens {
+  :root {
+    /* ---------- Colour: surfaces ---------- */
+    --color-surface-page: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-surface-sunken: oklch(96% 0.003 260); /* ~#f3f2f1 */
+    --color-surface-hover: oklch(93% 0.004 260);
+
+    /* ---------- Colour: ink (text) ---------- */
+    --color-ink: oklch(15% 0.01 260); /* ~#0b0c0c · 18:1 on white · AAA */
+    --color-ink-muted: oklch(38% 0.008 260); /* ~9.6:1 on white · AAA */
+    --color-ink-subtle: oklch(50% 0.006 260); /* AA large only — captions */
+    --color-ink-inverse: #ffffff;
+
+    /* ---------- Colour: borders ---------- */
+    --color-border: oklch(82% 0.005 260); /* decorative, 1px */
+    --color-border-strong: var(--color-ink); /* structural, 2px gov.uk */
+
+    /* ---------- Colour: brand primary (flag yellow) ---------- */
+    --color-primary: oklch(89% 0.18 98); /* ~#FCD116 */
+    --color-primary-hover: oklch(83% 0.18 98);
+    --color-primary-active: oklch(76% 0.18 98);
+    --color-primary-ink: var(--color-ink); /* black on yellow — 18:1 AAA */
+
+    /* ---------- Colour: flag blue (focus, links, info) ---------- */
+    --color-accent-blue: oklch(30% 0.15 266); /* ~#00247D · 12.8:1 AAA */
+    --color-accent-blue-hover: oklch(24% 0.14 266);
+    --color-focus: var(--color-accent-blue);
+    --color-link: var(--color-accent-blue);
+    --color-link-hover: var(--color-accent-blue-hover);
+
+    /* ---------- Colour: semantic ---------- */
+    --color-success: oklch(38% 0.13 150); /* gov.uk-esque deep green · AAA */
+    --color-success-soft: oklch(96% 0.03 150);
+
+    --color-warning: oklch(
+      42% 0.14 65
+    ); /* burnt orange, 7.1:1 w/ white · AAA */
+    --color-warning-hover: oklch(36% 0.14 65);
+    --color-warning-soft: oklch(96% 0.04 75);
+
+    --color-danger: oklch(40% 0.2 27); /* flag red, darkened to hit AAA */
+    --color-danger-hover: oklch(34% 0.2 27);
+    --color-danger-soft: oklch(96% 0.03 27);
+
+    --color-info: var(--color-accent-blue);
+    --color-info-soft: oklch(96% 0.02 260);
+
+    /* ---------- Typography ----------
+       'Inter' is served from Google Fonts (see ADR 0014 and
+       root.tsx's `links()` export). Because Google Fonts ships
+       it under the family name `Inter` (not `Inter Variable`),
+       that's the string we register here. While the stylesheet
+       is in flight — or if it fails entirely — first paint runs
+       on the platform variable sans fallback (SF Pro on Apple,
+       Segoe UI Variable on Windows 11, Roboto on Android), then
+       generic sans as a last resort. Identity degrades
+       gracefully; nothing ever renders in Times. */
+    --font-sans:
+      "Inter", system-ui, -apple-system, "Segoe UI Variable", "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Inter stylistic sets:
+       cv11 — single-storey 'a'  (cleaner at small sizes)
+       ss01 — open digits        (disambiguated 0/O, 1/l/i)
+       ss03 — curved 'l'         (kills 1/l confusion on pins)
+       cv05 — single-storey 'g'  (pairs with cv11) */
+    --font-feature-default: "cv11" on, "ss01" on, "ss03" on, "cv05" on;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem);
+    --text-4xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+
+    --leading-tight: 1.15;
+    --leading-snug: 1.3;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.6;
+
+    --tracking-tight: -0.015em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.02em;
+
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    /* ---------- Spacing ---------- */
+    --space-0: 0;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 2.5rem;
+    --space-8: 3rem;
+    --space-9: 4rem;
+    --space-10: 6rem;
+
+    /* ---------- Radii (crisper — gov.uk sensibility) ---------- */
+    --radius-xs: 0;
+    --radius-sm: 0;
+    --radius-md: 2px;
+    --radius-lg: 4px;
+    --radius-full: 9999px; /* only for tag chips */
+
+    /* ---------- Border widths ---------- */
+    --border-width-hairline: 1px;
+    --border-width-structural: 2px;
+
+    /* ---------- Elevation ----------
+       gov.uk rarely uses soft shadows. We use:
+       - elevation-1: a solid 2px ink strip below (button "shadow")
+       - elevation-2: a solid 4px ink strip (prominent press affordance)
+       - elevation-3: a single subtle shadow ONLY for elements that
+         float over the map, where a border alone isn't enough to
+         separate them from the map surface
+    */
+    --elevation-0: none;
+    --elevation-1: 0 2px 0 0 var(--color-ink);
+    --elevation-2: 0 4px 0 0 var(--color-ink);
+    --elevation-3:
+      0 4px 0 0 var(--color-ink), 0 8px 24px oklch(15% 0.01 260 / 0.12);
+
+    /* ---------- Motion ---------- */
+    --duration-fast: 120ms;
+    --duration-base: 200ms;
+    --duration-slow: 320ms;
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emphasised: cubic-bezier(0.3, 0, 0, 1);
+
+    /* ---------- Sizing ---------- */
+    --focus-ring-width: 3px; /* WCAG 2.2 2.4.13 — thick focus */
+    --focus-ring-offset: 0; /* gov.uk-style: no offset, ring flush */
+    --target-min: 2.75rem; /* 44px — WCAG 2.5.5 AAA, 2.5.8 AA */
+    --content-max: 72rem;
+
+    /* ---------- Z-index ----------
+       Semantic roles, not raw numbers. Lowest slot (`--z-map-overlay`)
+       is for floating controls anchored to the map surface — the
+       locate-me button, future zoom controls — which sit above the
+       map tiles but below any page chrome. If a dropdown inside the
+       header opens over a mobile map, the header wins. Native
+       `<dialog>` with `showModal()` bypasses this stack entirely via
+       the UA top layer, so `--z-dialog` is reserved for
+       non-native-dialog modal layers (scrims, sheets). */
+    --z-map-overlay: 5;
+    --z-header: 10;
+    --z-dropdown: 20;
+    --z-dialog: 30;
+    --z-tooltip: 40;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --duration-fast: 0ms;
+      --duration-base: 0ms;
+      --duration-slow: 0ms;
+    }
+  }
+}
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  button {
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: none;
+    border: 0;
+  }
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  ol {
+    padding: 0;
+    margin: 0;
+  }
+  ul,
+  ol {
+    list-style: none;
+  }
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    font-size: 100%;
+    font-feature-settings: var(--font-feature-default);
+    -webkit-font-smoothing: antialiased;
+    color: var(--color-ink);
+    background: var(--color-surface-page);
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+}
+
+@layer utilities {
+  /* WCAG 2.2 2.4.13 Focus Appearance — dual-colour ring.
+     Lives in `utilities` so it beats any component rule that
+     touches `outline` or `box-shadow` at resting state (e.g.
+     `.btn-ghost { box-shadow: none }`). Drawn entirely with
+     ring-shaped box-shadow spreads + a transparent outline for
+     Windows High Contrast Mode — no background swap, so it
+     works on any surface regardless of what the component
+     thinks its background should be.
+
+     Stacking order, element outward:
+        element → flag-blue ring (3px) → ink ring (2px)
+
+     Why blue inner, not yellow: the main CTA is the yellow
+     primary button, and users will focus it constantly. A yellow
+     inner ring would fuse into the yellow button fill and leave
+     only the outer ink ring visible — a weaker, inconsistent
+     focus signal on the single most-used control in the app.
+     Deep flag blue (--color-accent-blue) keeps two distinct
+     rings visible on yellow, white, sunken, and neutral surfaces
+     and falls back to the outer ink ring alone on danger red and
+     warning orange — the occasional dark-filled components where
+     blue would fuse with the element. 1.4.11 is still satisfied
+     everywhere by the ink outer ring against the white page.
+
+     Contrast on every surface in the system:
+        white input     · blue ring 14.20:1 · ink ring 19.67:1
+        sunken button   · blue ring 12.64:1 · ink ring 17.51:1
+        yellow primary  · blue ring 10.26:1 · ink ring 14.22:1
+        danger red      · blue ring  1.39:1 · ink ring 19.67:1
+        warning orange  · blue ring  1.61:1 · ink ring 19.67:1
+        ink inverse     · blue ring  1.39:1 · ink ring 19.67:1
+
+     The ink ring always carries ≥3:1, so 1.4.11 is always met. */
+  :focus-visible {
+    outline: var(--focus-ring-width) solid transparent;
+    outline-offset: 0;
+    box-shadow:
+      0 0 0 var(--focus-ring-width) var(--color-accent-blue),
+      0 0 0 calc(var(--focus-ring-width) + 2px) var(--color-ink);
+  }
+}

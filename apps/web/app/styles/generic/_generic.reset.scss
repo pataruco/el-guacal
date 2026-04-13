@@ -1,47 +1,69 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+// Generic reset — wrapped in `@layer reset` so its rules lose to
+// every named layer above it (base, objects, components, utilities).
+// Before this wrap, the rules in this file were UNLAYERED, which
+// means they beat every `@layer` rule in the rest of the system
+// per CSS cascade semantics. The specific bug this caused: the
+// `button { background: none; border: none; padding: 0 }` rule
+// below was silently stripping the background, border, and padding
+// off every `<button>`-based trigger in the ported components
+// (language selector, product filter, locate-me button, and every
+// store-card and dialog button). See ADR 0014 for the cascade
+// layer architecture.
+//
+// Most rules here are duplicated in `tokens.css @layer reset` —
+// which is also correct, because both files now target the same
+// layer and duplicate declarations are harmless. The only rule
+// NOT in tokens.css's reset is the `a { text-decoration: none;
+// color: inherit }` block at the bottom. Keeping this file as the
+// canonical home for that until the final cleanup sweep merges
+// everything into tokens.css.
 
-html,
-body {
-  height: 100%;
-}
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-body {
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  html,
+  body {
+    height: 100%;
+  }
 
-ul,
-ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin: 0;
-}
+  ul,
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    margin: 0;
+  }
 
-a {
-  text-decoration: none;
-  color: inherit;
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 }

@@ -1,168 +1,225 @@
-@use 'sass:color';
-@use 'settings/settings.colors' as colors;
-@use 'settings/settings.globals' as globals;
-@use 'settings/settings.typography' as typography;
-@use 'tools/tools.mixins' as mixins;
+// Blog styles — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Zero SCSS
+// imports.
+//
+// Covers the blog index list, individual blog post cards, the
+// post header, and the rendered markdown `.c-blog__content` block
+// which is also used by the about page. Two visible surfaces:
+//
+//   · .c-blog__card       → index page, hoverable preview card
+//   · .c-blog__content    → rendered markdown (h2/h3/p/ul/ol/code/
+//                            pre/blockquote/img), shared with about
+//
+// Wrapped in `@layer components`. Same layer architecture as the
+// rest of the migration.
 
-.c-blog {
-  &__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  &__list-item {
-    margin-bottom: globals.$spacing-lg;
-  }
-
-  &__link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-
-  &__card {
-    background-color: colors.$color-surface;
-    border: globals.$border-utility;
-    padding: globals.$spacing-lg;
-    box-shadow: globals.$shadow-utility;
-    transition: all 0.1s ease-in-out;
-
-    &:hover {
-      transform: translate(-0.125rem, -0.125rem);
-      box-shadow: 0.375rem 0.375rem 0px colors.$color-text;
+@layer components {
+  .c-blog {
+    &__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
 
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
-  }
-
-  &__card-title {
-    font-size: typography.$font-size-heading;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    margin: globals.$spacing-sm 0;
-    color: colors.$color-text;
-  }
-
-  &__date {
-    font-size: typography.$font-size-small;
-    color: colors.$color-muted;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: typography.$font-weight-semibold;
-  }
-
-  &__excerpt {
-    font-size: typography.$font-size-body-lg;
-    color: colors.$color-text;
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  &__back-link {
-    display: inline-block;
-    margin-bottom: globals.$spacing-md;
-    color: colors.$color-text;
-    text-decoration: none;
-    font-weight: typography.$font-weight-bold;
-    text-transform: uppercase;
-    font-size: typography.$font-size-small;
-
-    &:hover {
-      text-decoration: underline;
-      text-underline-offset: 0.25rem;
-    }
-  }
-
-  &__post-header {
-    margin-bottom: globals.$spacing-xl;
-    border-bottom: globals.$border-utility;
-    padding-bottom: globals.$spacing-lg;
-  }
-
-  // Styles for rendered markdown HTML content
-  // Used by both blog posts and the about page
-  &__content {
-    line-height: 1.7;
-    font-size: typography.$font-size-body-lg;
-    color: colors.$color-text;
-
-    h2 {
-      font-size: typography.$font-size-heading;
-      font-weight: typography.$font-weight-bold;
-      text-transform: uppercase;
-      margin: globals.$spacing-xl 0 globals.$spacing-md;
-      border-bottom: globals.$border-utility;
-      padding-bottom: globals.$spacing-sm;
+    &__list-item {
+      margin-bottom: var(--space-5);
     }
 
-    h3 {
-      font-size: typography.$font-size-medium;
-      font-weight: typography.$font-weight-bold;
-      text-transform: uppercase;
-      margin: globals.$spacing-lg 0 globals.$spacing-sm;
+    &__link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
 
-    p {
-      margin-bottom: globals.$spacing-md;
-    }
-
-    a {
-      color: colors.$color-text;
-      text-decoration: underline;
-      text-underline-offset: 0.25rem;
-      font-weight: typography.$font-weight-semibold;
+    // Hoverable blog preview card. White surface, 2px ink
+    // border, elevation-1 strip. On hover the card "lifts" by
+    // translating up-and-left and the strip deepens to
+    // elevation-2. This is the one place in the system where a
+    // non-button surface gets an elevation affordance, because
+    // the entire card is a clickable link (the <a class="__link">
+    // wraps the whole thing).
+    &__card {
+      background-color: var(--color-surface-page);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      padding: var(--space-5);
+      box-shadow: var(--elevation-1);
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard);
 
       &:hover {
-        color: colors.$color-secondary;
+        transform: translate(-2px, -2px);
+        box-shadow: var(--elevation-2);
+      }
+
+      &:active {
+        transform: translateY(2px);
+        box-shadow: var(--elevation-0);
       }
     }
 
-    ul,
-    ol {
-      padding-left: globals.$spacing-lg;
-      margin-bottom: globals.$spacing-md;
+    &__card-title {
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
+      margin: var(--space-2) 0;
+      color: var(--color-ink);
     }
 
-    li {
-      margin-bottom: globals.$spacing-sm;
+    &__date {
+      font-size: var(--text-sm);
+      color: var(--color-ink-muted);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      font-weight: var(--weight-semibold);
     }
 
-    blockquote {
-      border-left: 0.25rem solid colors.$color-secondary;
-      padding-left: globals.$spacing-md;
-      margin: globals.$spacing-md 0;
-      color: colors.$color-muted;
-      font-style: italic;
+    &__excerpt {
+      font-size: var(--text-lg);
+      color: var(--color-ink);
+      line-height: var(--leading-relaxed);
+      margin: 0;
     }
 
-    code {
-      background-color: colors.$color-surface;
-      border: globals.$border-utility;
-      padding: 0.125rem globals.$spacing-xs;
-      font-size: typography.$font-size-small;
+    // "← Back to all posts" link. Text-button pattern — uppercase
+    // bold ink with underline on hover. Same hover treatment as
+    // `c-store__close` and the footer's privacy-policy link.
+    &__back-link {
+      display: inline-block;
+      margin-bottom: var(--space-4);
+      color: var(--color-ink);
+      text-decoration: none;
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      font-size: var(--text-sm);
+      letter-spacing: var(--tracking-tight);
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.25rem;
+        text-decoration-thickness: 2px;
+      }
     }
 
-    pre {
-      background-color: colors.$color-surface;
-      border: globals.$border-utility;
-      padding: globals.$spacing-md;
-      overflow-x: auto;
-      margin-bottom: globals.$spacing-md;
-      box-shadow: globals.$shadow-utility;
+    &__post-header {
+      margin-bottom: var(--space-6);
+      border-bottom: var(--border-width-structural) solid
+        var(--color-border-strong);
+      padding-bottom: var(--space-5);
+    }
 
+    // Rendered markdown HTML content. Shared between blog posts
+    // and the about page. Tags below are element selectors
+    // scoped to `.c-blog__content` so they only target rendered
+    // markdown, not arbitrary <h2>/<p>/<a> elsewhere in the app.
+    &__content {
+      line-height: var(--leading-relaxed);
+      font-size: var(--text-lg);
+      color: var(--color-ink);
+
+      h2 {
+        font-size: var(--text-2xl);
+        font-weight: var(--weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-tight);
+        line-height: var(--leading-tight);
+        margin: var(--space-6) 0 var(--space-4);
+        border-bottom: var(--border-width-structural) solid
+          var(--color-border-strong);
+        padding-bottom: var(--space-2);
+      }
+
+      h3 {
+        font-size: var(--text-xl);
+        font-weight: var(--weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-tight);
+        line-height: var(--leading-tight);
+        margin: var(--space-5) 0 var(--space-2);
+      }
+
+      p {
+        margin-bottom: var(--space-4);
+      }
+
+      // Inline links in prose. Flag blue + underline — matches
+      // the footer's privacy link and the header's current-page
+      // indicator, keeping "blue = link" consistent across every
+      // surface in the system.
+      a {
+        color: var(--color-link);
+        text-decoration: underline;
+        text-underline-offset: 0.25rem;
+        font-weight: var(--weight-semibold);
+
+        &:hover {
+          color: var(--color-link-hover);
+        }
+      }
+
+      ul,
+      ol {
+        padding-left: var(--space-5);
+        margin-bottom: var(--space-4);
+      }
+
+      li {
+        margin-bottom: var(--space-2);
+      }
+
+      // Blockquote — left ink rule (matches the 2px structural
+      // border of the rest of the system), muted italic text.
+      // Old design used `$color-secondary` (orange) for the rule;
+      // orange isn't in the new palette, so ink is the closest
+      // equivalent. The visual weight reads as "editor's pull
+      // quote" rather than the old orange decorative accent.
+      blockquote {
+        border-left: 0.25rem solid var(--color-ink);
+        padding-left: var(--space-4);
+        margin: var(--space-4) 0;
+        color: var(--color-ink-muted);
+        font-style: italic;
+      }
+
+      // Inline code. Sunken surface with a hairline border —
+      // distinct from the 2px structural border used on form
+      // fields so inline code doesn't read as "input".
       code {
-        border: none;
-        padding: 0;
-        background: none;
+        background-color: var(--color-surface-sunken);
+        border: var(--border-width-hairline) solid var(--color-border);
+        padding: 0.125rem var(--space-1);
+        font-size: var(--text-sm);
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
+          monospace;
       }
-    }
 
-    img {
-      max-width: 100%;
-      height: auto;
-      border: globals.$border-utility;
-      box-shadow: globals.$shadow-utility;
+      // Code block. Same sunken surface + hairline border as
+      // inline code, plus elevation-1 strip. Code blocks are the
+      // one place where elevation on a non-button surface is
+      // warranted — they represent "copy me" content.
+      pre {
+        background-color: var(--color-surface-sunken);
+        border: var(--border-width-hairline) solid var(--color-border);
+        padding: var(--space-4);
+        overflow-x: auto;
+        margin-bottom: var(--space-4);
+        box-shadow: var(--elevation-1);
+
+        code {
+          border: 0;
+          padding: 0;
+          background: transparent;
+        }
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        border: var(--border-width-structural) solid var(--color-border-strong);
+        box-shadow: var(--elevation-1);
+      }
     }
   }
 }

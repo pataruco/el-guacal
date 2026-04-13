@@ -1,35 +1,83 @@
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-
-.c-map {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  position: relative;
-}
-
-.c-map--loading {
-  flex: 1;
-  width: 100%;
-  min-height: 18.75rem; // 300px
-  background-color: colors.$color-surface;
-  background-image: linear-gradient(
-    110deg,
-    rgba(10, 25, 49, 0.05) 8%,
-    rgba(10, 25, 49, 0.1) 18%,
-    rgba(10, 25, 49, 0.05) 33%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
+// Map — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Ninth component
+// ported. Zero SCSS imports.
+//
+// The React component (see `./index.tsx`) toggles between two
+// top-level classes based on whether the stores-near query is
+// loading:
+//
+//   · .c-map            → the live Google Maps container
+//   · .c-map--loading   → a shimmer skeleton placeholder
+//
+// Neither is a BEM modifier of the other (the tsx uses them as a
+// ternary, not as a composed class set), which is why they're
+// declared as two sibling top-level rules here rather than
+// `.c-map { &--loading { ... } }`.
+//
+// Keyframes live OUTSIDE the `@layer components` wrapper because
+// keyframe names resolve globally in CSS regardless of layer
+// scoping, and keeping them at file top level makes the global
+// scoping obvious.
 
 @keyframes shimmer {
   0% {
     background-position: 200% 0;
   }
-
   100% {
     background-position: -200% 0;
+  }
+}
+
+@layer components {
+  .c-map {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+  }
+
+  // Shimmer skeleton placeholder. Appears briefly while
+  // `useGetStoresNearQuery` is fetching the initial store list on
+  // first paint. The animation conveys "data is arriving" rather
+  // than decoration; ADR 0014's flat-elevation stance doesn't apply
+  // to loading states.
+  //
+  // The shimmer gradient now uses `color-mix(in oklch, var(--color-ink) N%, transparent)`
+  // — same formula as `c-header__mobile-overlay`. One scrim pattern,
+  // three surfaces in the system now (mobile menu overlay, dialog
+  // backdrop, map loading shimmer).
+  //
+  // `min-height: 18.75rem` (300px) stays as a literal — no
+  // corresponding token exists, and adding one for a single use
+  // case would be premature.
+  .c-map--loading {
+    flex: 1;
+    width: 100%;
+    min-height: 18.75rem;
+    background-color: var(--color-surface-sunken);
+    background-image: linear-gradient(
+      110deg,
+      color-mix(in oklch, var(--color-ink) 5%, transparent) 8%,
+      color-mix(in oklch, var(--color-ink) 10%, transparent) 18%,
+      color-mix(in oklch, var(--color-ink) 5%, transparent) 33%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  // `prefers-reduced-motion` handling. The token-based duration
+  // collapse in tokens.css only zeros out `--duration-*` values,
+  // which only affects `transition: ... var(--duration-fast)`
+  // patterns — it does NOT stop inlined `animation` durations. The
+  // old file animated indefinitely regardless of OS preference;
+  // this override disables the shimmer entirely for users who've
+  // asked the system to reduce motion, leaving them with the flat
+  // sunken surface as a static "loading" indicator.
+  @media (prefers-reduced-motion: reduce) {
+    .c-map--loading {
+      animation: none;
+      background-image: none;
+    }
   }
 }

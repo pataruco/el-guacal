@@ -1,19 +1,28 @@
-@use 'sass:color';
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
-@use '../../styles/tools/tools.mixins' as mixins;
+// Header — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). This file deliberately
+// no longer imports `settings.colors`, `settings.globals`,
+// `settings.typography` or `tools.mixins`: every design decision now
+// comes from CSS custom properties so the token layer can evolve
+// without touching component SCSS.
 
+// Wrapped in `@layer components` so the universal `:focus-visible`
+// rule in `@layer utilities` (tokens.css) can correctly beat any
+// `box-shadow` declaration inside this file on focus. Unlayered rules
+// otherwise win against every named layer, which silently disables
+// the dual-ring focus indicator.
+@layer components {
 .c-header {
   width: 100%;
-
-  padding: globals.$spacing-sm globals.$spacing-lg;
-  background-color: colors.$color-background;
-  border-bottom: globals.$border-utility;
-  box-shadow: globals.$shadow-utility;
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-surface-page);
+  border-bottom: var(--border-width-structural) solid var(--color-border-strong);
+  // gov.uk-style flat ink strip instead of a soft drop shadow — the
+  // header hangs on the edge of the page and needs a hard boundary,
+  // not a fade.
+  box-shadow: var(--elevation-1);
 
   &__container {
-    max-width: globals.$content-max-width;
+    max-width: var(--content-max);
     margin: 0 auto;
     width: 100%;
     display: flex;
@@ -24,26 +33,27 @@
   &__branding {
     display: flex;
     align-items: center;
-    gap: globals.$spacing-lg;
+    gap: var(--space-5);
   }
 
   &__logo {
     text-decoration: none;
-    color: colors.$color-text;
+    color: var(--color-ink);
 
     h1 {
-      font-size: typography.$font-size-heading;
-      font-weight: typography.$font-weight-black;
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
       color: inherit;
       font-style: italic;
       text-transform: uppercase;
-      letter-spacing: -0.025em;
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
     }
   }
 
   &__nav {
     display: none;
-    gap: globals.$spacing-md;
+    gap: var(--space-4);
     align-items: center;
 
     @media (min-width: 768px) {
@@ -52,7 +62,7 @@
 
     &-list {
       display: flex;
-      gap: globals.$spacing-md;
+      gap: var(--space-4);
     }
 
     &-item {
@@ -60,32 +70,41 @@
     }
 
     &-link {
-      font-weight: typography.$font-weight-bold;
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
-      letter-spacing: -0.025em;
-      padding: globals.$spacing-sm;
-      min-height: globals.$target-size-min;
+      letter-spacing: var(--tracking-tight);
+      padding: var(--space-2) var(--space-3);
+      min-height: var(--target-min);
       display: inline-flex;
       align-items: center;
-      transition: transform 0.1s ease-in-out;
       background: transparent;
-      border: none;
-      font-size: typography.$font-size-small;
+      // Reserve 4px of transparent border on the base state so the
+      // active indicator (`--active` below) doesn't shift the baseline
+      // when you navigate between tabs. gov.uk does this on the main
+      // navigation — the current-page underline is a 4px solid blue
+      // strip against a 4px transparent placeholder on every other
+      // link in the row.
+      border: 0;
+      border-bottom: 4px solid transparent;
+      font-size: var(--text-sm);
       cursor: pointer;
-      color: colors.$color-text;
+      color: var(--color-ink);
       text-decoration: none;
+      transition: background-color var(--duration-fast) var(--ease-standard);
 
       &:hover {
-        background-color: colors.$color-surface;
+        background-color: var(--color-surface-hover);
       }
 
-      @include mixins.mechanical-press(0px, 0.1875rem);
-
+      // Current-page indicator. Deep flag blue, not yellow: yellow on
+      // white clocks ~1.8:1 and fails WCAG 2.2 1.4.11 (3:1 for
+      // non-text UI) as a standalone signal, whereas blue hits
+      // ~10.5:1. It also matches the focus-ring token, so "current
+      // page" and "focused/interactive" read as one coherent visual
+      // system and the yellow stays reserved for the primary action
+      // on the page. See ADR 0014.
       &--active {
-        border-bottom: globals.$border-utility;
-        border-color: colors.$color-secondary;
-        border-bottom-width: 0.1875rem;
-        font-weight: typography.$font-weight-black;
+        border-bottom-color: var(--color-accent-blue);
       }
     }
   }
@@ -93,23 +112,32 @@
   &__hamburger {
     display: inline-flex;
     align-items: center;
-    background: transparent;
-    border: globals.$border-utility;
-    box-shadow: globals.$shadow-utility;
+    background: var(--color-surface-page);
+    border: var(--border-width-structural) solid var(--color-border-strong);
+    box-shadow: var(--elevation-1);
     cursor: pointer;
-    padding: globals.$spacing-sm globals.$spacing-md;
-    min-height: globals.$target-size-min;
-    font-size: typography.$font-size-small;
-    font-weight: typography.$font-weight-black;
+    padding: var(--space-2) var(--space-3);
+    min-height: var(--target-min);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
     text-transform: uppercase;
-    letter-spacing: -0.025em;
-    color: colors.$color-text;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-ink);
+    transition:
+      transform var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard);
 
     @media (min-width: 768px) {
       display: none;
     }
 
-    @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+    // gov.uk button affordance — on press the 2px ink strip collapses
+    // and the button translates 2px downward. `prefers-reduced-motion`
+    // collapses the duration token to 0ms upstream.
+    &:active {
+      transform: translateY(2px);
+      box-shadow: var(--elevation-0);
+    }
   }
 
   &__mobile-overlay {
@@ -118,10 +146,13 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 66, 0.5);
-    z-index: 600; // Above header
+    // Scrim sits behind the mobile menu. Using the ink token at 50%
+    // keeps it aligned with the rest of the palette rather than
+    // reintroducing the old navy RGB literal.
+    background: color-mix(in oklch, var(--color-ink) 50%, transparent);
+    z-index: var(--z-dialog);
     display: none;
-    border: none;
+    border: 0;
     padding: 0;
     cursor: pointer;
 
@@ -137,15 +168,15 @@
     width: 80%;
     max-width: 300px;
     height: 100vh;
-    background: colors.$color-background;
-    z-index: 700; // Above overlay
+    background: var(--color-surface-page);
+    z-index: calc(var(--z-dialog) + 1);
     display: flex;
     flex-direction: column;
-    padding: globals.$spacing-lg;
-    border-left: globals.$border-utility;
-    box-shadow: -0.25rem 0 0 colors.$color-text;
+    padding: var(--space-5);
+    border-left: var(--border-width-structural) solid var(--color-border-strong);
+    box-shadow: -4px 0 0 0 var(--color-ink);
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform var(--duration-slow) var(--ease-emphasised);
 
     &--open {
       transform: translateX(0);
@@ -154,51 +185,58 @@
     &-header {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: globals.$spacing-lg;
+      margin-bottom: var(--space-5);
     }
 
     &-close {
-      background: transparent;
-      border: globals.$border-utility;
-      box-shadow: globals.$shadow-utility;
-      padding: globals.$spacing-sm globals.$spacing-md;
-      min-height: globals.$target-size-min;
-      font-size: typography.$font-size-small;
-      font-weight: typography.$font-weight-black;
+      background: var(--color-surface-page);
+      border: var(--border-width-structural) solid var(--color-border-strong);
+      box-shadow: var(--elevation-1);
+      padding: var(--space-2) var(--space-3);
+      min-height: var(--target-min);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
       cursor: pointer;
-      color: colors.$color-text;
+      color: var(--color-ink);
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard);
 
-      @include mixins.mechanical-press(globals.$shadow-active, 0.1875rem);
+      &:active {
+        transform: translateY(2px);
+        box-shadow: var(--elevation-0);
+      }
     }
 
     &-divider {
-      border: none;
-      border-top: globals.$border-utility;
-      margin: globals.$spacing-lg 0;
+      border: 0;
+      border-top: var(--border-width-structural) solid
+        var(--color-border-strong);
+      margin: var(--space-5) 0;
     }
   }
 
   &__mobile-nav {
     display: flex;
     flex-direction: column;
-    gap: globals.$spacing-md;
+    gap: var(--space-4);
 
     &-link {
-      font-size: typography.$font-size-medium;
-      font-weight: typography.$font-weight-black;
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
       text-decoration: none;
-      color: colors.$color-text;
-      padding: globals.$spacing-sm 0;
-      min-height: globals.$target-size-min;
+      color: var(--color-ink);
+      padding: var(--space-2) 0;
+      min-height: var(--target-min);
       text-align: left;
       background: transparent;
-      border: none;
+      border: 0;
       cursor: pointer;
 
       &:hover {
-        color: colors.$color-primary;
+        color: var(--color-link);
       }
     }
   }
@@ -206,7 +244,7 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: globals.$spacing-sm;
+    gap: var(--space-2);
   }
 
   &__lang-selector {
@@ -218,7 +256,7 @@
   }
 
   &__mobile-lang-selector {
-    margin-top: globals.$spacing-md;
+    margin-top: var(--space-4);
   }
 
   &__auth-link {
@@ -228,20 +266,21 @@
       display: inline-flex;
       align-items: center;
       background-color: transparent;
-      color: colors.$color-text;
-      border: globals.$border-width-utility solid transparent;
-      padding: globals.$spacing-sm globals.$spacing-md;
-      min-height: globals.$target-size-min;
-      font-size: typography.$font-size-small;
-      font-weight: typography.$font-weight-black;
+      color: var(--color-ink);
+      border: var(--border-width-structural) solid transparent;
+      padding: var(--space-2) var(--space-3);
+      min-height: var(--target-min);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
-      letter-spacing: -0.025em;
-      transition: all 0.1s ease-in-out;
+      letter-spacing: var(--tracking-tight);
+      transition: color var(--duration-fast) var(--ease-standard);
       text-decoration: none;
 
       &:hover {
         text-decoration: underline;
         text-underline-offset: 0.25rem;
+        text-decoration-thickness: 2px;
       }
     }
   }
@@ -253,20 +292,22 @@
       display: flex;
       align-items: center;
       background-color: transparent;
-      color: colors.$color-text;
-      border: globals.$border-width-utility solid transparent;
-      padding: globals.$spacing-sm globals.$spacing-md;
-      min-height: globals.$target-size-min;
-      font-size: typography.$font-size-small;
-      font-weight: typography.$font-weight-black;
+      color: var(--color-ink);
+      border: var(--border-width-structural) solid transparent;
+      padding: var(--space-2) var(--space-3);
+      min-height: var(--target-min);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
       text-transform: uppercase;
-      letter-spacing: -0.025em;
-      transition: all 0.1s ease-in-out;
+      letter-spacing: var(--tracking-tight);
+      transition: color var(--duration-fast) var(--ease-standard);
 
       &:hover {
         text-decoration: underline;
         text-underline-offset: 0.25rem;
+        text-decoration-thickness: 2px;
       }
     }
   }
+}
 }

@@ -1,23 +1,27 @@
-/* ITCSS Layer: Settings */
-@use 'settings/settings.colors' as colors;
-@use 'settings/settings.typography' as typography;
-@use 'settings/settings.globals' as globals;
-
-/* ITCSS Layer: Tools */
-@use 'tools/tools.mixins' as mixins;
+// ITCSS-structured SCSS entry point. The old Settings/Tools layers
+// have been deleted — every design decision now lives as a CSS
+// custom property in `tokens.css`, which is loaded ahead of this
+// file from `root.tsx` via a direct `import './styles/tokens.css'`.
+// See ADR 0014.
+//
+// Cascade layer ordering is declared in tokens.css:
+//   @layer reset, tokens, base, objects, components, utilities;
+//
+// Each partial below wraps its rules in the appropriate `@layer`
+// block — see each file for the specific layer it targets.
 
 /* ITCSS Layer: Generic */
-@use 'generic/generic.reset' as reset;
+@use 'generic/generic.reset';
 
 /* ITCSS Layer: Base */
-@use 'base/base.page' as page;
+@use 'base/base.page';
 
 /* ITCSS Layer: Objects (Reusable patterns) */
-@use 'select' as select;
+@use 'select';
 
 /* ITCSS Layer: Pages (Global page styles) */
-@use 'pages' as pages;
-@use 'blog' as blog;
+@use 'pages';
+@use 'blog';
 
 /* ITCSS Layer: Utilities */
-@use 'utilities/utilities.helpers' as helpers;
+@use 'utilities/utilities.helpers';

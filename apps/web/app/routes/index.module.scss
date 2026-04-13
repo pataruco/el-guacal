@@ -1,75 +1,111 @@
-@use '../styles/settings/settings.colors' as colors;
-@use '../styles/settings/settings.globals' as globals;
-
-.p-home {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
-
-  &__sidebar {
-    position: absolute;
-    left: globals.$spacing-md;
-    z-index: 150;
-    pointer-events: none;
+// Home route — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Second route-level
+// file ported after `auth.module.scss`. Zero SCSS imports.
+//
+// The React component (see `./_locale._index.tsx`) renders:
+//
+//   .p-home (Page wrapper, flex column on mobile / row on desktop)
+//     .p-home__sidebar (absolute overlay above the map)
+//       .p-home__sidebar__container (max-width column inside sidebar)
+//         .p-home__controls (the actual fixed-width control column)
+//           .p-home__search-wrapper (SearchBar + ProductFilter stack)
+//     .p-home__map-container (the GoogleMap component mount point)
+//
+// The sidebar is `position: absolute; width: 100%; height: 100%`,
+// which means it visually covers the entire page area on top of the
+// map. `pointer-events: none` on the sidebar is load-bearing — it
+// makes the sidebar click-through so map/marker clicks reach Google
+// Maps underneath. The `.p-home__controls` child explicitly sets
+// `pointer-events: all` to remain interactive. This is the single
+// most important fact in this file; deleting the pointer-events
+// line breaks every marker click on the map (which is how the bug
+// ~4 hours ago manifested — it was undone accidentally at some
+// earlier date).
+//
+// The BEM class `p-home__sidebar__container` has a double `__`
+// separator which is a BEM naming anti-pattern — nested elements
+// should collapse to one underscore sequence. Preserving exactly as
+// the tsx consumes it; renaming requires a tsx edit out of scope
+// for this port.
+//
+// Wrapped in `@layer components` for consistency with the auth
+// route port. The tokens.css layer scale has no `pages` slot; if we
+// ever want one, the wrap is trivially swappable.
+@layer components {
+  .p-home {
     display: flex;
     flex-direction: column;
-    gap: globals.$spacing-md;
-    width: 100%;
-
-    @media (min-width: 768px) {
-      top: 0;
-      left: 0;
-      right: auto;
-      height: 100%;
-      background: transparent;
-      pointer-events: all;
-      padding: 0;
-      overflow-y: auto;
-      padding: 0 1.5rem;
-      flex-direction: column;
-    }
-
-    &__container {
-      width: 100%;
-      max-width: globals.$content-max-width;
-      margin: 0 auto;
-    }
-  }
-
-  &__controls {
-    display: flex;
-    flex-direction: column;
-    gap: globals.$spacing-sm;
-    pointer-events: all;
-    padding: globals.$spacing-md 0;
-    /* max-width: max-content; */
-    width: 21rem;
-
-    @media (min-width: 768px) {
-      border: none;
-      box-shadow: none;
-      background: transparent;
-    }
-  }
-
-  &__search-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: globals.$spacing-sm;
-  }
-
-  &__map-container {
-    flex: 1;
-    position: relative;
     height: 100%;
     width: 100%;
-    z-index: 1;
+    position: relative;
+    overflow: hidden;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+    }
+
+    &__sidebar {
+      position: absolute;
+      left: var(--space-4);
+      // Raw literal for now — same reason as store card and
+      // locate-me-button z-indices. A cross-component scale
+      // migration is a separate sweep.
+      z-index: 150;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      width: 100%;
+
+      @media (min-width: 768px) {
+        top: 0;
+        left: 0;
+        right: auto;
+        height: 100%;
+        background: transparent;
+        // DO NOT set `pointer-events: all` here. See the file
+        // header comment — this is the bug that took ~30 minutes
+        // of debugging to find. `.p-home__controls` below handles
+        // its own pointer-events.
+        padding: 0 var(--space-5);
+        overflow-y: auto;
+        flex-direction: column;
+      }
+
+      &__container {
+        width: 100%;
+        max-width: var(--content-max);
+        margin: 0 auto;
+      }
+    }
+
+    &__controls {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      pointer-events: all;
+      padding: var(--space-4) 0;
+      // 21rem (336px) is the canonical sidebar control column
+      // width on mobile. Not in the token scale — kept as a
+      // literal because it's a single-use layout constraint.
+      width: 21rem;
+    }
+
+    &__search-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    &__map-container {
+      flex: 1;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      // Raw literal — this `z-index: 1` sits below the sidebar
+      // (150) and locate-me-button (`--z-map-overlay: 5`). Part of
+      // the deferred z-scale sweep.
+      z-index: 1;
+    }
   }
 }

@@ -1,44 +1,98 @@
-@use 'sass:color';
-@use '../../styles/settings/settings.colors' as colors;
-@use '../../styles/settings/settings.globals' as globals;
-@use '../../styles/settings/settings.typography' as typography;
-
-.c-search {
-  position: relative;
-  width: 100%;
-
-  &__input-wrapper {
+// Search bar — restyled against the design tokens in
+// `apps/web/app/styles/tokens.css` (see ADR 0014). Seventh component
+// ported. Zero SCSS imports.
+//
+// The React component (see `./index.tsx`) uses a Base UI <Combobox>
+// for address autocomplete. The combobox surface — trigger surface,
+// popup, list items — comes from the shared `o-select` object (see
+// `apps/web/app/styles/_select.scss`), and this file only adds the
+// search-bar-specific overrides:
+//
+//   · c-search               → wrapper div (combobox root anchor)
+//   · c-search__input-wrapper → relative-positioned flex container
+//                               so the loading indicator can overlay
+//                               the input without affecting layout
+//   · c-search__input        → Combobox.Input composed with
+//                               `o-select__trigger`; stretches to
+//                               fill the wrapper and enables text
+//                               caret via `cursor: text`
+//   · c-search__loading      → absolute-positioned "..." indicator
+//   · c-search__suggestions  → Combobox.List (kept as a defensive
+//                               reset — see comment on the rule)
+//
+// Wrapped in `@layer components`. The `o-select` object lives in
+// `@layer objects`, which sits below `components`, so width and
+// cursor overrides on `__input` win against `o-select__trigger`'s
+// base rules without any specificity gymnastics. See
+// `header/index.module.scss` for the full architectural rationale.
+@layer components {
+  .c-search {
     position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  // Override trigger to be full-width and allow text input
-  &__input {
     width: 100%;
-    cursor: text;
 
-    &::placeholder {
-      color: colors.$color-muted;
-      font-style: italic;
+    // Flex wrapper whose only job is to host the input and the
+    // absolute-positioned loading indicator. `align-items: center`
+    // keeps the loading indicator vertically centred even though it
+    // escapes the flex flow via `position: absolute`.
+    &__input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
-    &:focus-visible {
-      outline: 0.1875rem solid colors.$color-focus;
-      outline-offset: -0.1875rem;
+    // Composed with `o-select__trigger` in the tsx. The base object
+    // treats its target as a pressable trigger; here we override the
+    // two properties that differ for a text input:
+    //   · `width: 100%` — the search field fills its sidebar column
+    //   · `cursor: text` — the caret should read "I'm an input",
+    //     not "I'm a button"
+    //
+    // The italicised muted placeholder is the same pattern used by
+    // `_select.scss`'s `__input` rule. Ink-muted on white is ~9.6:1,
+    // AAA even for the small italic UI text case.
+    //
+    // No `:focus-visible` override. The old file had one with an
+    // *inset* outline-offset specifically because the old universal
+    // focus rule used `outline` (which sits outside the element); the
+    // new universal focus rule uses ring-shaped `box-shadow` spreads
+    // (tokens.css:286-292) that already draw at the outer edge. The
+    // inset workaround no longer has a reason to exist.
+    &__input {
+      width: 100%;
+      cursor: text;
+
+      &::placeholder {
+        color: var(--color-ink-muted);
+        font-style: italic;
+      }
     }
-  }
 
-  &__loading {
-    position: absolute;
-    right: globals.$spacing-md;
-    font-size: typography.$font-size-small;
-    color: colors.$color-text;
-  }
+    // Inline loading indicator. Overlays the right-hand side of the
+    // input via absolute positioning, clearing the trigger's natural
+    // `var(--space-3)` right padding by a margin of roughly 4px. The
+    // old file used full ink; I've switched to ink-muted so the "..."
+    // reads as "system meta" rather than competing with the user's
+    // typed query for visual weight. 9.6:1 on white is AAA.
+    &__loading {
+      position: absolute;
+      right: var(--space-4);
+      font-size: var(--text-sm);
+      color: var(--color-ink-muted);
+      pointer-events: none;
+    }
 
-  &__suggestions {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    // Suggestions list (Combobox.List). `@layer reset` in tokens.css
+    // already resets `ul`/`ol` margins, padding and list-style — so
+    // these three properties are redundant. They're kept as a
+    // defensive no-op that (a) survives any future change to the
+    // reset layer and (b) preserves the CSS Modules class mapping so
+    // `styles['c-search__suggestions']` resolves to a real class name
+    // at runtime rather than `undefined` (which would send
+    // `className="undefined"` into the rendered markup).
+    &__suggestions {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
   }
 }

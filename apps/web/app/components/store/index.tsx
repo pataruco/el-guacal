@@ -21,7 +21,14 @@ const Store: React.FC = () => {
   };
 
   const { isAuthenticated } = useAppSelector(selectAuth);
-  const { data, isLoading, isError } = useGetStoreByIdQuery({ storeId });
+  // Skip until the user has asked to see a store AND we have a real
+  // id. The GraphQL query is typed `$storeId: UUID!`, so firing with
+  // the initial empty-string state throws a server-side validation
+  // error on every page load and poisons the hook's error state.
+  const { data, isLoading, isError } = useGetStoreByIdQuery(
+    { storeId },
+    { skip: !show || !storeId },
+  );
   const [deleteStore] = useDeleteStoreMutation();
 
   if (!show || isError || isLoading || !data) return null;
