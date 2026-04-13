@@ -17,6 +17,7 @@ pub struct Config {
     pub database_url: String,
     pub cors_allowed_origins: Vec<String>,
     pub gcp_project_id: Option<String>,
+    pub seed_admin_firebase_uid: Option<String>,
 }
 
 impl Config {
@@ -43,6 +44,7 @@ impl Config {
             database_url: env::var("DATABASE_URL").unwrap_or_else(|_| default_database_url()),
             cors_allowed_origins,
             gcp_project_id: env::var("GCP_PROJECT_ID").ok(),
+            seed_admin_firebase_uid: env::var("GUACAL_SEED_ADMIN_UID").ok(),
         };
 
         Ok(config)
