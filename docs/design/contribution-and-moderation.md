@@ -457,6 +457,6 @@ Extend the existing `tracing` + OTLP setup (ADR 0011):
 4. Moderation UI ships at `/mod`, gated by `users.role`.
 5. Frontend store-submission form switches to `submitCreateStoreProposal`. Old `createStore` becomes admin-only at the resolver level.
 6. Update/delete forms follow the same cut-over one week later.
-7. After a bake-in period, the deprecated resolvers stay but are gated on `role = 'admin'` and logged at WARN.
+7. After a bake-in period, the deprecated resolvers stay but are gated on `role = 'admin'` and logged at WARN .
 
 A rollback plan exists at every step: the old mutations remain wired, so the frontend can revert to them by flipping a single config flag while the backend tables stay in place.
