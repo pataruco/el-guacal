@@ -2,5 +2,13 @@ pub mod commands;
 pub mod export;
 pub mod queries;
 
-pub use commands::Mutation;
-pub use queries::Query;
+use async_graphql::MergedObject;
+use commands::store::StoreCommand;
+use queries::product::ProductQuery;
+use queries::store::StoreQuery;
+
+#[derive(MergedObject, Default)]
+pub struct Query(StoreQuery, ProductQuery);
+
+#[derive(MergedObject, Default)]
+pub struct Mutation(StoreCommand);

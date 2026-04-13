@@ -37,22 +37,6 @@ async fn main() {
         .await
         .expect("Failed to run migrations");
 
-    // Seed admin user
-    if let Some(admin_uid) = &config.seed_admin_firebase_uid {
-        sqlx::query(
-            r"
-            INSERT INTO users (firebase_uid, role)
-            VALUES ($1, 'admin')
-            ON CONFLICT (firebase_uid) DO UPDATE SET role = 'admin'
-            ",
-        )
-        .bind(admin_uid)
-        .execute(&pool)
-        .await
-        .expect("Failed to seed admin user");
-        println!("Seeded admin user: {admin_uid}");
-    }
-
     let allowed_origins: Vec<axum::http::HeaderValue> = config
         .cors_allowed_origins
         .iter()

@@ -38,8 +38,7 @@ pub enum Radius {
 
 #[allow(clippy::suboptimal_flops)]
 impl Radius {
-    #[must_use]
-    pub fn to_meters(self, lat: f64) -> f64 {
+    fn to_meters(self, lat: f64) -> f64 {
         let zoom = match self {
             Self::Zoom11 => 11.0,
             Self::Zoom12 => 12.0,
@@ -55,6 +54,11 @@ impl Radius {
             Self::Zoom22 => 22.0,
         };
 
+        // Web Mercator resolution formula: converts a map zoom level to meters-per-pixel.
+        // 156_543.03392 = Earth's circumference (40_075_016.686m) / 256px (one tile at zoom 0).
+        // cos(lat) corrects for Mercator distortion at higher latitudes.
+        // 2^zoom halves the resolution per zoom level.
+        // Multiplied by 1280px (viewport width) to get the search radius in meters.
         let meters_per_pixel = (lat.to_radians().cos() * 156_543.033_92) / 2.0_f64.powf(zoom);
         meters_per_pixel * 1280.0
     }
@@ -88,7 +92,6 @@ impl StoreQuery {
                 address,
                 ST_Y(location::geometry) as lat,
                 ST_X(location::geometry) as lng,
-                version,
                 created_at,
                 updated_at
             FROM stores s
@@ -123,7 +126,6 @@ impl StoreQuery {
                         lat: row.get::<f64, _>("lat"),
                         lng: row.get::<f64, _>("lng"),
                     },
-                    version: row.get::<i64, _>("version"),
                     created_at: row.get::<DateTime<Utc>, _>("created_at"),
                     updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
                 }
@@ -148,7 +150,6 @@ impl StoreQuery {
                 address,
                 ST_Y(location::geometry) as lat,
                 ST_X(location::geometry) as lng,
-                version,
                 created_at,
                 updated_at
             FROM stores
@@ -169,7 +170,6 @@ impl StoreQuery {
                     lat: row.get::<f64, _>("lat"),
                     lng: row.get::<f64, _>("lng"),
                 },
-                version: row.get::<i64, _>("version"),
                 created_at: row.get::<DateTime<Utc>, _>("created_at"),
                 updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
             }

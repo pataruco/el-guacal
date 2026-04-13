@@ -1,4 +1,4 @@
-use crate::model::user::{User, UserRole};
+use crate::auth::FirebaseUser;
 use crate::model::location::Location;
 use crate::model::store::Store;
 use async_graphql::{Context, InputObject, Object};
@@ -30,19 +30,14 @@ pub struct UpdateStoreInput {
 
 #[Object]
 impl StoreCommand {
-    #[graphql(deprecation = "Use submitCreateStoreProposal. Kept for admin bulk imports.")]
     async fn create_store(
         &self,
         ctx: &Context<'_>,
         input: CreateStoreInput,
     ) -> async_graphql::Result<Store> {
-        let user = ctx
-            .data_opt::<User>()
+        let _user = ctx
+            .data_opt::<FirebaseUser>()
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
-
-        if user.role != UserRole::Admin {
-            return Err(async_graphql::Error::new("Forbidden: Admin only"));
-        }
 
         let pool = ctx.data::<PgPool>()?;
 
@@ -52,7 +47,7 @@ impl StoreCommand {
             r"
             INSERT INTO stores (name, address, location)
             VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography)
-            RETURNING store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, version, created_at, updated_at
+            RETURNING store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, created_at, updated_at
             ",
         )
         .bind(&input.name)
@@ -70,7 +65,6 @@ impl StoreCommand {
                 lat: row.get::<f64, _>("lat"),
                 lng: row.get::<f64, _>("lng"),
             },
-            version: row.get::<i64, _>("version"),
             created_at: row.get::<DateTime<Utc>, _>("created_at"),
             updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
         };
@@ -88,25 +82,20 @@ impl StoreCommand {
         Ok(store)
     }
 
-    #[graphql(deprecation = "Use submitUpdateStoreProposal. Kept for admin bulk imports.")]
     async fn update_store(
         &self,
         ctx: &Context<'_>,
         input: UpdateStoreInput,
     ) -> async_graphql::Result<Store> {
-        let user = ctx
-            .data_opt::<User>()
+        let _user = ctx
+            .data_opt::<FirebaseUser>()
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
-
-        if user.role != UserRole::Admin {
-            return Err(async_graphql::Error::new("Forbidden: Admin only"));
-        }
 
         let pool = ctx.data::<PgPool>()?;
         let mut tx = pool.begin().await?;
 
         if let Some(name) = &input.name {
-            sqlx::query("UPDATE stores SET name = $1, version = version + 1 WHERE store_id = $2")
+            sqlx::query("UPDATE stores SET name = $1 WHERE store_id = $2")
                 .bind(name)
                 .bind(input.store_id)
                 .execute(&mut *tx)
@@ -114,7 +103,7 @@ impl StoreCommand {
         }
 
         if let Some(address) = &input.address {
-            sqlx::query("UPDATE stores SET address = $1, version = version + 1 WHERE store_id = $2")
+            sqlx::query("UPDATE stores SET address = $1 WHERE store_id = $2")
                 .bind(address)
                 .bind(input.store_id)
                 .execute(&mut *tx)
@@ -123,7 +112,7 @@ impl StoreCommand {
 
         if let (Some(lat), Some(lng)) = (input.lat, input.lng) {
             sqlx::query(
-                "UPDATE stores SET location = ST_SetSRID(ST_Point($1, $2), 4326)::geography, version = version + 1 WHERE store_id = $3",
+                "UPDATE stores SET location = ST_SetSRID(ST_Point($1, $2), 4326)::geography WHERE store_id = $3",
             )
             .bind(lng)
             .bind(lat)
@@ -145,16 +134,11 @@ impl StoreCommand {
                     .execute(&mut *tx)
                     .await?;
             }
-
-            sqlx::query("UPDATE stores SET version = version + 1 WHERE store_id = $1")
-                .bind(input.store_id)
-                .execute(&mut *tx)
-                .await?;
         }
 
         let row = sqlx::query(
             r"
-            SELECT store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, version, created_at, updated_at
+            SELECT store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, created_at, updated_at
             FROM stores
             WHERE store_id = $1
             ",
@@ -171,7 +155,6 @@ impl StoreCommand {
                 lat: row.get::<f64, _>("lat"),
                 lng: row.get::<f64, _>("lng"),
             },
-            version: row.get::<i64, _>("version"),
             created_at: row.get::<DateTime<Utc>, _>("created_at"),
             updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
         };
@@ -181,15 +164,10 @@ impl StoreCommand {
         Ok(store)
     }
 
-    #[graphql(deprecation = "Use submitDeleteStoreProposal. Kept for admin bulk imports.")]
     async fn delete_store(&self, ctx: &Context<'_>, id: Uuid) -> async_graphql::Result<bool> {
-        let user = ctx
-            .data_opt::<User>()
+        let _user = ctx
+            .data_opt::<FirebaseUser>()
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
-
-        if user.role != UserRole::Admin {
-            return Err(async_graphql::Error::new("Forbidden: Admin only"));
-        }
 
         let pool = ctx.data::<PgPool>()?;
 

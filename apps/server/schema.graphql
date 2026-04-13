@@ -13,11 +13,6 @@ The input/output is a string in RFC3339 format.
 """
 scalar DateTime
 
-"""
-A scalar that can represent any JSON value.
-"""
-scalar JSON
-
 type Location {
 	lat: Float!
 	lng: Float!
@@ -29,37 +24,9 @@ input LocationInput {
 }
 
 type Mutation {
-	createStore(input: CreateStoreInput!): Store! @deprecated(reason: "Use submitCreateStoreProposal. Kept for admin bulk imports.")
-	updateStore(input: UpdateStoreInput!): Store! @deprecated(reason: "Use submitUpdateStoreProposal. Kept for admin bulk imports.")
-	deleteStore(id: UUID!): Boolean! @deprecated(reason: "Use submitDeleteStoreProposal. Kept for admin bulk imports.")
-	submitCreateStoreProposal(input: SubmitCreateStoreProposalInput!): StoreProposal!
-	submitUpdateStoreProposal(input: SubmitUpdateStoreProposalInput!): StoreProposal!
-	submitDeleteStoreProposal(input: SubmitDeleteStoreProposalInput!): StoreProposal!
-	withdrawStoreProposal(proposalId: UUID!): StoreProposal!
-	reviewStoreProposal(input: ReviewProposalInput!): StoreProposal!
-	setUserRole(input: SetUserRoleInput!): User!
-}
-
-"""
-Information about pagination in a connection
-"""
-type PageInfo {
-	"""
-	When paginating backwards, are there more items?
-	"""
-	hasPreviousPage: Boolean!
-	"""
-	When paginating forwards, are there more items?
-	"""
-	hasNextPage: Boolean!
-	"""
-	When paginating backwards, the cursor to continue.
-	"""
-	startCursor: String
-	"""
-	When paginating forwards, the cursor to continue.
-	"""
-	endCursor: String
+	createStore(input: CreateStoreInput!): Store!
+	updateStore(input: UpdateStoreInput!): Store!
+	deleteStore(id: UUID!): Boolean!
 }
 
 type Product {
@@ -70,27 +37,10 @@ type Product {
 	updatedAt: DateTime!
 }
 
-enum ProposalKind {
-	CREATE
-	UPDATE
-	DELETE
-}
-
-enum ProposalStatus {
-	PENDING
-	APPROVED
-	REJECTED
-	WITHDRAWN
-	SUPERSEDED
-}
-
 type Query {
-	allProducts: [Product!]!
 	storesNear(location: LocationInput!, radius: Radius!, productIds: [UUID!]): [Store!]!
 	getStoreById(id: UUID!): Store
-	storeProposal(id: UUID!): StoreProposal!
-	myStoreProposals(status: ProposalStatus, after: String, before: String, first: Int, last: Int): StoreProposalConnection!
-	pendingStoreProposals(location: LocationInput, radius: Radius, kind: ProposalKind, after: String, before: String, first: Int, last: Int): StoreProposalConnection!
+	allProducts: [Product!]!
 }
 
 enum Radius {
@@ -108,105 +58,14 @@ enum Radius {
 	ZOOM_22
 }
 
-enum ReviewDecision {
-	APPROVE
-	REJECT
-}
-
-input ReviewProposalInput {
-	proposalId: UUID!
-	decision: ReviewDecision!
-	note: String
-}
-
-input SetUserRoleInput {
-	firebaseUid: String!
-	role: UserRole!
-	region: String
-}
-
 type Store {
 	storeId: UUID!
 	name: String!
 	address: String!
 	location: Location!
-	version: Int!
 	createdAt: DateTime!
 	updatedAt: DateTime!
-}
-
-type StoreProposal {
-	proposalId: UUID!
-	proposerUserId: UUID!
-	kind: ProposalKind!
-	status: ProposalStatus!
-	targetStoreId: UUID
-	targetVersion: Int
-	payload: JSON!
-	proposedLocation: Location
-	possibleDuplicates: JSON!
-	reviewedBy: UUID
-	reviewedAt: DateTime
-	reviewNote: String
-	clientNonce: String!
-	createdAt: DateTime!
-	updatedAt: DateTime!
-}
-
-type StoreProposalConnection {
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-	"""
-	A list of edges.
-	"""
-	edges: [StoreProposalEdge!]!
-	"""
-	A list of nodes.
-	"""
-	nodes: [StoreProposal!]!
-}
-
-"""
-An edge in a connection.
-"""
-type StoreProposalEdge {
-	"""
-	The item at the end of the edge
-	"""
-	node: StoreProposal!
-	"""
-	A cursor for use in pagination
-	"""
-	cursor: String!
-}
-
-input SubmitCreateStoreProposalInput {
-	name: String!
-	address: String!
-	lat: Float!
-	lng: Float!
-	productIds: [UUID!]!
-	clientNonce: String!
-}
-
-input SubmitDeleteStoreProposalInput {
-	targetStoreId: UUID!
-	expectedVersion: Int!
-	reason: String!
-	clientNonce: String!
-}
-
-input SubmitUpdateStoreProposalInput {
-	targetStoreId: UUID!
-	expectedVersion: Int!
-	name: String
-	address: String
-	lat: Float
-	lng: Float
-	productIds: [UUID!]
-	clientNonce: String!
+	products: [Product!]!
 }
 
 """
@@ -230,26 +89,6 @@ input UpdateStoreInput {
 	productIds: [UUID!]
 }
 
-type User {
-	userId: UUID!
-	firebaseUid: String!
-	role: UserRole!
-	trustScore: Int!
-	region: String
-	createdAt: DateTime!
-	updatedAt: DateTime!
-}
-
-enum UserRole {
-	CONTRIBUTOR
-	MODERATOR
-	ADMIN
-}
-
-"""
-Marks an element of a GraphQL schema as no longer supported.
-"""
-directive @deprecated(reason: String = "No longer supported") on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
 """
 Directs the executor to include this field or fragment only when the `if` argument is true.
 """

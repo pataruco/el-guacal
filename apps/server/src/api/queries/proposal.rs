@@ -93,7 +93,7 @@ impl ProposalQuery {
             last,
             |after: Option<String>, _before, first, _last| async move {
                 let status_str = status.map(|s| format!("{s:?}").to_lowercase());
-                let limit = first.map_or(50, |v| v as usize);
+                let limit = first.unwrap_or(50);
                 #[allow(clippy::cast_possible_wrap)]
                 let sql_limit = (limit as i64) + 1;
 
@@ -169,7 +169,7 @@ impl ProposalQuery {
             first,
             last,
             |after: Option<String>, _before, first, _last| async move {
-                let limit = first.map_or(50, |v| v as usize);
+                let limit = first.unwrap_or(50);
                 #[allow(clippy::cast_possible_wrap)]
                 let sql_limit = (limit as i64) + 1;
 

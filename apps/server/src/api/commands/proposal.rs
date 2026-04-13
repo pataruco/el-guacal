@@ -109,19 +109,13 @@ impl ProposalCommand {
                        VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography)
                        RETURNING store_id",
                 )
-                .bind(name)
-                .bind(address)
-                .bind(loc.lng)
-                .bind(loc.lat)
+                .bind(name).bind(address).bind(loc.lng).bind(loc.lat)
                 .fetch_one(&mut **tx).await?;
 
                 let store_id: Uuid = row.get("store_id");
-
                 for pid in product_ids {
                     sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
-                        .bind(store_id)
-                        .bind(pid)
-                        .execute(&mut **tx).await?;
+                        .bind(store_id).bind(pid).execute(&mut **tx).await?;
                 }
             },
             ProposalKind::Update => {
@@ -137,24 +131,17 @@ impl ProposalCommand {
                        name = COALESCE($1, name),
                        address = COALESCE($2, address),
                        location = CASE WHEN $3::float8 IS NOT NULL AND $4::float8 IS NOT NULL THEN ST_SetSRID(ST_Point($4, $3), 4326)::geography ELSE location END,
-                       version = version + 1,
-                       updated_at = NOW()
+                       version = version + 1, updated_at = NOW()
                        WHERE store_id = $5",
                 )
-                .bind(name)
-                .bind(address)
-                .bind(lat)
-                .bind(lng)
-                .bind(target_id)
+                .bind(name).bind(address).bind(lat).bind(lng).bind(target_id)
                 .execute(&mut **tx).await?;
 
                 if let Some(pids) = product_ids {
                     sqlx::query("DELETE FROM store_products WHERE store_id = $1").bind(target_id).execute(&mut **tx).await?;
                     for pid in pids {
                         sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
-                            .bind(target_id)
-                            .bind(pid)
-                            .execute(&mut **tx).await?;
+                            .bind(target_id).bind(pid).execute(&mut **tx).await?;
                     }
                 }
             },
@@ -162,6 +149,32 @@ impl ProposalCommand {
                 sqlx::query("DELETE FROM stores WHERE store_id = $1").bind(proposal.target_store_id.unwrap()).execute(&mut **tx).await?;
             }
         }
+        Ok(())
+    }
+
+    async fn handle_approval(
+        tx: &mut Transaction<'_, Postgres>,
+        proposal: &StoreProposal,
+        user_id: Uuid,
+        note: &Option<String>,
+    ) -> Result<()> {
+        if let Some(target_id) = proposal.target_store_id {
+            let row = sqlx::query("SELECT version FROM stores WHERE store_id = $1 FOR UPDATE")
+                .bind(target_id).fetch_one(&mut **tx).await?;
+            if row.get::<i64, _>("version") != proposal.target_version.unwrap_or(0) {
+                 sqlx::query("UPDATE store_proposals SET status = 'superseded', reviewed_by = $1, reviewed_at = NOW(), review_note = $2, updated_at = NOW() WHERE proposal_id = $3")
+                    .bind(user_id).bind(note).bind(proposal.proposal_id).execute(&mut **tx).await?;
+                 sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'superseded', $2)")
+                    .bind(proposal.proposal_id).bind(user_id).execute(&mut **tx).await?;
+                 return Ok(());
+            }
+        }
+        Self::apply_approved_proposal(tx, proposal).await?;
+        sqlx::query("UPDATE users SET trust_score = trust_score + 1 WHERE user_id = $1").bind(proposal.proposer_user_id).execute(&mut **tx).await?;
+        sqlx::query("UPDATE store_proposals SET status = 'approved', reviewed_by = $1, reviewed_at = NOW(), review_note = $2, updated_at = NOW() WHERE proposal_id = $3")
+            .bind(user_id).bind(note).bind(proposal.proposal_id).execute(&mut **tx).await?;
+        sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'approved', $2), ($1, 'applied', $2)")
+            .bind(proposal.proposal_id).bind(user_id).execute(&mut **tx).await?;
         Ok(())
     }
 }
@@ -175,63 +188,19 @@ impl ProposalCommand {
     ) -> Result<StoreProposal> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-
         check_rate_limit(pool, user).await.map_err(async_graphql::Error::new)?;
 
-        // Possible duplicates (within 50m)
-        let duplicates = sqlx::query(
-            r"
-            SELECT store_id, name, address
-            FROM stores
-            WHERE ST_DWithin(
-                location,
-                ST_SetSRID(ST_Point($1, $2), 4326)::geography,
-                50
-            )
-            ",
-        )
-        .bind(input.lng)
-        .bind(input.lat)
-        .fetch_all(pool)
-        .await?
-        .into_iter()
-        .map(|r| json!({"store_id": r.get::<Uuid, _>("store_id"), "name": r.get::<String, _>("name"), "address": r.get::<String, _>("address")}))
-        .collect::<Vec<_>>();
+        let duplicates = sqlx::query(r"SELECT store_id, name, address FROM stores WHERE ST_DWithin(location, ST_SetSRID(ST_Point($1, $2), 4326)::geography, 50)")
+            .bind(input.lng).bind(input.lat).fetch_all(pool).await?
+            .into_iter().map(|r| json!({"store_id": r.get::<Uuid, _>("store_id"), "name": r.get::<String, _>("name"), "address": r.get::<String, _>("address")})).collect::<Vec<_>>();
 
-        let payload = json!({
-            "name": input.name,
-            "address": input.address,
-            "product_ids": input.product_ids
-        });
-
-        let row = sqlx::query(
-            r"
-            INSERT INTO store_proposals (
-                proposer_user_id, kind, status, payload, proposed_location, possible_duplicates, client_nonce
-            )
-            VALUES ($1, 'create', 'pending', $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography, $5, $6)
-            RETURNING proposal_id
-            ",
-        )
-        .bind(user.user_id)
-        .bind(payload)
-        .bind(input.lng)
-        .bind(input.lat)
-        .bind(json!(duplicates))
-        .bind(input.client_nonce)
-        .fetch_one(pool)
-        .await?;
+        let payload = json!({"name": input.name, "address": input.address, "product_ids": input.product_ids});
+        let row = sqlx::query(r"INSERT INTO store_proposals (proposer_user_id, kind, status, payload, proposed_location, possible_duplicates, client_nonce) VALUES ($1, 'create', 'pending', $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography, $5, $6) RETURNING proposal_id")
+            .bind(user.user_id).bind(payload).bind(input.lng).bind(input.lat).bind(json!(duplicates)).bind(input.client_nonce).fetch_one(pool).await?;
 
         let proposal_id: Uuid = row.get("proposal_id");
-
-        sqlx::query(
-            "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'submitted', $2)"
-        )
-        .bind(proposal_id)
-        .bind(user.user_id)
-        .execute(pool)
-        .await?;
-
+        sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'submitted', $2)")
+            .bind(proposal_id).bind(user.user_id).execute(pool).await?;
         Ok(fetch_proposal_with_location(pool, proposal_id).await?.unwrap())
     }
 
@@ -242,65 +211,24 @@ impl ProposalCommand {
     ) -> Result<StoreProposal> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-
         check_rate_limit(pool, user).await.map_err(async_graphql::Error::new)?;
 
         if input.name.is_none() && input.address.is_none() && input.lat.is_none() && input.lng.is_none() && input.product_ids.is_none() {
             return Err(async_graphql::Error::new("At least one field must be set"));
         }
 
-        // Verify version
-        let row = sqlx::query("SELECT version FROM stores WHERE store_id = $1")
-            .bind(input.target_store_id)
-            .fetch_optional(pool)
-            .await?
-            .ok_or_else(|| async_graphql::Error::new("Store not found"))?;
-
-        let current_version: i64 = row.get("version");
-
-        if current_version != input.expected_version {
+        let row = sqlx::query("SELECT version FROM stores WHERE store_id = $1").bind(input.target_store_id).fetch_optional(pool).await?.ok_or_else(|| async_graphql::Error::new("Store not found"))?;
+        if row.get::<i64, _>("version") != input.expected_version {
             return Err(async_graphql::Error::new("Store has been modified by someone else. Please refresh."));
         }
 
-        let payload = json!({
-            "name": input.name,
-            "address": input.address,
-            "lat": input.lat,
-            "lng": input.lng,
-            "product_ids": input.product_ids
-        });
-
-        let row = sqlx::query(
-            r"
-            INSERT INTO store_proposals (
-                proposer_user_id, kind, status, target_store_id, target_version, payload, proposed_location, client_nonce
-            )
-            VALUES ($1, 'update', 'pending', $2, $3, $4,
-                CASE WHEN $5::float8 IS NOT NULL AND $6::float8 IS NOT NULL THEN ST_SetSRID(ST_Point($6, $5), 4326)::geography ELSE NULL END,
-                $7)
-            RETURNING proposal_id
-            ",
-        )
-        .bind(user.user_id)
-        .bind(input.target_store_id)
-        .bind(input.expected_version)
-        .bind(payload)
-        .bind(input.lat)
-        .bind(input.lng)
-        .bind(input.client_nonce)
-        .fetch_one(pool)
-        .await?;
+        let payload = json!({"name": input.name, "address": input.address, "lat": input.lat, "lng": input.lng, "product_ids": input.product_ids});
+        let row = sqlx::query(r"INSERT INTO store_proposals (proposer_user_id, kind, status, target_store_id, target_version, payload, proposed_location, client_nonce) VALUES ($1, 'update', 'pending', $2, $3, $4, CASE WHEN $5::float8 IS NOT NULL AND $6::float8 IS NOT NULL THEN ST_SetSRID(ST_Point($6, $5), 4326)::geography ELSE NULL END, $7) RETURNING proposal_id")
+            .bind(user.user_id).bind(input.target_store_id).bind(input.expected_version).bind(payload).bind(input.lat).bind(input.lng).bind(input.client_nonce).fetch_one(pool).await?;
 
         let proposal_id: Uuid = row.get("proposal_id");
-
-        sqlx::query(
-            "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'submitted', $2)"
-        )
-        .bind(proposal_id)
-        .bind(user.user_id)
-        .execute(pool)
-        .await?;
-
+        sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'submitted', $2)")
+            .bind(proposal_id).bind(user.user_id).execute(pool).await?;
         Ok(fetch_proposal_with_location(pool, proposal_id).await?.unwrap())
     }
 
@@ -311,88 +239,41 @@ impl ProposalCommand {
     ) -> Result<StoreProposal> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-
         check_rate_limit(pool, user).await.map_err(async_graphql::Error::new)?;
 
         if user.role == UserRole::Contributor && user.trust_score < 3 {
              return Err(async_graphql::Error::new("Insufficient trust score to propose deletions"));
         }
 
-        // Verify version
-        let row = sqlx::query("SELECT version FROM stores WHERE store_id = $1")
-            .bind(input.target_store_id)
-            .fetch_optional(pool)
-            .await?
-            .ok_or_else(|| async_graphql::Error::new("Store not found"))?;
-
-        let current_version: i64 = row.get("version");
-
-        if current_version != input.expected_version {
+        let row = sqlx::query("SELECT version FROM stores WHERE store_id = $1").bind(input.target_store_id).fetch_optional(pool).await?.ok_or_else(|| async_graphql::Error::new("Store not found"))?;
+        if row.get::<i64, _>("version") != input.expected_version {
             return Err(async_graphql::Error::new("Store has been modified by someone else. Please refresh."));
         }
 
         let payload = json!({"reason": input.reason});
-
-        let row = sqlx::query(
-            r"
-            INSERT INTO store_proposals (
-                proposer_user_id, kind, status, target_store_id, target_version, payload, client_nonce
-            )
-            VALUES ($1, 'delete', 'pending', $2, $3, $4, $5)
-            RETURNING proposal_id
-            ",
-        )
-        .bind(user.user_id)
-        .bind(input.target_store_id)
-        .bind(input.expected_version)
-        .bind(payload)
-        .bind(input.client_nonce)
-        .fetch_one(pool)
-        .await?;
+        let row = sqlx::query(r"INSERT INTO store_proposals (proposer_user_id, kind, status, target_store_id, target_version, payload, client_nonce) VALUES ($1, 'delete', 'pending', $2, $3, $4, $5) RETURNING proposal_id")
+            .bind(user.user_id).bind(input.target_store_id).bind(input.expected_version).bind(payload).bind(input.client_nonce).fetch_one(pool).await?;
 
         let proposal_id: Uuid = row.get("proposal_id");
-
-        sqlx::query(
-            "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'submitted', $2)"
-        )
-        .bind(proposal_id)
-        .bind(user.user_id)
-        .execute(pool)
-        .await?;
-
+        sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'submitted', $2)")
+            .bind(proposal_id).bind(user.user_id).execute(pool).await?;
         Ok(fetch_proposal_with_location(pool, proposal_id).await?.unwrap())
     }
 
     async fn withdraw_store_proposal(&self, ctx: &Context<'_>, proposal_id: Uuid) -> Result<StoreProposal> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-
-        let proposal = fetch_proposal_with_location(pool, proposal_id).await?
-            .ok_or_else(|| async_graphql::Error::new("Proposal not found"))?;
+        let proposal = fetch_proposal_with_location(pool, proposal_id).await?.ok_or_else(|| async_graphql::Error::new("Proposal not found"))?;
 
         if user.role == UserRole::Contributor && proposal.proposer_user_id != user.user_id {
             return Err(async_graphql::Error::new("Forbidden"));
         }
-
         if proposal.status != ProposalStatus::Pending {
             return Err(async_graphql::Error::new("Only pending proposals can be withdrawn"));
         }
 
-        sqlx::query(
-            "UPDATE store_proposals SET status = 'withdrawn', updated_at = NOW() WHERE proposal_id = $1"
-        )
-        .bind(proposal_id)
-        .execute(pool)
-        .await?;
-
-        sqlx::query(
-            "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'withdrawn', $2)"
-        )
-        .bind(proposal_id)
-        .bind(user.user_id)
-        .execute(pool)
-        .await?;
-
+        sqlx::query("UPDATE store_proposals SET status = 'withdrawn', updated_at = NOW() WHERE proposal_id = $1").bind(proposal_id).execute(pool).await?;
+        sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'withdrawn', $2)").bind(proposal_id).bind(user.user_id).execute(pool).await?;
         Ok(fetch_proposal_with_location(pool, proposal_id).await?.unwrap())
     }
 
@@ -404,45 +285,18 @@ impl ProposalCommand {
     ) -> Result<StoreProposal> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-
         if user.role == UserRole::Contributor {
             return Err(async_graphql::Error::new("Forbidden"));
         }
 
         let mut tx = pool.begin().await?;
-
-        let row = sqlx::query(
-            r"SELECT
-                proposal_id, proposer_user_id, kind, status,
-                target_store_id, target_version, payload,
-                ST_Y(proposed_location::geometry) as lat, ST_X(proposed_location::geometry) as lng,
-                possible_duplicates, reviewed_by, reviewed_at, review_note, client_nonce, created_at, updated_at
-            FROM store_proposals WHERE proposal_id = $1 FOR UPDATE"
-        )
-        .bind(input.proposal_id)
-        .fetch_optional(&mut *tx)
-        .await?
-        .ok_or_else(|| async_graphql::Error::new("Proposal not found"))?;
+        let row = sqlx::query(r"SELECT proposal_id, proposer_user_id, kind, status, target_store_id, target_version, payload, ST_Y(proposed_location::geometry) as lat, ST_X(proposed_location::geometry) as lng, possible_duplicates, reviewed_by, reviewed_at, review_note, client_nonce, created_at, updated_at FROM store_proposals WHERE proposal_id = $1 FOR UPDATE")
+            .bind(input.proposal_id).fetch_optional(&mut *tx).await?.ok_or_else(|| async_graphql::Error::new("Proposal not found"))?;
 
         let proposal = StoreProposal {
-            proposal_id: row.get("proposal_id"),
-            proposer_user_id: row.get("proposer_user_id"),
-            kind: row.get("kind"),
-            status: row.get("status"),
-            target_store_id: row.get("target_store_id"),
-            target_version: row.get("target_version"),
-            payload: row.get("payload"),
-            proposed_location: match (row.try_get::<f64, _>("lat"), row.try_get::<f64, _>("lng")) {
-                (Ok(lat), Ok(lng)) => Some(Location { lat, lng }),
-                _ => None,
-            },
-            possible_duplicates: row.get("possible_duplicates"),
-            reviewed_by: row.get("reviewed_by"),
-            reviewed_at: row.get("reviewed_at"),
-            review_note: row.get("review_note"),
-            client_nonce: row.get("client_nonce"),
-            created_at: row.get("created_at"),
-            updated_at: row.get("updated_at"),
+            proposal_id: row.get("proposal_id"), proposer_user_id: row.get("proposer_user_id"), kind: row.get("kind"), status: row.get("status"), target_store_id: row.get("target_store_id"), target_version: row.get("target_version"), payload: row.get("payload"),
+            proposed_location: match (row.try_get::<f64, _>("lat"), row.try_get::<f64, _>("lng")) { (Ok(lat), Ok(lng)) => Some(Location { lat, lng }), _ => None },
+            possible_duplicates: row.get("possible_duplicates"), reviewed_by: row.get("reviewed_by"), reviewed_at: row.get("reviewed_at"), review_note: row.get("review_note"), client_nonce: row.get("client_nonce"), created_at: row.get("created_at"), updated_at: row.get("updated_at"),
         };
 
         if proposal.status != ProposalStatus::Pending {
@@ -450,83 +304,11 @@ impl ProposalCommand {
         }
 
         if input.decision == ReviewDecision::Approve {
-             // For update/delete, check version
-             if let Some(target_id) = proposal.target_store_id {
-                 let row = sqlx::query("SELECT version FROM stores WHERE store_id = $1 FOR UPDATE")
-                     .bind(target_id)
-                     .fetch_one(&mut *tx)
-                     .await?;
-
-                 let current_version: i64 = row.get("version");
-
-                 if current_version != proposal.target_version.unwrap_or(0) {
-                      // Mark as superseded
-                      sqlx::query(
-                          "UPDATE store_proposals SET status = 'superseded', reviewed_by = $1, reviewed_at = NOW(), review_note = $2, updated_at = NOW() WHERE proposal_id = $3"
-                      )
-                      .bind(user.user_id)
-                      .bind(&input.note)
-                      .bind(input.proposal_id)
-                      .execute(&mut *tx)
-                      .await?;
-
-                      sqlx::query(
-                          "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'superseded', $2)"
-                      )
-                      .bind(input.proposal_id)
-                      .bind(user.user_id)
-                      .execute(&mut *tx)
-                      .await?;
-
-                      tx.commit().await?;
-                      return Ok(fetch_proposal_with_location(pool, input.proposal_id).await?.unwrap());
-                 }
-             }
-
-             Self::apply_approved_proposal(&mut tx, &proposal).await?;
-
-             sqlx::query(
-                 "UPDATE users SET trust_score = trust_score + 1 WHERE user_id = $1"
-             )
-             .bind(proposal.proposer_user_id)
-             .execute(&mut *tx).await?;
-
-            sqlx::query(
-                "UPDATE store_proposals SET status = 'approved', reviewed_by = $1, reviewed_at = NOW(), review_note = $2, updated_at = NOW() WHERE proposal_id = $3"
-            )
-            .bind(user.user_id)
-            .bind(&input.note)
-            .bind(input.proposal_id)
-            .execute(&mut *tx).await?;
-
-            sqlx::query(
-                "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'approved', $2), ($1, 'applied', $2)"
-            )
-            .bind(input.proposal_id)
-            .bind(user.user_id)
-            .execute(&mut *tx).await?;
-         } else {
-            // REJECT
-            sqlx::query(
-                 "UPDATE users SET trust_score = trust_score - 1 WHERE user_id = $1"
-             )
-             .bind(proposal.proposer_user_id)
-             .execute(&mut *tx).await?;
-
-            sqlx::query(
-                "UPDATE store_proposals SET status = 'rejected', reviewed_by = $1, reviewed_at = NOW(), review_note = $2, updated_at = NOW() WHERE proposal_id = $3"
-            )
-            .bind(user.user_id)
-            .bind(&input.note)
-            .bind(input.proposal_id)
-            .execute(&mut *tx).await?;
-
-            sqlx::query(
-                "INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'rejected', $2)"
-            )
-            .bind(input.proposal_id)
-            .bind(user.user_id)
-            .execute(&mut *tx).await?;
+             Self::handle_approval(&mut tx, &proposal, user.user_id, &input.note).await?;
+        } else {
+            sqlx::query("UPDATE users SET trust_score = trust_score - 1 WHERE user_id = $1").bind(proposal.proposer_user_id).execute(&mut *tx).await?;
+            sqlx::query("UPDATE store_proposals SET status = 'rejected', reviewed_by = $1, reviewed_at = NOW(), review_note = $2, updated_at = NOW() WHERE proposal_id = $3").bind(user.user_id).bind(&input.note).bind(input.proposal_id).execute(&mut *tx).await?;
+            sqlx::query("INSERT INTO proposal_audit_log (proposal_id, action, actor_user_id) VALUES ($1, 'rejected', $2)").bind(input.proposal_id).bind(user.user_id).execute(&mut *tx).await?;
         }
 
         tx.commit().await?;
@@ -536,36 +318,11 @@ impl ProposalCommand {
     async fn set_user_role(&self, ctx: &Context<'_>, input: SetUserRoleInput) -> Result<User> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
+        if user.role != UserRole::Admin { return Err(async_graphql::Error::new("Only admins can set user roles")); }
 
-        if user.role != UserRole::Admin {
-             return Err(async_graphql::Error::new("Only admins can set user roles"));
-        }
+        let row = sqlx::query(r"INSERT INTO users (firebase_uid, role, region) VALUES ($1, $2, $3) ON CONFLICT (firebase_uid) DO UPDATE SET role = $2, region = $3, updated_at = NOW() RETURNING user_id, firebase_uid, role, trust_score, region, created_at, updated_at")
+            .bind(&input.firebase_uid).bind(format!("{0:?}", input.role).to_lowercase()).bind(&input.region).fetch_one(pool).await?;
 
-        let row = sqlx::query(
-            r"
-            INSERT INTO users (firebase_uid, role, region)
-            VALUES ($1, $2, $3)
-            ON CONFLICT (firebase_uid) DO UPDATE SET
-                role = $2,
-                region = $3,
-                updated_at = NOW()
-            RETURNING user_id, firebase_uid, role, trust_score, region, created_at, updated_at
-            ",
-        )
-        .bind(&input.firebase_uid)
-        .bind(format!("{0:?}", input.role).to_lowercase())
-        .bind(&input.region)
-        .fetch_one(pool)
-        .await?;
-
-        Ok(User {
-            user_id: row.get("user_id"),
-            firebase_uid: row.get("firebase_uid"),
-            role: row.get("role"),
-            trust_score: row.get("trust_score"),
-            region: row.get("region"),
-            created_at: row.get("created_at"),
-            updated_at: row.get("updated_at"),
-        })
+        Ok(User { user_id: row.get("user_id"), firebase_uid: row.get("firebase_uid"), role: row.get("role"), trust_score: row.get("trust_score"), region: row.get("region"), created_at: row.get("created_at"), updated_at: row.get("updated_at") })
     }
 }
