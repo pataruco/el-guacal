@@ -81,6 +81,11 @@ resource "google_cloud_run_v2_service" "api" {
         value = var.project_id
       }
 
+      env {
+        name  = "GUACAL_SEED_ADMIN_UID"
+        value = var.seed_admin_uid
+      }
+
       volume_mounts {
         name       = "cloudsql"
         mount_path = "/cloudsql"

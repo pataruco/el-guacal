@@ -38,3 +38,9 @@ variable "domain_name" {
   description = "The custom domain name for the application (e.g., elguacal.com)"
   default     = "elguacal.com"
 }
+
+variable "seed_admin_uid" {
+  type        = string
+  description = "The Firebase UID of the initial admin user to seed on startup"
+  default     = ""
+}

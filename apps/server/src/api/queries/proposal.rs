@@ -1,7 +1,7 @@
 use crate::model::proposal::{StoreProposal, ProposalStatus, ProposalKind};
 use crate::model::user::{User, UserRole};
 use crate::model::location::Location;
-use async_graphql::{Context, Object, Result};
+use async_graphql::{Context, Object, Result, connection::{Connection, Edge, EmptyFields, query}};
 use sqlx::{PgPool, Row};
 use uuid::Uuid;
 
@@ -78,117 +78,165 @@ impl ProposalQuery {
         &self,
         ctx: &Context<'_>,
         status: Option<ProposalStatus>,
-        limit: Option<i64>,
-    ) -> Result<Vec<StoreProposal>> {
+        after: Option<String>,
+        before: Option<String>,
+        first: Option<i32>,
+        last: Option<i32>,
+    ) -> Result<Connection<String, StoreProposal, EmptyFields, EmptyFields>> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-        let limit = limit.unwrap_or(50);
 
-        let status_str = status.map(|s| format!("{s:?}").to_lowercase());
+        query(
+            after,
+            before,
+            first,
+            last,
+            |after: Option<String>, _before, first, _last| async move {
+                let status_str = status.map(|s| format!("{s:?}").to_lowercase());
+                let limit = first.map_or(50, |v| v as usize);
+                #[allow(clippy::cast_possible_wrap)]
+                let sql_limit = (limit as i64) + 1;
 
-        let rows = sqlx::query(
-            r"
-            SELECT
-                proposal_id,
-                proposer_user_id,
-                kind,
-                status,
-                target_store_id,
-                target_version,
-                payload,
-                ST_Y(proposed_location::geometry) as lat,
-                ST_X(proposed_location::geometry) as lng,
-                possible_duplicates,
-                reviewed_by,
-                reviewed_at,
-                review_note,
-                client_nonce,
-                created_at,
-                updated_at
-            FROM store_proposals
-            WHERE proposer_user_id = $1
-            AND ($2::varchar IS NULL OR status = $2::varchar)
-            ORDER BY created_at DESC
-            LIMIT $3
-            ",
-        )
-        .bind(user.user_id)
-        .bind(status_str)
-        .bind(limit)
-        .fetch_all(pool)
-        .await?;
+                let rows = sqlx::query(
+                    r"
+                    SELECT
+                        proposal_id,
+                        proposer_user_id,
+                        kind,
+                        status,
+                        target_store_id,
+                        target_version,
+                        payload,
+                        ST_Y(proposed_location::geometry) as lat,
+                        ST_X(proposed_location::geometry) as lng,
+                        possible_duplicates,
+                        reviewed_by,
+                        reviewed_at,
+                        review_note,
+                        client_nonce,
+                        created_at,
+                        updated_at
+                    FROM store_proposals
+                    WHERE proposer_user_id = $1
+                    AND ($2::varchar IS NULL OR status = $2::varchar)
+                    AND ($3::timestamptz IS NULL OR created_at < $3)
+                    ORDER BY created_at DESC
+                    LIMIT $4
+                    ",
+                )
+                .bind(user.user_id)
+                .bind(status_str)
+                .bind(after.and_then(|a| chrono::DateTime::parse_from_rfc3339(&a).ok()))
+                .bind(sql_limit)
+                .fetch_all(pool)
+                .await?;
 
-        Ok(rows.iter().map(map_proposal_row).collect())
+                let has_next_page = rows.len() > limit;
+                let mut connection = Connection::new(false, has_next_page);
+                connection.edges.extend(rows.into_iter().take(limit).map(|row| {
+                    let proposal = map_proposal_row(&row);
+                    let cursor = proposal.created_at.to_rfc3339();
+                    Edge::new(cursor, proposal)
+                }));
+
+                Ok::<_, async_graphql::Error>(connection)
+            },
+        ).await
     }
 
+    #[allow(clippy::too_many_arguments)]
     async fn pending_store_proposals(
         &self,
         ctx: &Context<'_>,
         location: Option<crate::api::queries::store::LocationInput>,
         radius: Option<crate::api::queries::store::Radius>,
         kind: Option<ProposalKind>,
-        limit: Option<i64>,
-    ) -> Result<Vec<StoreProposal>> {
+        after: Option<String>,
+        before: Option<String>,
+        first: Option<i32>,
+        last: Option<i32>,
+    ) -> Result<Connection<String, StoreProposal, EmptyFields, EmptyFields>> {
         let pool = ctx.data::<PgPool>()?;
         let user = ctx.data::<User>()?;
-        let limit = limit.unwrap_or(50);
 
         if user.role == UserRole::Contributor {
             return Err(async_graphql::Error::new("Forbidden"));
         }
 
-        let radius_meters = if let (Some(loc), Some(rad)) = (location.as_ref(), radius) {
-             Some(rad.to_meters(loc.lat))
-        } else {
-             None
-        };
+        query(
+            after,
+            before,
+            first,
+            last,
+            |after: Option<String>, _before, first, _last| async move {
+                let limit = first.map_or(50, |v| v as usize);
+                #[allow(clippy::cast_possible_wrap)]
+                let sql_limit = (limit as i64) + 1;
 
-        let kind_str = kind.map(|k| format!("{k:?}").to_lowercase());
-        let lng = location.as_ref().map(|l| l.lng);
-        let lat = location.as_ref().map(|l| l.lat);
+                let radius_meters = if let (Some(loc), Some(rad)) = (location.as_ref(), radius) {
+                     Some(rad.to_meters(loc.lat))
+                } else {
+                     None
+                };
 
-        let rows = sqlx::query(
-            r"
-            SELECT
-                proposal_id,
-                proposer_user_id,
-                kind,
-                status,
-                target_store_id,
-                target_version,
-                payload,
-                ST_Y(proposed_location::geometry) as lat,
-                ST_X(proposed_location::geometry) as lng,
-                possible_duplicates,
-                reviewed_by,
-                reviewed_at,
-                review_note,
-                client_nonce,
-                created_at,
-                updated_at
-            FROM store_proposals
-            WHERE status = 'pending'
-            AND ($1::varchar IS NULL OR kind = $1::varchar)
-            AND (
-                $2::float8 IS NULL OR
-                ST_DWithin(
-                    proposed_location,
-                    ST_SetSRID(ST_Point($3, $4), 4326)::geography,
-                    $2
+                let kind_str = kind.map(|k| format!("{k:?}").to_lowercase());
+                let lng = location.as_ref().map(|l| l.lng);
+                let latitude = location.as_ref().map(|l| l.lat);
+
+                let rows = sqlx::query(
+                    r"
+                    SELECT
+                        proposal_id,
+                        proposer_user_id,
+                        kind,
+                        status,
+                        target_store_id,
+                        target_version,
+                        payload,
+                        ST_Y(proposed_location::geometry) as lat,
+                        ST_X(proposed_location::geometry) as lng,
+                        possible_duplicates,
+                        reviewed_by,
+                        reviewed_at,
+                        review_note,
+                        client_nonce,
+                        created_at,
+                        updated_at
+                    FROM store_proposals
+                    WHERE status = 'pending'
+                    AND ($1::varchar IS NULL OR kind = $1::varchar)
+                    AND (
+                        $2::float8 IS NULL OR
+                        ST_DWithin(
+                            proposed_location,
+                            ST_SetSRID(ST_Point($3, $4), 4326)::geography,
+                            $2
+                        )
+                    )
+                    AND ($5::timestamptz IS NULL OR created_at > $5)
+                    ORDER BY created_at ASC
+                    LIMIT $6
+                    ",
                 )
-            )
-            ORDER BY created_at ASC
-            LIMIT $5
-            ",
-        )
-        .bind(kind_str)
-        .bind(radius_meters)
-        .bind(lng)
-        .bind(lat)
-        .bind(limit)
-        .fetch_all(pool)
-        .await?;
+                .bind(kind_str)
+                .bind(radius_meters)
+                .bind(lng)
+                .bind(latitude)
+                .bind(after.and_then(|a| chrono::DateTime::parse_from_rfc3339(&a).ok()))
+                .bind(sql_limit)
+                .fetch_all(pool)
+                .await?;
 
-        Ok(rows.iter().map(map_proposal_row).collect())
+                let has_next_page = rows.len() > limit;
+                let mut connection = Connection::new(false, has_next_page);
+                connection.edges.extend(rows.into_iter().take(limit).map(|row| {
+                    let proposal = map_proposal_row(&row);
+                    let cursor = proposal.created_at.to_rfc3339();
+                    Edge::new(cursor, proposal)
+                }));
+
+                Ok::<_, async_graphql::Error>(connection)
+            },
+        ).await
     }
 }
