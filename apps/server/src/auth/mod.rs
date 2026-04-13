@@ -8,12 +8,14 @@ use std::time::{Duration, Instant};
 pub struct FirebaseUser {
     pub uid: String,
     pub email: Option<String>,
+    pub email_verified: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
     sub: String,
     email: Option<String>,
+    email_verified: Option<bool>,
     aud: String,
     iss: String,
     exp: usize,
@@ -84,6 +86,7 @@ impl FirebaseVerifier {
         Ok(FirebaseUser {
             uid: token_data.claims.sub,
             email: token_data.claims.email,
+            email_verified: token_data.claims.email_verified.unwrap_or(false),
         })
     }
 }

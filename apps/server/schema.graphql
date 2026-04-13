@@ -24,9 +24,9 @@ input LocationInput {
 }
 
 type Mutation {
-	createStore(input: CreateStoreInput!): Store!
-	updateStore(input: UpdateStoreInput!): Store!
-	deleteStore(id: UUID!): Boolean!
+	createStore(input: CreateStoreInput!): Store! @deprecated(reason: "Use submitCreateStoreProposal. Kept for admin bulk imports.")
+	updateStore(input: UpdateStoreInput!): Store! @deprecated(reason: "Use submitUpdateStoreProposal. Kept for admin bulk imports.")
+	deleteStore(id: UUID!): Boolean! @deprecated(reason: "Use submitDeleteStoreProposal. Kept for admin bulk imports.")
 }
 
 type Product {
@@ -63,9 +63,9 @@ type Store {
 	name: String!
 	address: String!
 	location: Location!
+	version: Int!
 	createdAt: DateTime!
 	updatedAt: DateTime!
-	products: [Product!]!
 }
 
 """
@@ -89,6 +89,10 @@ input UpdateStoreInput {
 	productIds: [UUID!]
 }
 
+"""
+Marks an element of a GraphQL schema as no longer supported.
+"""
+directive @deprecated(reason: String = "No longer supported") on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
 """
 Directs the executor to include this field or fragment only when the `if` argument is true.
 """
