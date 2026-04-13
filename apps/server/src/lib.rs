@@ -2,6 +2,7 @@ pub mod api;
 pub mod auth;
 pub mod config;
 pub mod model;
+pub mod rate_limit;
 pub mod telemetry;
 
 use api::{Mutation, Query};
@@ -13,7 +14,8 @@ use axum::{
     response::{Html, IntoResponse},
     routing::get,
 };
-use sqlx::PgPool;
+use model::user::User;
+use sqlx::{PgPool, Row};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 pub type AppSchema = Schema<Query, Mutation, EmptySubscription>;
@@ -50,7 +52,7 @@ pub fn create_router(
 
     Router::new()
         .route("/api/export/zip", get(api::export::export_zip_handler))
-        .with_state(pool)
+        .with_state(pool.clone())
         .route(
             "/graphql",
             get(graphql_handler).post(
@@ -59,15 +61,41 @@ pub fn create_router(
                       req: async_graphql_axum::GraphQLRequest| {
                     let mut req = req.into_inner();
                     let schema = schema.clone();
+                    let pool = pool.clone();
                     async move {
                         if let Some(verifier) = verifier.as_ref()
                             && let Some(auth_header) =
                                 headers.get(axum::http::header::AUTHORIZATION)
                             && let Ok(auth_str) = auth_header.to_str()
                             && let Some(token) = auth_str.strip_prefix("Bearer ")
-                            && let Ok(user) = verifier.verify_token(token).await
+                            && let Ok(fb_user) = verifier.verify_token(token).await
                         {
-                            req = req.data(user);
+                            // Inset/Lookup user in DB
+                            let row = sqlx::query(
+                                r"
+                                INSERT INTO users (firebase_uid)
+                                VALUES ($1)
+                                ON CONFLICT (firebase_uid) DO UPDATE SET updated_at = NOW()
+                                RETURNING user_id, firebase_uid, role, trust_score, region, created_at, updated_at
+                                ",
+                            )
+                            .bind(&fb_user.uid)
+                            .fetch_one(&pool)
+                            .await;
+
+                            if let Ok(row) = row {
+                                let user = User {
+                                    user_id: row.get("user_id"),
+                                    firebase_uid: row.get("firebase_uid"),
+                                    role: row.get("role"),
+                                    trust_score: row.get("trust_score"),
+                                    region: row.get("region"),
+                                    created_at: row.get("created_at"),
+                                    updated_at: row.get("updated_at"),
+                                };
+                                req = req.data(fb_user);
+                                req = req.data(user);
+                            }
                         }
                         async_graphql_axum::GraphQLResponse::from(schema.execute(req).await)
                     }
