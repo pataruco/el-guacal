@@ -2,7 +2,7 @@
 
 Status: Draft
 Author: Pedro (with Claude as design partner)
-Date: 2026-04-11
+Date: 2026-04-13
 Scale target: ~100k MAU, ~100k stores, ~1k submissions/day peak
 
 ## 1. Problem
@@ -23,13 +23,13 @@ At the scale we are designing for (100k MAU, 100k stores, ~1k submissions/day pe
 
 ### Goals
 
-- Anyone can propose a new store. Authenticated users can also propose edits and deletions.
+- All write operations require Firebase Auth. Any authenticated user can propose a new store, an edit, or a deletion.
 - Every proposal carries enough provenance to audit, rollback, and measure trust.
 - Moderators review a queue and approve or reject with a note.
 - Approvals apply changes atomically to canonical tables. Rejections leave canonical state untouched.
 - Read path (`storesNear`, `getStoreById`) is unchanged. No cache invalidation rewrite.
 - 95% of proposals reviewed within 72 hours at steady state.
-- Obvious anti-abuse: rate limits, captcha on anonymous submissions, duplicate detection on submit.
+- Anti-abuse: Firebase Auth gate, uid-keyed rate limits, duplicate detection on submit.
 - Boring infra. Everything runs in the existing Rust/Axum + Postgres/PostGIS + Firebase Auth stack. No Kafka, no Redis unless we have to.
 
 ### Non-goals
@@ -38,13 +38,13 @@ At the scale we are designing for (100k MAU, 100k stores, ~1k submissions/day pe
 - Machine learning classification of submissions. Hooks are left open; no model ships in v1.
 - Product taxonomy improvements. Tracked separately.
 - Replacing Firebase Auth. ADR 0009 stands.
-- Frontend framework rewrite. ADR 0007 stands — moderation UI lives inside the existing React Router v7 app at `/mod/*` until it outgrows it.
+- Frontend framework rewrite. ADR 0007 stands.
 
 ## 3. High-level architecture
 
 ```mermaid
 flowchart LR
-    User[Contributor<br/>anonymous or Firebase user] -->|submit*Proposal| API
+    User[Contributor<br/>Firebase Auth required] -->|submit*Proposal| API
     Mod[Moderator<br/>Firebase user, role=moderator] -->|reviewStoreProposal| API
     API[Rust/Axum<br/>async-graphql] -->|rate limit + dedupe| PG[(Postgres + PostGIS)]
     PG -->|store_proposals| Queue[Moderation queue]
@@ -108,10 +108,8 @@ CREATE TABLE store_proposals (
   -- Separate column so we can GIST-index it and moderate by region.
   proposed_location  geography(Point),
 
-  -- Provenance
-  proposer_user_id   uuid REFERENCES users(user_id) ON DELETE SET NULL,
-  proposer_ip        inet,
-  proposer_ua        text,
+  -- Provenance (all writes require Firebase Auth, so user_id is always set)
+  proposer_user_id   uuid NOT NULL REFERENCES users(user_id) ON DELETE SET NULL,
   client_nonce       text NOT NULL, -- idempotency key from client
 
   created_at         timestamptz NOT NULL DEFAULT now(),
@@ -155,7 +153,7 @@ CREATE INDEX idx_audit_time     ON proposal_audit_log (at);
 -- 4.5 Rate-limiting token buckets
 
 CREATE TABLE submission_quota (
-  key          text PRIMARY KEY,     -- 'ip:1.2.3.4' | 'uid:<uid>'
+  key          text PRIMARY KEY,     -- 'uid:<firebase_uid>'
   tokens       integer NOT NULL,
   capacity     integer NOT NULL,
   refill_per_s double precision NOT NULL,
@@ -200,7 +198,7 @@ type StoreProposal {
   proposedLocation: Location
   proposedProductIds: [UUID!]
   reason: String                # only for delete
-  proposer: User                # null if anonymous
+  proposer: User
   createdAt: DateTime!
   reviewedBy: User
   reviewedAt: DateTime
@@ -230,7 +228,6 @@ input SubmitCreateStoreProposalInput {
   productIds: [UUID!]!
   clientNonce: String!
   notADuplicate: Boolean        # set true to override duplicate warning
-  turnstileToken: String        # required for anonymous
 }
 
 input SubmitUpdateStoreProposalInput {
@@ -257,12 +254,19 @@ input ReviewProposalInput {
   note: String
 }
 
+input SetUserRoleInput {
+  firebaseUid: String!
+  role: String!    # "contributor" | "moderator" | "admin"
+  region: String   # optional, for regional moderators
+}
+
 extend type Mutation {
   submitCreateStoreProposal(input: SubmitCreateStoreProposalInput!): StoreProposal!
   submitUpdateStoreProposal(input: SubmitUpdateStoreProposalInput!): StoreProposal!
   submitDeleteStoreProposal(input: SubmitDeleteStoreProposalInput!): StoreProposal!
   withdrawStoreProposal(proposalId: UUID!): StoreProposal!
   reviewStoreProposal(input: ReviewProposalInput!): StoreProposal!
+  setUserRole(input: SetUserRoleInput!): User!  # admin only
 
   createStore(input: CreateStoreInput!): Store! @deprecated(reason: "Use submitCreateStoreProposal. Kept for admin bulk imports.")
   updateStore(input: UpdateStoreInput!): Store! @deprecated(reason: "Use submitUpdateStoreProposal. Kept for admin bulk imports.")
@@ -276,18 +280,19 @@ extend type Query {
 }
 ```
 
-Authorization rules enforced server-side before the resolver runs, via an Axum `Extension` layer that resolves Firebase uid → `users.user_id` + role:
+All write operations require Firebase Auth. No anonymous mutations.
 
-| Operation | Anonymous | Contributor | Moderator | Admin |
-|---|---|---|---|---|
-| `submitCreateStoreProposal` | yes (with Turnstile) | yes | yes | yes |
-| `submitUpdateStoreProposal` | no | yes, email verified | yes | yes |
-| `submitDeleteStoreProposal` | no | yes, trust_score ≥ 3 | yes | yes |
-| `withdrawStoreProposal` (own) | no | yes | yes | yes |
-| `reviewStoreProposal` | no | no | yes | yes |
-| `pendingStoreProposals` | no | no | yes | yes |
-| `myStoreProposals` | no | yes | yes | yes |
-| `createStore` / `updateStore` / `deleteStore` | no | no | no | yes |
+| Operation | Contributor | Moderator | Admin |
+|---|---|---|---|
+| `submitCreateStoreProposal` | yes | yes | yes |
+| `submitUpdateStoreProposal` | yes | yes | yes |
+| `submitDeleteStoreProposal` | yes, trust_score >= 3 | yes | yes |
+| `withdrawStoreProposal` (own) | yes | yes | yes |
+| `reviewStoreProposal` | no | yes | yes |
+| `pendingStoreProposals` | no | yes | yes |
+| `myStoreProposals` | yes | yes | yes |
+| `setUserRole` | no | no | yes |
+| `createStore` / `updateStore` / `deleteStore` | no | no | yes |
 
 ## 6. Approval transaction
 
@@ -366,61 +371,101 @@ Also search `store_proposals` where `status='pending'` and `ST_DWithin(proposed_
 
 ## 8. Anti-abuse
 
-Layered defences, cheapest first.
+All writes require Firebase Auth, so the primary abuse vector is compromised or throwaway Firebase accounts rather than fully anonymous bots. Defences are layered, cheapest first.
 
-1. **Honeypot field** in the form. Bots fill every input; humans don't see it. If populated, silently `status='rejected'` without ever returning to the client.
-2. **Cloudflare Turnstile** token required on every anonymous submit. Verified server-side against Turnstile's `/siteverify` endpoint (no tracking, privacy-friendly, works without cookies — kinder to the diaspora audience than reCAPTCHA).
-3. **Postgres token-bucket rate limit** keyed by IP for anonymous and uid for authenticated:
+1. **Firebase Auth as the first gate.** Every mutation requires a valid, verified Firebase ID token. This alone eliminates casual bot traffic. The token carries `email_verified`; we mirror it into `users.email_verified` on upsert and require it for all proposals.
+2. **Postgres token-bucket rate limit** keyed by Firebase uid:
 
    | Actor | Bucket | Refill |
    |---|---|---|
-   | Anonymous IP | 5 tokens, cap 5 | +1 every 30 min |
    | Contributor uid | 20 tokens, cap 20 | +1 every 15 min |
-   | Trusted contributor (trust ≥ 10) | 100 tokens, cap 100 | +1 every 3 min |
+   | Trusted contributor (trust >= 10) | 100 tokens, cap 100 | +1 every 3 min |
    | Moderator uid | 500 tokens, cap 500 | +1 per s |
 
-   Bucket update is one `INSERT … ON CONFLICT … DO UPDATE` per request. At 1k/day this is invisible load. If it becomes a hot row we move the table to a Redis hash; the interface stays the same.
+   Bucket update is one `INSERT ... ON CONFLICT ... DO UPDATE` per request. At 1k/day this is invisible load. If it becomes a hot row we move the table to a Redis hash; the interface stays the same.
 
-4. **Email verification** gate for update and delete proposals. The Firebase ID token carries `email_verified`; we mirror it into `users.email_verified` on first login and re-check on each write.
-5. **Trust score**: +1 on approval, -3 on rejection. Trust ≥ 3 unlocks delete proposals; trust ≥ 10 lifts rate limit; trust < -5 auto-rejects with "account under review".
-6. **Circuit breaker** on the proposer: if a single uid produces 5 pending proposals at once and none has been reviewed, further submissions return a soft error until the queue drains.
+3. **Trust score**: +1 on approval, -3 on rejection. Trust >= 3 unlocks delete proposals; trust >= 10 lifts rate limit; trust < -5 auto-rejects with "account under review".
+4. **Circuit breaker** on the proposer: if a single uid produces 5 pending proposals at once and none has been reviewed, further submissions return a soft error until the queue drains.
+5. **Honeypot field** in the form as a low-cost bot trap. If populated, silently `status='rejected'`.
 
-None of these require new infrastructure. Turnstile is a Cloudflare free tier feature; everything else is a table.
+None of these require new infrastructure beyond what already exists (Firebase Auth + Postgres).
 
-## 9. Moderation UX (sketch only — content design is a separate pass)
+**Deferred: Cloudflare Turnstile.** If anonymous submissions are ever opened (e.g. for maximum contribution volume), add Turnstile as a captcha layer on anonymous-only mutations. Not needed at launch since all writes require sign-in.
 
-A new route tree inside the existing web app, gated at the React Router `loader` level by checking the `role` claim we'll mirror into a lightweight `/me` query:
+## 9. Moderation & admin UX
 
-- `/mod` — queue home, default filter `pending, ordered by created_at asc, region = my region || global`
-- `/mod/proposal/:id` — single proposal view, diff, map preview, buttons
-- `/mod/users/:id` — proposer history, trust score, recent rejections
+No dedicated admin UI ships in v1. All moderator and admin operations are performed via the GraphiQL playground that `async-graphql` already exposes (typically at `/graphql` with the playground at `/`).
 
-Keyboard shortcuts: `a` approve, `r` reject, `j`/`k` next/prev, `d` open duplicate picker. The review view calls `reviewStoreProposal` and optimistically advances to the next item, falling back on error.
+Moderators authenticate by passing their Firebase ID token in the `Authorization: Bearer <token>` header. They can then:
 
-The moderator surface is small enough that it does not justify a separate app, a separate deployment, or a separate framework. This is the boring, correct call today. Worth revisiting if it ever needs offline mode or grows past ~20 screens.
+- Query `pendingStoreProposals` with filters for region and kind
+- Inspect a single proposal via `storeProposal(id: ...)`
+- Approve or reject via `reviewStoreProposal`
 
-## 10. Observability
+Admins promote moderators via `setUserRole`.
+
+This is the right call at launch: the moderator pool is tiny (you, plus a handful of trusted community members), and building a custom moderation dashboard is premature work that doesn't improve the dataset. The GraphQL schema *is* the admin interface. When the queue grows past what's comfortable in a playground (>20 reviews/day per moderator, or non-technical moderators join), build a lightweight `/mod` route inside the existing React app — the API contract is already there.
+
+### Bootstrap sequence
+
+1. Set `SEED_ADMIN_FIREBASE_UID` in the server environment (your Firebase uid).
+2. On startup, the Rust server upserts that uid into `users` with `role = 'admin'`.
+3. Sign into the web app, grab your ID token from the browser dev tools (`firebase.auth().currentUser.getIdToken()`).
+4. Open GraphiQL, set the `Authorization` header, call `setUserRole` to promote your first moderators.
+5. Done. No migration needed per moderator, no Firebase custom claims, no re-sign-in.
+
+## 10. Contributor UX and content design
+
+The shift from "submit -> live" to "submit -> pending -> reviewed -> live" is a fundamental change in the contributor experience. The store creation (and edit/delete) forms must communicate at every step that the submission is a *proposal*, not an instant publish. This is a content design and UX task that should be treated as a first-class deliverable alongside the API work.
+
+### Principles
+
+- **Set expectations before the form.** The "Add a store" entry point (button, link, CTA) should say something like "Suggest a store" or "Propose a store", not "Add a store". The language must make clear that the contributor is starting a review process, not publishing.
+- **Confirm the pending state after submit.** The success screen should not say "Store created". It should say something like "Thanks — your suggestion has been submitted and is waiting for review." Include the proposal status and, if possible, an estimated review time (e.g. "usually within 72 hours").
+- **Make status visible.** Contributors should be able to see their submissions and their current status (pending, approved, rejected) from their profile or a "My submissions" page. The `myStoreProposals` query powers this.
+- **Explain rejections kindly.** A rejected proposal should show the moderator's note and, where possible, a constructive next step ("This store already exists — did you mean [link]?" or "We couldn't verify this address. Could you double-check it and resubmit?").
+- **Don't surprise on edits and deletes either.** The same pattern applies: "Suggest an edit" not "Edit store", "Request removal" not "Delete store". The contributor should understand that their change is queued, not applied.
+
+### Key touchpoints requiring content design review
+
+1. **"Suggest a store" CTA** — button label, tooltip, any onboarding copy for first-time contributors.
+2. **Store submission form** — intro text, field labels, help text. Consider a banner at the top: "Your suggestion will be reviewed by the El Guacal community before it appears on the map."
+3. **Duplicate warning screen** — when `possibleDuplicates` is returned, the copy must help the contributor decide whether their store is genuinely new or already listed.
+4. **Post-submit confirmation** — the success state after `submitCreateStoreProposal` returns. Must clearly communicate "pending review", not "done".
+5. **"My submissions" list** — status labels (pending, approved, rejected, withdrawn), timestamps, and any moderator notes.
+6. **Rejection notice** — empathetic, actionable copy. Avoid blame language.
+7. **Edit and delete proposal forms** — same "suggest" / "request" language pattern, with a note that the change is queued.
+8. **Empty states** — "You haven't submitted any stores yet" with a CTA to the suggest form.
+
+### i18n
+
+All contributor-facing copy must ship in both en-GB and es-VE (the existing supported locales). Tone may differ between locales — formal "usted" register in Spanish is appropriate for this kind of community contribution flow. This should be reviewed by a native speaker, not just machine-translated.
+
+### Recommendation
+
+This is a content design pass, not a frontend engineering task. The API and data model are ready; the forms already exist. The work is rewriting labels, help text, confirmation screens, and status copy to reflect the new flow. It should be scoped as a separate ticket and reviewed by someone with content design experience before launch.
+
+## 11. Observability
 
 Extend the existing `tracing` + OTLP setup (ADR 0011):
 
 - Spans: `proposal.submit`, `proposal.review`, `proposal.apply`, `proposal.dedupe_check`
 - Counters: `proposals_submitted_total{kind}`, `proposals_reviewed_total{kind,decision}`, `proposals_superseded_total`, `anti_abuse_blocks_total{reason}`
-- Histograms: `proposal_review_latency_seconds` (created → reviewed), `proposal_apply_latency_seconds` (reviewed → committed)
+- Histograms: `proposal_review_latency_seconds` (created -> reviewed), `proposal_apply_latency_seconds` (reviewed -> committed)
 - Alerts:
   - pending queue depth > 200
   - oldest pending proposal age > 7 days
   - rejection rate from a single proposer > 50% over 24h
-  - Turnstile verify failure rate > 5%
 
-## 11. Scale estimation
+## 12. Scale estimation
 
-- **Submissions**: 100k MAU × 1% contribution rate × 1 submission = ~1k/day peak, ~100/day steady state. Postgres trivially absorbs this.
+- **Submissions**: 100k MAU x 1% contribution rate x 1 submission = ~1k/day peak, ~100/day steady state. Postgres trivially absorbs this.
 - **Moderator throughput** (Little's law): at 1k/day arrivals and 72h target latency, steady-state work in progress = 3k. Assume 10 active moderators handling 300 proposals each. At 60s/proposal that is 5h each over 72h, comfortable.
-- **Audit log growth**: ~4 rows per proposal × 1k/day × 365 = ~1.5M rows/year, ~300 MB with indices. Partition by month after year 1.
-- **`store_proposals` size**: 1k/day × 365 = 365k/year. Fine on a single table for at least 3 years before partitioning matters.
+- **Audit log growth**: ~4 rows per proposal x 1k/day x 365 = ~1.5M rows/year, ~300 MB with indices. Partition by month after year 1.
+- **`store_proposals` size**: 1k/day x 365 = 365k/year. Fine on a single table for at least 3 years before partitioning matters.
 - **Hot paths for the read side**: unaffected. `storesNear` reads `stores` + `store_products` exactly as today; CDN in front of GraphQL `GET` works for cached queries (out of scope here).
 
-## 12. Trade-offs
+## 13. Trade-offs
 
 | Decision | Alternative | Why this one |
 |---|---|---|
@@ -429,12 +474,11 @@ Extend the existing `tracing` + OTLP setup (ADR 0011):
 | Postgres-backed token bucket | Redis / Cloudflare rate limiter | No new infra. One row per actor, one UPSERT per write. Hot row is unlikely at 1k/day; when it becomes one, we swap the implementation behind the same interface. |
 | Optimistic concurrency via `stores.version` | Row-level advisory locks | Survives read replicas; simpler mental model; explicit in API via `expectedVersion`. |
 | App-level `users.role` table | Firebase custom claims | Claims need a forced re-sign-in to update. A Postgres column is boring and instant. Role checks are one join we already do for the proposer record. |
-| Cloudflare Turnstile for captcha | reCAPTCHA v3 | Privacy-respecting, no Google tracking. Right default for a diaspora project. Drop-in if Turnstile ever goes away. |
-| Moderation UI inside the existing React app | Separate admin SPA | One less deploy target, one less auth surface. Moderators are few and technical enough to cope with one app. |
-| Proposals authored anonymously allowed for `create` only | Require sign-in for everything | Friction kills contributions. The create path is the most valuable and the least destructive (worst case: spam in a moderation queue we already defend). Update and delete need accountability. |
+| Firebase Auth required for all writes (no anonymous submissions) | Allow anonymous create with Turnstile captcha | Simpler launch: one auth gate, no captcha integration, no anonymous rate-limit table. Slightly higher friction for contributors (must sign in). Turnstile can be added later if we open anonymous submissions. |
+| GraphiQL as the moderation/admin UI at launch | Custom moderation dashboard | Zero frontend work. Moderators are technical and few. The GraphQL schema is the interface. Build a UI only when non-technical moderators need one. |
 | Keep deprecated direct mutations for admins | Remove entirely | Bulk imports and emergency rollbacks still need a trapdoor. Deprecation in the schema plus `admin`-only auth is safer than deletion. |
 
-## 13. What I'd revisit as it grows
+## 14. What I'd revisit as it grows
 
 - **>10k submissions/day**: move rate limiting to Redis or Cloudflare Workers; partition `store_proposals` by month; consider pre-screening submissions with a lightweight classifier (address quality, distance-from-existing, proposer trust) and auto-approving when all three cross a threshold.
 - **Cross-region write latency**: if we ever put the API on more than one Cloud Run region, we need a primary-writer election or accept that writes always go to one region. Reads are already happy on replicas.
@@ -442,21 +486,22 @@ Extend the existing `tracing` + OTLP setup (ADR 0011):
 - **Public contribution API**: documented mutations with rotated API keys for partners (universities, diaspora orgs, the R4V platform). The same `store_proposals` pipeline receives the writes; the only difference is the authenticator.
 - **CRDT merges** for concurrent edits on the same pending proposal. Not needed until moderators routinely argue over the same row.
 
-## 14. Open questions
+## 15. Open questions
 
 1. Do we want `superseded` proposals to be auto-resubmittable? Proposed default: no, the contributor sees the status and a "resubmit against current version" button that copies the payload into a new submit mutation.
 2. Regional moderators: do we gate by proposed country or by moderator's home region? Proposed default: proposer's country (from geocoding the proposed point), falling back to global moderators after 24h in the queue.
-3. Should anonymous submissions expire if never reviewed within 30 days? Proposed default: yes, auto-`rejected` with note `stale anonymous proposal`, purged after another 60 days to keep GDPR surface small.
-4. GDPR right-to-erasure: when a user deletes their account, we replace `proposer_user_id` with NULL and scrub `proposer_ip` and `proposer_ua`. The proposal and audit entries stay. Is that acceptable to legal? (Probably yes, since the content was published, but worth confirming.)
+3. Should unreviewed proposals expire after 30 days? Proposed default: yes, auto-`rejected` with note `stale proposal`, purged after another 60 days.
+4. GDPR right-to-erasure: when a user deletes their account, we set `proposer_user_id` to NULL. The proposal content and audit entries stay (the contributed data was intended for publication). Is that acceptable to legal? (Probably yes, but worth confirming.)
 
-## 15. Rollout plan
+## 16. Rollout plan
 
-1. Migration `20260412000000_contribution_moderation.sql` ships the new tables and the `stores.version` column.
-2. `users` row is upserted on every authenticated request from the Firebase verifier middleware; no login required.
-3. New mutations ship behind a GraphQL schema flag. Frontend still uses the old ones.
-4. Moderation UI ships at `/mod`, gated by `users.role`.
-5. Frontend store-submission form switches to `submitCreateStoreProposal`. Old `createStore` becomes admin-only at the resolver level.
-6. Update/delete forms follow the same cut-over one week later.
-7. After a bake-in period, the deprecated resolvers stay but are gated on `role = 'admin'` and logged at WARN .
+1. Migration `20260413000000_contribution_moderation.sql` ships the new tables and the `stores.version` column.
+2. Set `SEED_ADMIN_FIREBASE_UID` in the Cloud Run environment. On startup the server upserts that uid into `users` with `role = 'admin'`.
+3. `users` row is upserted on every authenticated request from the Firebase verifier middleware; no separate registration flow.
+4. New mutations (`submit*Proposal`, `reviewStoreProposal`, `setUserRole`) ship behind a GraphQL schema flag. Frontend still uses the old mutations.
+5. Admin promotes initial moderators via GraphiQL using `setUserRole`.
+6. Frontend store-submission form switches to `submitCreateStoreProposal`. Old `createStore` becomes admin-only at the resolver level.
+7. Update/delete forms follow the same cut-over one week later.
+8. After a bake-in period, the deprecated resolvers stay but are gated on `role = 'admin'` and logged at WARN.
 
 A rollback plan exists at every step: the old mutations remain wired, so the frontend can revert to them by flipping a single config flag while the backend tables stay in place.
