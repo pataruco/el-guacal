@@ -3,7 +3,7 @@ use crate::model::user::{User, UserRole};
 use crate::rate_limit::check_rate_limit;
 use crate::model::location::Location;
 use async_graphql::{Context, Object, Result, InputObject, Enum};
-use sqlx::{PgPool, Row};
+use sqlx::{PgPool, Row, Postgres, Transaction};
 use uuid::Uuid;
 use serde_json::json;
 
@@ -90,6 +90,80 @@ async fn fetch_proposal_with_location(pool: &PgPool, id: Uuid) -> sqlx::Result<O
         created_at: r.get("created_at"),
         updated_at: r.get("updated_at"),
     }))
+}
+
+impl ProposalCommand {
+    async fn apply_approved_proposal(
+        tx: &mut Transaction<'_, Postgres>,
+        proposal: &StoreProposal,
+    ) -> Result<()> {
+        match proposal.kind {
+            ProposalKind::Create => {
+                let name = proposal.payload["name"].as_str().unwrap();
+                let address = proposal.payload["address"].as_str().unwrap();
+                let product_ids: Vec<Uuid> = serde_json::from_value(proposal.payload["product_ids"].clone())?;
+                let loc = proposal.proposed_location.as_ref().unwrap();
+
+                let row = sqlx::query(
+                    r"INSERT INTO stores (name, address, location)
+                       VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography)
+                       RETURNING store_id",
+                )
+                .bind(name)
+                .bind(address)
+                .bind(loc.lng)
+                .bind(loc.lat)
+                .fetch_one(&mut **tx).await?;
+
+                let store_id: Uuid = row.get("store_id");
+
+                for pid in product_ids {
+                    sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
+                        .bind(store_id)
+                        .bind(pid)
+                        .execute(&mut **tx).await?;
+                }
+            },
+            ProposalKind::Update => {
+                let target_id = proposal.target_store_id.unwrap();
+                let name = proposal.payload["name"].as_str();
+                let address = proposal.payload["address"].as_str();
+                let lat = proposal.payload["lat"].as_f64();
+                let lng = proposal.payload["lng"].as_f64();
+                let product_ids: Option<Vec<Uuid>> = serde_json::from_value(proposal.payload["product_ids"].clone()).ok();
+
+                sqlx::query(
+                    r"UPDATE stores SET
+                       name = COALESCE($1, name),
+                       address = COALESCE($2, address),
+                       location = CASE WHEN $3::float8 IS NOT NULL AND $4::float8 IS NOT NULL THEN ST_SetSRID(ST_Point($4, $3), 4326)::geography ELSE location END,
+                       version = version + 1,
+                       updated_at = NOW()
+                       WHERE store_id = $5",
+                )
+                .bind(name)
+                .bind(address)
+                .bind(lat)
+                .bind(lng)
+                .bind(target_id)
+                .execute(&mut **tx).await?;
+
+                if let Some(pids) = product_ids {
+                    sqlx::query("DELETE FROM store_products WHERE store_id = $1").bind(target_id).execute(&mut **tx).await?;
+                    for pid in pids {
+                        sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
+                            .bind(target_id)
+                            .bind(pid)
+                            .execute(&mut **tx).await?;
+                    }
+                }
+            },
+            ProposalKind::Delete => {
+                sqlx::query("DELETE FROM stores WHERE store_id = $1").bind(proposal.target_store_id.unwrap()).execute(&mut **tx).await?;
+            }
+        }
+        Ok(())
+    }
 }
 
 #[Object]
@@ -322,6 +396,7 @@ impl ProposalCommand {
         Ok(fetch_proposal_with_location(pool, proposal_id).await?.unwrap())
     }
 
+    #[allow(clippy::too_many_lines)]
     async fn review_store_proposal(
         &self,
         ctx: &Context<'_>,
@@ -408,72 +483,7 @@ impl ProposalCommand {
                  }
              }
 
-             // Apply change
-             match proposal.kind {
-                 ProposalKind::Create => {
-                     let name = proposal.payload["name"].as_str().unwrap();
-                     let address = proposal.payload["address"].as_str().unwrap();
-                     let product_ids: Vec<Uuid> = serde_json::from_value(proposal.payload["product_ids"].clone())?;
-                     let loc = proposal.proposed_location.as_ref().unwrap();
-
-                     let row = sqlx::query(
-                         r"INSERT INTO stores (name, address, location)
-                            VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography)
-                            RETURNING store_id",
-                     )
-                     .bind(name)
-                     .bind(address)
-                     .bind(loc.lng)
-                     .bind(loc.lat)
-                     .fetch_one(&mut *tx).await?;
-
-                     let store_id: Uuid = row.get("store_id");
-
-                     for pid in product_ids {
-                         sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
-                             .bind(store_id)
-                             .bind(pid)
-                             .execute(&mut *tx).await?;
-                     }
-                 },
-                 ProposalKind::Update => {
-                     let target_id = proposal.target_store_id.unwrap();
-                     let name = proposal.payload["name"].as_str();
-                     let address = proposal.payload["address"].as_str();
-                     let lat = proposal.payload["lat"].as_f64();
-                     let lng = proposal.payload["lng"].as_f64();
-                     let product_ids: Option<Vec<Uuid>> = serde_json::from_value(proposal.payload["product_ids"].clone()).ok();
-
-                     sqlx::query(
-                         r"UPDATE stores SET
-                            name = COALESCE($1, name),
-                            address = COALESCE($2, address),
-                            location = CASE WHEN $3::float8 IS NOT NULL AND $4::float8 IS NOT NULL THEN ST_SetSRID(ST_Point($4, $3), 4326)::geography ELSE location END,
-                            version = version + 1,
-                            updated_at = NOW()
-                            WHERE store_id = $5",
-                     )
-                     .bind(name)
-                     .bind(address)
-                     .bind(lat)
-                     .bind(lng)
-                     .bind(target_id)
-                     .execute(&mut *tx).await?;
-
-                     if let Some(pids) = product_ids {
-                         sqlx::query("DELETE FROM store_products WHERE store_id = $1").bind(target_id).execute(&mut *tx).await?;
-                         for pid in pids {
-                             sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
-                                 .bind(target_id)
-                                 .bind(pid)
-                                 .execute(&mut *tx).await?;
-                         }
-                     }
-                 },
-                 ProposalKind::Delete => {
-                     sqlx::query("DELETE FROM stores WHERE store_id = $1").bind(proposal.target_store_id.unwrap()).execute(&mut *tx).await?;
-                 }
-             }
+             Self::apply_approved_proposal(&mut tx, &proposal).await?;
 
              sqlx::query(
                  "UPDATE users SET trust_score = trust_score + 1 WHERE user_id = $1"
@@ -495,8 +505,6 @@ impl ProposalCommand {
             .bind(input.proposal_id)
             .bind(user.user_id)
             .execute(&mut *tx).await?;
-
-            tx.commit().await?;
          } else {
             // REJECT
             sqlx::query(
@@ -519,9 +527,9 @@ impl ProposalCommand {
             .bind(input.proposal_id)
             .bind(user.user_id)
             .execute(&mut *tx).await?;
-
-            tx.commit().await?;
         }
+
+        tx.commit().await?;
         Ok(fetch_proposal_with_location(pool, input.proposal_id).await?.unwrap())
     }
 
@@ -545,7 +553,7 @@ impl ProposalCommand {
             ",
         )
         .bind(&input.firebase_uid)
-        .bind(format!("{:?}", input.role).to_lowercase())
+        .bind(format!("{0:?}", input.role).to_lowercase())
         .bind(&input.region)
         .fetch_one(pool)
         .await?;

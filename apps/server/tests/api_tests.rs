@@ -166,7 +166,7 @@ async fn test_graphql_store_mutations() {
     // Mock user
     let user = server::auth::FirebaseUser {
         uid: "test-user".to_string(),
-        email: Some("test@example.com".to_string()),
+        email: Some("test@example.com".to_string()), email_verified: true,
     };
 
     // 1. Create Store
@@ -270,7 +270,7 @@ async fn test_graphql_stores_near_filter() {
     // Create a store with both products
     let user = server::auth::FirebaseUser {
         uid: "test-user-filter".to_string(),
-        email: Some("test-filter@example.com".to_string()),
+        email: Some("test-filter@example.com".to_string()), email_verified: true,
     };
 
     let create_mutation = format!(
