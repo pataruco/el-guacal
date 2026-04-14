@@ -11,6 +11,12 @@
     "signInWithGoogle": "Sign in with Google",
     "signUp": "Sign up"
   },
+  "mySubmissions": {
+    "title": "My submissions",
+    "empty": "You haven't submitted any store suggestions yet.",
+    "deletion": "Store removal request",
+    "moderatorNote": "Moderator note"
+  },
   "common": {
     "loading": "Loading...",
     "notFound": "Page not found"
@@ -27,6 +33,25 @@
   "footer": {},
   "map": {
     "locateMe": "Find my location"
+  },
+  "proposal": {
+    "submitted": {
+      "title": "Suggestion submitted",
+      "message": "Thank you! Your suggestion has been submitted and is waiting for review. This usually takes up to 72 hours.",
+      "backToMap": "Back to map"
+    },
+    "status": {
+      "pending": "Pending review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "superseded": "Superseded"
+    },
+    "kind": {
+      "create": "New store",
+      "update": "Edit",
+      "delete": "Removal"
+    }
   },
   "nav": {
     "about": "About",
@@ -89,6 +114,10 @@
       "description": "Find local stores and products in Venezuela. Community-driven map of bodegas, supermarkets, and more.",
       "title": "El Guacal - Local Store Finder"
     },
+    "mySubmissions": {
+      "title": "My submissions — El Guacal",
+      "description": "View your store suggestions and their review status."
+    },
     "stores": {
       "edit": {
         "title": "Edit Store - El Guacal"
@@ -111,9 +140,10 @@
   "storeForm": {
     "address": "Address",
     "addressPlaceholder": "e.g., 123 High Street, London",
-    "addTitle": "Add new store",
+    "addTitle": "Suggest a store",
+    "banner": "Your suggestion will be reviewed by the El Guacal community before it appears on the map.",
     "cancel": "Cancel",
-    "editTitle": "Edit store",
+    "editTitle": "Suggest an edit",
     "locateMe": "Find my location",
     "location": "Location",
     "mapHintAddress": "The address fills in automatically. You can also edit it.",
@@ -121,7 +151,7 @@
     "noProductsFound": "No products found",
     "products": "Products",
     "removeProduct": "Remove product",
-    "saveStore": "Save store",
+    "saveStore": "Submit suggestion",
     "searchProducts": "Search products...",
     "storeName": "Store name",
     "storeNamePlaceholder": "e.g., Bodega La Esquina",

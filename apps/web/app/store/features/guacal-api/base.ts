@@ -16,5 +16,5 @@ export const gualcalGraphqlApiSlice = createApi({
   }),
   endpoints: () => ({}),
   reducerPath: 'gualcalGraphqlApi',
-  tagTypes: ['Store'],
+  tagTypes: ['Store', 'Proposal'],
 });

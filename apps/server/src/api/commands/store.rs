@@ -41,12 +41,12 @@ impl StoreCommand {
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
 
         // Gate to admin only (deprecated — use submitCreateStoreProposal)
-        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>() {
-            if auth.role != "admin" {
-                return Err(async_graphql::Error::new(
-                    "Forbidden: use submitCreateStoreProposal instead. Direct mutations are admin-only.",
-                ));
-            }
+        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>()
+            && auth.role != "admin"
+        {
+            return Err(async_graphql::Error::new(
+                "Forbidden: use submitCreateStoreProposal instead. Direct mutations are admin-only.",
+            ));
         }
 
         let pool = ctx.data::<PgPool>()?;
@@ -104,12 +104,12 @@ impl StoreCommand {
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
 
         // Gate to admin only (deprecated — use submitUpdateStoreProposal)
-        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>() {
-            if auth.role != "admin" {
-                return Err(async_graphql::Error::new(
-                    "Forbidden: use submitUpdateStoreProposal instead. Direct mutations are admin-only.",
-                ));
-            }
+        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>()
+            && auth.role != "admin"
+        {
+            return Err(async_graphql::Error::new(
+                "Forbidden: use submitUpdateStoreProposal instead. Direct mutations are admin-only.",
+            ));
         }
 
         let pool = ctx.data::<PgPool>()?;
@@ -193,12 +193,12 @@ impl StoreCommand {
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
 
         // Gate to admin only (deprecated — use submitDeleteStoreProposal)
-        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>() {
-            if auth.role != "admin" {
-                return Err(async_graphql::Error::new(
-                    "Forbidden: use submitDeleteStoreProposal instead. Direct mutations are admin-only.",
-                ));
-            }
+        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>()
+            && auth.role != "admin"
+        {
+            return Err(async_graphql::Error::new(
+                "Forbidden: use submitDeleteStoreProposal instead. Direct mutations are admin-only.",
+            ));
         }
 
         let pool = ctx.data::<PgPool>()?;

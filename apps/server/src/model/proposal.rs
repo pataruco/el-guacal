@@ -3,7 +3,7 @@ use crate::model::store::Store;
 use crate::model::user::User;
 use async_graphql::{Context, Enum, Object, SimpleObject};
 use chrono::{DateTime, Utc};
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 use uuid::Uuid;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
@@ -14,7 +14,8 @@ pub enum ProposalKind {
 }
 
 impl ProposalKind {
-    pub fn as_db_str(self) -> &'static str {
+    #[must_use]
+    pub const fn as_db_str(self) -> &'static str {
         match self {
             Self::Create => "create",
             Self::Update => "update",
@@ -22,6 +23,7 @@ impl ProposalKind {
         }
     }
 
+    #[must_use]
     pub fn from_db_str(s: &str) -> Option<Self> {
         match s {
             "create" => Some(Self::Create),
@@ -42,7 +44,8 @@ pub enum ProposalStatus {
 }
 
 impl ProposalStatus {
-    pub fn as_db_str(self) -> &'static str {
+    #[must_use]
+    pub const fn as_db_str(self) -> &'static str {
         match self {
             Self::Pending => "pending",
             Self::Approved => "approved",
@@ -52,6 +55,7 @@ impl ProposalStatus {
         }
     }
 
+    #[must_use]
     pub fn from_db_str(s: &str) -> Option<Self> {
         match s {
             "pending" => Some(Self::Pending),
@@ -112,16 +116,16 @@ impl StoreProposal {
         self.target_version
     }
     async fn proposed_name(&self) -> Option<&str> {
-        self.payload.get("name").and_then(|v| v.as_str())
+        self.payload.get("name").and_then(serde_json::Value::as_str)
     }
     async fn proposed_address(&self) -> Option<&str> {
-        self.payload.get("address").and_then(|v| v.as_str())
+        self.payload.get("address").and_then(serde_json::Value::as_str)
     }
     async fn proposed_location(&self) -> Option<&Location> {
         self.proposed_location.as_ref()
     }
     async fn reason(&self) -> Option<&str> {
-        self.payload.get("reason").and_then(|v| v.as_str())
+        self.payload.get("reason").and_then(serde_json::Value::as_str)
     }
     async fn client_nonce(&self) -> &str {
         &self.client_nonce
@@ -146,7 +150,6 @@ impl StoreProposal {
         .await?;
 
         Ok(row.map(|row| {
-            use sqlx::Row;
             User {
                 user_id: row.get("user_id"),
                 firebase_uid: row.get("firebase_uid"),
@@ -175,7 +178,6 @@ impl StoreProposal {
         .await?;
 
         Ok(row.map(|row| {
-            use sqlx::Row;
             User {
                 user_id: row.get("user_id"),
                 firebase_uid: row.get("firebase_uid"),
@@ -218,7 +220,6 @@ impl StoreProposal {
         Ok(rows
             .into_iter()
             .map(|row| {
-                use sqlx::Row;
                 Store {
                     store_id: row.get("store_id"),
                     name: row.get("name"),
@@ -252,10 +253,9 @@ impl StoreProposal {
             return Ok(vec![]);
         };
 
-        use sqlx::Row;
         let mut diffs = Vec::new();
 
-        if let Some(proposed_name) = self.payload.get("name").and_then(|v| v.as_str()) {
+        if let Some(proposed_name) = self.payload.get("name").and_then(serde_json::Value::as_str) {
             let current: String = row.get("name");
             if proposed_name != current {
                 diffs.push(StoreDiff {
@@ -266,7 +266,7 @@ impl StoreProposal {
             }
         }
 
-        if let Some(proposed_addr) = self.payload.get("address").and_then(|v| v.as_str()) {
+        if let Some(proposed_addr) = self.payload.get("address").and_then(serde_json::Value::as_str) {
             let current: String = row.get("address");
             if proposed_addr != current {
                 diffs.push(StoreDiff {
@@ -277,9 +277,9 @@ impl StoreProposal {
             }
         }
 
-        if let Some(proposed_lat) = self.payload.get("lat").and_then(|v| v.as_f64()) {
+        if let Some(proposed_lat) = self.payload.get("lat").and_then(serde_json::Value::as_f64) {
             let current: f64 = row.get("lat");
-            if (proposed_lat - current).abs() > 0.000001 {
+            if (proposed_lat - current).abs() > 0.000_001 {
                 diffs.push(StoreDiff {
                     field: "lat".to_string(),
                     before: Some(current.to_string()),
@@ -288,9 +288,9 @@ impl StoreProposal {
             }
         }
 
-        if let Some(proposed_lng) = self.payload.get("lng").and_then(|v| v.as_f64()) {
+        if let Some(proposed_lng) = self.payload.get("lng").and_then(serde_json::Value::as_f64) {
             let current: f64 = row.get("lng");
-            if (proposed_lng - current).abs() > 0.000001 {
+            if (proposed_lng - current).abs() > 0.000_001 {
                 diffs.push(StoreDiff {
                     field: "lng".to_string(),
                     before: Some(current.to_string()),
@@ -317,10 +317,9 @@ pub struct StoreProposalConnection {
     pub has_next_page: bool,
 }
 
-/// Helper: build a StoreProposal from a sqlx Row
+/// Helper: build a `StoreProposal` from a sqlx Row.
+#[must_use]
 pub fn proposal_from_row(row: &sqlx::postgres::PgRow) -> StoreProposal {
-    use sqlx::Row;
-
     let kind_str: String = row.get("kind");
     let status_str: String = row.get("status");
 

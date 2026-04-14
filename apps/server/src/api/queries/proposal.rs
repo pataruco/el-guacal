@@ -4,7 +4,7 @@ use crate::model::proposal::{
     proposal_from_row,
 };
 use async_graphql::{Context, Object};
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 use uuid::Uuid;
 
 #[derive(Default)]
@@ -39,7 +39,6 @@ impl ProposalQuery {
 
         match row {
             Some(r) => {
-                use sqlx::Row;
                 let proposer_id: Uuid = r.get("proposer_user_id");
                 // Contributors can only see their own proposals
                 if auth.role == "contributor" && proposer_id != auth.user_id {
@@ -51,6 +50,7 @@ impl ProposalQuery {
         }
     }
 
+    #[allow(clippy::cast_sign_loss)]
     async fn my_store_proposals(
         &self,
         ctx: &Context<'_>,
@@ -63,7 +63,7 @@ impl ProposalQuery {
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
         let pool = ctx.data::<PgPool>()?;
 
-        let limit = limit.unwrap_or(50).min(100) as i64;
+        let limit = limit.unwrap_or(50).min(100);
         let cursor_time = cursor
             .as_deref()
             .and_then(|c| chrono::DateTime::parse_from_rfc3339(c).ok())
@@ -113,7 +113,7 @@ impl ProposalQuery {
             .await?
         };
 
-        let has_next_page = rows.len() as i64 > limit;
+        let has_next_page = rows.len() > limit as usize;
         let edges: Vec<StoreProposalEdge> = rows
             .into_iter()
             .take(limit as usize)
@@ -133,10 +133,11 @@ impl ProposalQuery {
         })
     }
 
+    #[allow(unused_variables, clippy::cast_sign_loss)]
     async fn pending_store_proposals(
         &self,
         ctx: &Context<'_>,
-        _region: Option<String>,
+        region: Option<String>,
         kind: Option<ProposalKind>,
         limit: Option<i32>,
         cursor: Option<String>,
@@ -150,7 +151,7 @@ impl ProposalQuery {
         }
 
         let pool = ctx.data::<PgPool>()?;
-        let limit = limit.unwrap_or(50).min(100) as i64;
+        let limit = limit.unwrap_or(50).min(100);
         let cursor_time = cursor
             .as_deref()
             .and_then(|c| chrono::DateTime::parse_from_rfc3339(c).ok())
@@ -179,7 +180,7 @@ impl ProposalQuery {
         .fetch_all(pool)
         .await?;
 
-        let has_next_page = rows.len() as i64 > limit;
+        let has_next_page = rows.len() > limit as usize;
         let edges: Vec<StoreProposalEdge> = rows
             .into_iter()
             .take(limit as usize)

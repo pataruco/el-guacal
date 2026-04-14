@@ -294,6 +294,7 @@ impl ProposalCommand {
         Ok(proposal)
     }
 
+    #[allow(clippy::too_many_lines)]
     async fn review_store_proposal(
         &self,
         ctx: &Context<'_>,
@@ -461,14 +462,14 @@ impl ProposalCommand {
 
                         if let Some(product_ids) = payload["product_ids"].as_array() {
                             for pid in product_ids {
-                                if let Some(pid_str) = pid.as_str() {
-                                    if let Ok(pid_uuid) = Uuid::parse_str(pid_str) {
-                                        sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
-                                            .bind(new_store_id)
-                                            .bind(pid_uuid)
-                                            .execute(&mut *tx)
-                                            .await?;
-                                    }
+                                if let Some(pid_str) = pid.as_str()
+                                    && let Ok(pid_uuid) = Uuid::parse_str(pid_str)
+                                {
+                                    sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
+                                        .bind(new_store_id)
+                                        .bind(pid_uuid)
+                                        .execute(&mut *tx)
+                                        .await?;
                                 }
                             }
                         }
@@ -483,14 +484,14 @@ impl ProposalCommand {
                     "update" => {
                         let target_id = target_store_id.unwrap();
 
-                        if let Some(name) = payload.get("name").and_then(|v| v.as_str()) {
+                        if let Some(name) = payload.get("name").and_then(serde_json::Value::as_str) {
                             sqlx::query("UPDATE stores SET name = $1 WHERE store_id = $2")
                                 .bind(name)
                                 .bind(target_id)
                                 .execute(&mut *tx)
                                 .await?;
                         }
-                        if let Some(address) = payload.get("address").and_then(|v| v.as_str()) {
+                        if let Some(address) = payload.get("address").and_then(serde_json::Value::as_str) {
                             sqlx::query("UPDATE stores SET address = $1 WHERE store_id = $2")
                                 .bind(address)
                                 .bind(target_id)
@@ -498,8 +499,8 @@ impl ProposalCommand {
                                 .await?;
                         }
                         if let (Some(lat), Some(lng)) = (
-                            payload.get("lat").and_then(|v| v.as_f64()),
-                            payload.get("lng").and_then(|v| v.as_f64()),
+                            payload.get("lat").and_then(serde_json::Value::as_f64),
+                            payload.get("lng").and_then(serde_json::Value::as_f64),
                         ) {
                             sqlx::query("UPDATE stores SET location = ST_SetSRID(ST_Point($1, $2), 4326)::geography WHERE store_id = $3")
                                 .bind(lng)
@@ -508,20 +509,20 @@ impl ProposalCommand {
                                 .execute(&mut *tx)
                                 .await?;
                         }
-                        if let Some(product_ids) = payload.get("product_ids").and_then(|v| v.as_array()) {
+                        if let Some(product_ids) = payload.get("product_ids").and_then(serde_json::Value::as_array) {
                             sqlx::query("DELETE FROM store_products WHERE store_id = $1")
                                 .bind(target_id)
                                 .execute(&mut *tx)
                                 .await?;
                             for pid in product_ids {
-                                if let Some(pid_str) = pid.as_str() {
-                                    if let Ok(pid_uuid) = Uuid::parse_str(pid_str) {
-                                        sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
-                                            .bind(target_id)
-                                            .bind(pid_uuid)
-                                            .execute(&mut *tx)
-                                            .await?;
-                                    }
+                                if let Some(pid_str) = pid.as_str()
+                                    && let Ok(pid_uuid) = Uuid::parse_str(pid_str)
+                                {
+                                    sqlx::query("INSERT INTO store_products (store_id, product_id) VALUES ($1, $2)")
+                                        .bind(target_id)
+                                        .bind(pid_uuid)
+                                        .execute(&mut *tx)
+                                        .await?;
                                 }
                             }
                         }

@@ -1,0 +1,23 @@
+mutation SubmitCreateStoreProposal($input: SubmitCreateStoreProposalInput!) {
+  submitCreateStoreProposal(input: $input) {
+    proposalId
+    kind
+    status
+    proposedName
+    proposedAddress
+    proposedLocation {
+      lat
+      lng
+    }
+    createdAt
+    possibleDuplicates {
+      storeId
+      name
+      address
+      location {
+        lat
+        lng
+      }
+    }
+  }
+}

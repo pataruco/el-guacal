@@ -1,0 +1,8 @@
+mutation SubmitDeleteStoreProposal($input: SubmitDeleteStoreProposalInput!) {
+  submitDeleteStoreProposal(input: $input) {
+    proposalId
+    kind
+    status
+    createdAt
+  }
+}

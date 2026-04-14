@@ -1,6 +1,6 @@
 use jsonwebtoken::{DecodingKey, Validation, decode, decode_header};
 use serde::{Deserialize, Serialize};
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::time::{Duration, Instant};
@@ -100,7 +100,11 @@ pub struct AuthenticatedUser {
     pub role: String,
 }
 
-/// Upserts a Firebase user into the `users` table, returning their user_id and role.
+/// Upserts a Firebase user into the `users` table, returning their `user_id` and role.
+///
+/// # Errors
+///
+/// Returns an error if the database query fails.
 pub async fn upsert_user(
     pool: &PgPool,
     firebase_user: &FirebaseUser,
@@ -122,11 +126,14 @@ pub async fn upsert_user(
     .fetch_one(pool)
     .await?;
 
-    use sqlx::Row;
     Ok((row.get("user_id"), row.get("role")))
 }
 
-/// Seeds the admin user on startup if SEED_ADMIN_FIREBASE_UID is set.
+/// Seeds the admin user on startup if `SEED_ADMIN_FIREBASE_UID` is set.
+///
+/// # Errors
+///
+/// Returns an error if the database query fails.
 pub async fn seed_admin(pool: &PgPool, firebase_uid: &str) -> anyhow::Result<()> {
     sqlx::query(
         r"

@@ -11,6 +11,12 @@
     "signInWithGoogle": "Ingresar con Google",
     "signUp": "Registrarse"
   },
+  "mySubmissions": {
+    "title": "Mis envíos",
+    "empty": "Aún no ha enviado ninguna sugerencia de tienda.",
+    "deletion": "Solicitud de eliminación",
+    "moderatorNote": "Nota del moderador"
+  },
   "common": {
     "loading": "Cargando...",
     "notFound": "Página no encontrada"
@@ -27,6 +33,25 @@
   "footer": {},
   "map": {
     "locateMe": "Buscar mi ubicación"
+  },
+  "proposal": {
+    "submitted": {
+      "title": "Sugerencia enviada",
+      "message": "¡Gracias! Su sugerencia ha sido enviada y está en espera de revisión. Esto suele tomar hasta 72 horas.",
+      "backToMap": "Volver al mapa"
+    },
+    "status": {
+      "pending": "Pendiente de revisión",
+      "approved": "Aprobada",
+      "rejected": "Rechazada",
+      "withdrawn": "Retirada",
+      "superseded": "Reemplazada"
+    },
+    "kind": {
+      "create": "Nueva tienda",
+      "update": "Edición",
+      "delete": "Eliminación"
+    }
   },
   "nav": {
     "about": "Nosotros",
@@ -89,6 +114,10 @@
       "description": "Encuentra tiendas y productos locales en Venezuela. Mapa de bodegas, supermercados y más.",
       "title": "El Guacal - Buscador de Tiendas Locales"
     },
+    "mySubmissions": {
+      "title": "Mis envíos — El Guacal",
+      "description": "Vea sus sugerencias de tiendas y el estado de revisión."
+    },
     "stores": {
       "edit": {
         "title": "Editar Tienda - El Guacal"
@@ -111,9 +140,10 @@
   "storeForm": {
     "address": "Dirección",
     "addressPlaceholder": "ej., Av. Libertador, Caracas",
-    "addTitle": "Agregar nueva tienda",
+    "addTitle": "Sugerir una tienda",
+    "banner": "Su sugerencia será revisada por la comunidad de El Guacal antes de aparecer en el mapa.",
     "cancel": "Cancelar",
-    "editTitle": "Editar tienda",
+    "editTitle": "Sugerir una edición",
     "locateMe": "Buscar mi ubicación",
     "location": "Ubicación",
     "mapHintAddress": "La dirección se completa automáticamente. También puedes editarla.",
@@ -121,7 +151,7 @@
     "noProductsFound": "No se encontraron productos",
     "products": "Productos",
     "removeProduct": "Eliminar producto",
-    "saveStore": "Guardar tienda",
+    "saveStore": "Enviar sugerencia",
     "searchProducts": "Buscar productos...",
     "storeName": "Nombre de la tienda",
     "storeNamePlaceholder": "ej., Bodega La Esquina",

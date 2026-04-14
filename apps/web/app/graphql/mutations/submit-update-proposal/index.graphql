@@ -1,0 +1,8 @@
+mutation SubmitUpdateStoreProposal($input: SubmitUpdateStoreProposalInput!) {
+  submitUpdateStoreProposal(input: $input) {
+    proposalId
+    kind
+    status
+    createdAt
+  }
+}

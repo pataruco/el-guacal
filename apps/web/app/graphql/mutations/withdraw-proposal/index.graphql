@@ -1,0 +1,6 @@
+mutation WithdrawStoreProposal($proposalId: UUID!) {
+  withdrawStoreProposal(proposalId: $proposalId) {
+    proposalId
+    status
+  }
+}

@@ -1,7 +1,10 @@
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 
 /// Checks and consumes a rate-limit token for the given key.
-/// Returns `Ok(true)` if the request is allowed, `Ok(false)` if rate-limited.
+///
+/// # Errors
+///
+/// Returns an error if the database query fails.
 pub async fn check_rate_limit(
     pool: &PgPool,
     key: &str,
@@ -32,12 +35,12 @@ pub async fn check_rate_limit(
     .fetch_one(pool)
     .await?;
 
-    use sqlx::Row;
     let tokens: i32 = row.get("tokens");
     Ok(tokens >= 0)
 }
 
 /// Returns rate-limit parameters based on user role and trust score.
+#[must_use]
 pub fn rate_limit_params(role: &str, trust_score: i32) -> (i32, f64) {
     match role {
         "admin" | "moderator" => (500, 1.0),
