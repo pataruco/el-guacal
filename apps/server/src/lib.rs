@@ -2,6 +2,7 @@ pub mod api;
 pub mod auth;
 pub mod config;
 pub mod model;
+pub mod rate_limit;
 pub mod telemetry;
 
 use api::{Mutation, Query};
@@ -48,6 +49,8 @@ pub fn create_router(
         ])
         .allow_origin(allowed_origins);
 
+    let pool_clone = pool.clone();
+
     Router::new()
         .route("/api/export/zip", get(api::export::export_zip_handler))
         .with_state(pool)
@@ -59,6 +62,7 @@ pub fn create_router(
                       req: async_graphql_axum::GraphQLRequest| {
                     let mut req = req.into_inner();
                     let schema = schema.clone();
+                    let pool = pool_clone.clone();
                     async move {
                         if let Some(verifier) = verifier.as_ref()
                             && let Some(auth_header) =
@@ -67,7 +71,16 @@ pub fn create_router(
                             && let Some(token) = auth_str.strip_prefix("Bearer ")
                             && let Ok(user) = verifier.verify_token(token).await
                         {
-                            req = req.data(user);
+                            // Upsert user into Postgres and get their user_id + role
+                            if let Ok((user_id, role)) =
+                                auth::upsert_user(&pool, &user).await
+                            {
+                                req = req
+                                    .data(user)
+                                    .data(auth::AuthenticatedUser { user_id, role });
+                            } else {
+                                req = req.data(user);
+                            }
                         }
                         async_graphql_axum::GraphQLResponse::from(schema.execute(req).await)
                     }

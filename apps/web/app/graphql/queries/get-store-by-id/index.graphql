@@ -3,6 +3,7 @@ query GetStoreById($storeId: UUID!) {
     name
     storeId
     address
+    version
     updatedAt
     location {
       lat

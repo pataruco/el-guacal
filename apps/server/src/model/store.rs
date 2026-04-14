@@ -11,6 +11,7 @@ pub struct Store {
     pub name: String,
     pub address: String,
     pub location: Location,
+    pub version: i64,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -31,6 +32,9 @@ impl Store {
     }
     async fn created_at(&self) -> DateTime<Utc> {
         self.created_at
+    }
+    async fn version(&self) -> i64 {
+        self.version
     }
     async fn updated_at(&self) -> DateTime<Utc> {
         self.updated_at
@@ -85,6 +89,7 @@ mod tests {
             name: "Test Store".to_string(),
             address: "123 Test St".to_string(),
             location: loc.clone(),
+            version: 1,
             created_at: now,
             updated_at: now,
         };

@@ -12,9 +12,9 @@ async-graphql = { version = "7.2.1", features = [
     "log",
 ] }
 async-graphql-axum = "7.2.1"
-axum = "0.8.8"
+axum = "0.8.9"
 chrono = { version = "0.4.44", features = ["clock"] }
-tokio = { version = "1.50.0", features = ["full"] }
+tokio = { version = "1.51.1", features = ["full"] }
 uuid = { version = "1.23.0", features = ["v4", "serde"] }
 sqlx = { version = "0.8.6", features = [
     "runtime-tokio-native-tls",
@@ -27,7 +27,7 @@ dotenvy = "0.15"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0"
 csv = "1.4.0"
-zip = { version = "8.5.0", default-features = false, features = ["deflate"] }
+zip = { version = "8.5.1", default-features = false, features = ["deflate"] }
 anyhow = "1.0.102"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }

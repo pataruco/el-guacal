@@ -5,11 +5,17 @@ describe('auth slice', () => {
   const initialState = {
     idToken: null,
     isAuthenticated: false,
+    isAuthReady: false,
     user: null,
   };
 
   it('should handle initial state', () => {
     expect(reducer(undefined, { type: 'unknown' })).toEqual(initialState);
+  });
+
+  it('should start with isAuthReady false', () => {
+    const state = reducer(undefined, { type: 'unknown' });
+    expect(state.isAuthReady).toBe(false);
   });
 
   it('should handle setAuth', () => {
@@ -23,6 +29,7 @@ describe('auth slice', () => {
     const actual = reducer(initialState, setAuth({ idToken, user }));
     expect(actual.idToken).toBe(idToken);
     expect(actual.isAuthenticated).toBe(true);
+    expect(actual.isAuthReady).toBe(true);
     expect(actual.user).toEqual(user);
   });
 
@@ -30,6 +37,7 @@ describe('auth slice', () => {
     const authenticatedState = {
       idToken: 'fake-token',
       isAuthenticated: true,
+      isAuthReady: true,
       user: {
         displayName: 'Test User',
         email: 'test@example.com',
@@ -40,6 +48,7 @@ describe('auth slice', () => {
     const actual = reducer(authenticatedState, clearAuth());
     expect(actual.idToken).toBeNull();
     expect(actual.isAuthenticated).toBe(false);
+    expect(actual.isAuthReady).toBe(true);
     expect(actual.user).toBeNull();
   });
 
@@ -48,6 +57,7 @@ describe('auth slice', () => {
       auth: {
         idToken: 'token',
         isAuthenticated: true,
+        isAuthReady: true,
         user: {
           displayName: 'Test',
           email: 'test@example.com',

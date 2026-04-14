@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type MetaFunction, useNavigate, useParams } from 'react-router';
 import Page from '@/components/page';
 import StoreForm from '@/components/store/StoreForm';
-import { useUpdateStoreMutation } from '@/graphql/mutations/update-store/index.generated';
+import { useSubmitUpdateStoreProposalMutation } from '@/graphql/mutations/submit-update-proposal/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import i18n from '@/i18n/config';
 import { selectAuth } from '@/store/features/auth/slice';
@@ -25,9 +25,13 @@ const EditStorePage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
+  const clientNonce = useMemo(() => crypto.randomUUID(), []);
 
   const { data, isLoading } = useGetStoreByIdQuery({ storeId: id as string });
-  const [updateStore] = useUpdateStoreMutation();
+  const [submitProposal] = useSubmitUpdateStoreProposalMutation();
+  const [submissionStatus, setSubmissionStatus] = useState<
+    'idle' | 'submitted'
+  >('idle');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,6 +55,7 @@ const EditStorePage = () => {
   const store = data.getStoreById;
   const initialValues = {
     address: store.address,
+    clientNonce,
     lat: store.location.lat,
     lng: store.location.lng,
     name: store.name,
@@ -59,29 +64,46 @@ const EditStorePage = () => {
 
   const handleSubmit = async (values: {
     address: string;
+    clientNonce: string;
     lat: number;
     lng: number;
     name: string;
     productIds: string[];
   }) => {
     try {
-      await updateStore({
+      await submitProposal({
         input: {
           address: values.address,
+          clientNonce: values.clientNonce,
+          expectedVersion: store.version,
           lat: values.lat,
           lng: values.lng,
           name: values.name,
           productIds: values.productIds,
-          storeId: id as string,
+          targetStoreId: id as string,
         },
       }).unwrap();
-      navigate(`/${locale}`);
+      setSubmissionStatus('submitted');
     } catch (error) {
-      console.error('Failed to update store:', error);
+      console.error('Failed to submit proposal:', error);
     }
   };
 
   if (!isAuthenticated) return null;
+
+  if (submissionStatus === 'submitted') {
+    return (
+      <Page>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h1>{t('proposal.submitted.title')}</h1>
+          <p>{t('proposal.submitted.message')}</p>
+          <button type="button" onClick={() => navigate(`/${locale}`)}>
+            {t('proposal.submitted.backToMap')}
+          </button>
+        </div>
+      </Page>
+    );
+  }
 
   return (
     <Page>

@@ -28,6 +28,12 @@
   "map": {
     "locateMe": "Buscar mi ubicación"
   },
+  "mySubmissions": {
+    "deletion": "Solicitud de eliminación",
+    "empty": "Aún no ha enviado ninguna sugerencia de tienda.",
+    "moderatorNote": "Nota del moderador",
+    "title": "Mis propuestas de tienda"
+  },
   "nav": {
     "about": "Nosotros",
     "addStore": "Agregar tienda",
@@ -37,7 +43,8 @@
     "languageSelector": "Seleccionar idioma",
     "login": "Ingresar",
     "logout": "Salir",
-    "menu": "Menú"
+    "menu": "Menú",
+    "mySubmissions": "Mis propuestas de tienda"
   },
   "pages": {
     "blog": {
@@ -53,6 +60,25 @@
       "storesCsv": "Una lista de todas las tiendas con sus nombres, direcciones, coordenadas e identificadores de productos asociados.",
       "title": "Datos abiertos",
       "whatsIncluded": "¿Qué incluye?"
+    }
+  },
+  "proposal": {
+    "kind": {
+      "create": "Nueva tienda",
+      "delete": "Eliminación",
+      "update": "Edición"
+    },
+    "status": {
+      "approved": "Aprobada",
+      "pending": "Pendiente de revisión",
+      "rejected": "Rechazada",
+      "superseded": "Reemplazada",
+      "withdrawn": "Retirada"
+    },
+    "submitted": {
+      "backToMap": "Volver al mapa",
+      "message": "¡Gracias! Su sugerencia ha sido enviada y está en espera de revisión. Esto suele tomar hasta 72 horas.",
+      "title": "Sugerencia enviada"
     }
   },
   "search": {
@@ -89,6 +115,10 @@
       "description": "Encuentra tiendas y productos locales en Venezuela. Mapa de bodegas, supermercados y más.",
       "title": "El Guacal - Buscador de Tiendas Locales"
     },
+    "mySubmissions": {
+      "description": "Vea sus sugerencias de tiendas y el estado de revisión.",
+      "title": "Mis propuestas de tienda — El Guacal"
+    },
     "stores": {
       "edit": {
         "title": "Editar Tienda - El Guacal"
@@ -111,9 +141,10 @@
   "storeForm": {
     "address": "Dirección",
     "addressPlaceholder": "ej., Av. Libertador, Caracas",
-    "addTitle": "Agregar nueva tienda",
+    "addTitle": "Sugerir una tienda",
+    "banner": "Su sugerencia será revisada por la comunidad de El Guacal antes de aparecer en el mapa.",
     "cancel": "Cancelar",
-    "editTitle": "Editar tienda",
+    "editTitle": "Sugerir una edición",
     "locateMe": "Buscar mi ubicación",
     "location": "Ubicación",
     "mapHintAddress": "La dirección se completa automáticamente. También puedes editarla.",
@@ -121,7 +152,7 @@
     "noProductsFound": "No se encontraron productos",
     "products": "Productos",
     "removeProduct": "Eliminar producto",
-    "saveStore": "Guardar tienda",
+    "saveStore": "Enviar sugerencia",
     "searchProducts": "Buscar productos...",
     "storeName": "Nombre de la tienda",
     "storeNamePlaceholder": "ej., Bodega La Esquina",

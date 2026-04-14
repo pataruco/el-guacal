@@ -163,10 +163,21 @@ async fn test_graphql_store_mutations() {
 
     let schema = create_schema(pool.clone(), None);
 
-    // Mock user
+    // Mock user (admin, since legacy mutations are now admin-gated)
     let user = server::auth::FirebaseUser {
         uid: "test-user".to_string(),
         email: Some("test@example.com".to_string()),
+        email_verified: true,
+    };
+    server::auth::seed_admin(&pool, "test-user")
+        .await
+        .expect("Failed to seed test admin");
+    let (admin_user_id, _) = server::auth::upsert_user(&pool, &user)
+        .await
+        .expect("Failed to upsert test user");
+    let admin_auth = server::auth::AuthenticatedUser {
+        user_id: admin_user_id,
+        role: "admin".to_string(),
     };
 
     // 1. Create Store
@@ -195,7 +206,9 @@ async fn test_graphql_store_mutations() {
         product_id
     );
 
-    let request = async_graphql::Request::new(create_mutation).data(user.clone());
+    let request = async_graphql::Request::new(create_mutation)
+        .data(user.clone())
+        .data(admin_auth.clone());
     let response = schema.execute(request).await;
 
     assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
@@ -221,7 +234,9 @@ async fn test_graphql_store_mutations() {
         store_id
     );
 
-    let request = async_graphql::Request::new(update_mutation).data(user.clone());
+    let request = async_graphql::Request::new(update_mutation)
+        .data(user.clone())
+        .data(admin_auth.clone());
     let response = schema.execute(request).await;
     assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
     let data = response.data.into_json().unwrap();
@@ -237,11 +252,19 @@ async fn test_graphql_store_mutations() {
         store_id
     );
 
-    let request = async_graphql::Request::new(delete_mutation).data(user);
+    let request = async_graphql::Request::new(delete_mutation)
+        .data(user.clone())
+        .data(admin_auth.clone());
     let response = schema.execute(request).await;
     assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
     let data = response.data.into_json().unwrap();
     assert!(data["deleteStore"].as_bool().unwrap());
+
+    // Cleanup test user
+    sqlx::query("DELETE FROM users WHERE firebase_uid = 'test-user'")
+        .execute(&pool)
+        .await
+        .ok();
 }
 
 #[tokio::test]
@@ -271,6 +294,17 @@ async fn test_graphql_stores_near_filter() {
     let user = server::auth::FirebaseUser {
         uid: "test-user-filter".to_string(),
         email: Some("test-filter@example.com".to_string()),
+        email_verified: true,
+    };
+    server::auth::seed_admin(&pool, "test-user-filter")
+        .await
+        .expect("Failed to seed test admin");
+    let (filter_user_id, _) = server::auth::upsert_user(&pool, &user)
+        .await
+        .expect("Failed to upsert test user");
+    let admin_auth = server::auth::AuthenticatedUser {
+        user_id: filter_user_id,
+        role: "admin".to_string(),
     };
 
     let create_mutation = format!(
@@ -291,7 +325,11 @@ async fn test_graphql_stores_near_filter() {
     );
 
     let response = schema
-        .execute(async_graphql::Request::new(create_mutation).data(user.clone()))
+        .execute(
+            async_graphql::Request::new(create_mutation)
+                .data(user.clone())
+                .data(admin_auth.clone()),
+        )
         .await;
     assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
     let store_both_id = response.data.into_json().unwrap()["createStore"]["storeId"]
@@ -318,7 +356,11 @@ async fn test_graphql_stores_near_filter() {
     );
 
     let response = schema
-        .execute(async_graphql::Request::new(create_mutation_one).data(user.clone()))
+        .execute(
+            async_graphql::Request::new(create_mutation_one)
+                .data(user.clone())
+                .data(admin_auth.clone()),
+        )
         .await;
     assert!(response.errors.is_empty(), "Errors: {:?}", response.errors);
     let store_one_id = response.data.into_json().unwrap()["createStore"]["storeId"]
@@ -375,7 +417,178 @@ async fn test_graphql_stores_near_filter() {
             id
         );
         schema
-            .execute(async_graphql::Request::new(delete_mutation).data(user.clone()))
+            .execute(
+                async_graphql::Request::new(delete_mutation)
+                    .data(user.clone())
+                    .data(admin_auth.clone()),
+            )
             .await;
     }
+    sqlx::query("DELETE FROM users WHERE firebase_uid = 'test-user-filter'")
+        .execute(&pool)
+        .await
+        .ok();
+}
+
+#[tokio::test]
+#[ignore = "integration tests"]
+async fn test_proposal_lifecycle() {
+    let config = Config::new().expect("Failed to load config");
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .connect(&config.database_url)
+        .await
+        .expect("Failed to create pool");
+
+    // Seed an admin user
+    server::auth::seed_admin(&pool, "test-admin-uid")
+        .await
+        .expect("Failed to seed admin");
+
+    // Seed a contributor user
+    let contributor = server::auth::FirebaseUser {
+        uid: "test-contributor-uid".to_string(),
+        email: Some("contributor@test.com".to_string()),
+        email_verified: true,
+    };
+    let (contributor_id, _) = server::auth::upsert_user(&pool, &contributor)
+        .await
+        .expect("Failed to upsert contributor");
+
+    let admin = server::auth::FirebaseUser {
+        uid: "test-admin-uid".to_string(),
+        email: Some("admin@test.com".to_string()),
+        email_verified: true,
+    };
+    let (admin_id, _) = server::auth::upsert_user(&pool, &admin)
+        .await
+        .expect("Failed to upsert admin");
+
+    let schema = create_schema(pool.clone(), None);
+
+    // 1. Submit a create proposal as contributor
+    let product_id: uuid::Uuid = sqlx::query_scalar("SELECT product_id FROM products LIMIT 1")
+        .fetch_one(&pool)
+        .await
+        .expect("Failed to fetch product_id");
+
+    let submit_mutation = format!(
+        r#"
+        mutation {{
+            submitCreateStoreProposal(input: {{
+                name: "Test Proposal Store",
+                address: "123 Test Street",
+                lat: 51.5,
+                lng: -0.1,
+                productIds: ["{}"],
+                clientNonce: "test-nonce-lifecycle"
+            }}) {{
+                proposalId
+                kind
+                status
+            }}
+        }}
+    "#,
+        product_id
+    );
+
+    let contributor_auth = server::auth::AuthenticatedUser {
+        user_id: contributor_id,
+        role: "contributor".to_string(),
+    };
+
+    let request = async_graphql::Request::new(submit_mutation)
+        .data(contributor.clone())
+        .data(contributor_auth.clone());
+    let response = schema.execute(request).await;
+    assert!(response.errors.is_empty(), "Submit errors: {:?}", response.errors);
+
+    let data = response.data.into_json().unwrap();
+    let proposal_id = data["submitCreateStoreProposal"]["proposalId"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert_eq!(data["submitCreateStoreProposal"]["status"], "PENDING");
+
+    // 2. Approve as admin
+    let review_mutation = format!(
+        r#"
+        mutation {{
+            reviewStoreProposal(input: {{
+                proposalId: "{}",
+                decision: APPROVE,
+                note: "Looks good"
+            }}) {{
+                status
+                targetStoreId
+            }}
+        }}
+    "#,
+        proposal_id
+    );
+
+    let admin_auth = server::auth::AuthenticatedUser {
+        user_id: admin_id,
+        role: "admin".to_string(),
+    };
+
+    let request = async_graphql::Request::new(review_mutation)
+        .data(admin.clone())
+        .data(admin_auth.clone());
+    let response = schema.execute(request).await;
+    assert!(response.errors.is_empty(), "Review errors: {:?}", response.errors);
+
+    let data = response.data.into_json().unwrap();
+    assert_eq!(data["reviewStoreProposal"]["status"], "APPROVED");
+
+    // 3. Verify the store was actually created
+    let target_store_id = data["reviewStoreProposal"]["targetStoreId"]
+        .as_str()
+        .unwrap();
+
+    let check_query = format!(
+        r#"
+        query {{
+            getStoreById(id: "{}") {{
+                name
+            }}
+        }}
+    "#,
+        target_store_id
+    );
+
+    let response = schema.execute(check_query).await;
+    assert!(response.errors.is_empty());
+    let data = response.data.into_json().unwrap();
+    assert_eq!(data["getStoreById"]["name"], "Test Proposal Store");
+
+    // Cleanup
+    let delete_mutation = format!(
+        r#"mutation {{ deleteStore(id: "{}") }}"#,
+        target_store_id
+    );
+    schema
+        .execute(
+            async_graphql::Request::new(delete_mutation)
+                .data(admin)
+                .data(server::auth::AuthenticatedUser {
+                    user_id: admin_id,
+                    role: "admin".to_string(),
+                }),
+        )
+        .await;
+
+    // Clean up users and proposals
+    sqlx::query("DELETE FROM proposal_audit_log WHERE proposal_id IN (SELECT proposal_id FROM store_proposals WHERE client_nonce LIKE 'test-nonce%')")
+        .execute(&pool)
+        .await
+        .ok();
+    sqlx::query("DELETE FROM store_proposals WHERE client_nonce LIKE 'test-nonce%'")
+        .execute(&pool)
+        .await
+        .ok();
+    sqlx::query("DELETE FROM users WHERE firebase_uid LIKE 'test-%'")
+        .execute(&pool)
+        .await
+        .ok();
 }

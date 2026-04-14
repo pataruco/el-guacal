@@ -1,0 +1,26 @@
+@layer components {
+  .c-status-badge {
+    border-radius: 4px;
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    padding: var(--space-0-5, 2px) var(--space-2, 8px);
+
+    &--approved {
+      background-color: var(--color-success);
+    }
+
+    &--pending {
+      background-color: var(--color-warning, #f59e0b);
+    }
+
+    &--rejected {
+      background-color: var(--color-danger, #ef4444);
+    }
+
+    &--superseded,
+    &--withdrawn {
+      background-color: var(--color-muted, #6b7280);
+    }
+  }
+}

@@ -1,19 +1,23 @@
 use jsonwebtoken::{DecodingKey, Validation, decode, decode_header};
 use serde::{Deserialize, Serialize};
+use sqlx::{PgPool, Row};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::time::{Duration, Instant};
+use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FirebaseUser {
     pub uid: String,
     pub email: Option<String>,
+    pub email_verified: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
     sub: String,
     email: Option<String>,
+    email_verified: Option<bool>,
     aud: String,
     iss: String,
     exp: usize,
@@ -84,6 +88,63 @@ impl FirebaseVerifier {
         Ok(FirebaseUser {
             uid: token_data.claims.sub,
             email: token_data.claims.email,
+            email_verified: token_data.claims.email_verified.unwrap_or(false),
         })
     }
+}
+
+/// The authenticated user's Postgres identity, injected by the middleware.
+#[derive(Debug, Clone)]
+pub struct AuthenticatedUser {
+    pub user_id: Uuid,
+    pub role: String,
+}
+
+/// Upserts a Firebase user into the `users` table, returning their `user_id` and role.
+///
+/// # Errors
+///
+/// Returns an error if the database query fails.
+pub async fn upsert_user(
+    pool: &PgPool,
+    firebase_user: &FirebaseUser,
+) -> anyhow::Result<(Uuid, String)> {
+    let row = sqlx::query(
+        r"
+        INSERT INTO users (firebase_uid, email, email_verified)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (firebase_uid) DO UPDATE
+            SET email = EXCLUDED.email,
+                email_verified = EXCLUDED.email_verified,
+                updated_at = now()
+        RETURNING user_id, role
+        ",
+    )
+    .bind(&firebase_user.uid)
+    .bind(&firebase_user.email)
+    .bind(firebase_user.email_verified)
+    .fetch_one(pool)
+    .await?;
+
+    Ok((row.get("user_id"), row.get("role")))
+}
+
+/// Seeds the admin user on startup if `SEED_ADMIN_FIREBASE_UID` is set.
+///
+/// # Errors
+///
+/// Returns an error if the database query fails.
+pub async fn seed_admin(pool: &PgPool, firebase_uid: &str) -> anyhow::Result<()> {
+    sqlx::query(
+        r"
+        INSERT INTO users (firebase_uid, role)
+        VALUES ($1, 'admin')
+        ON CONFLICT (firebase_uid) DO UPDATE SET role = 'admin', updated_at = now()
+        ",
+    )
+    .bind(firebase_uid)
+    .execute(pool)
+    .await?;
+    tracing::info!("Seeded admin user for firebase_uid={}", firebase_uid);
+    Ok(())
 }

@@ -5,7 +5,7 @@ import {
   type MapCameraChangedEvent,
 } from '@vis.gl/react-google-maps';
 import { Field, type FieldProps, Form, Formik } from 'formik';
-import { useCallback, useId, useRef, useState } from 'react';
+import { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
@@ -37,6 +37,7 @@ const createStoreSchema = (t: (key: string) => string) =>
 
 type StoreFormValues = {
   address: string;
+  clientNonce: string;
   lat: number;
   lng: number;
   name: string;
@@ -62,6 +63,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const comboboxId = useId();
 
+  const clientNonce = useMemo(() => crypto.randomUUID(), []);
   const [triggerReverseGeocode] = useLazyGetReverseGeocodeQuery();
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
@@ -90,6 +92,7 @@ const StoreForm: React.FC<StoreFormProps> = ({
 
   const defaultValues: StoreFormValues = initialValues || {
     address: '',
+    clientNonce,
     lat: center.lat,
     lng: center.lng,
     name: '',

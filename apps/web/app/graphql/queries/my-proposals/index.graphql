@@ -1,0 +1,23 @@
+query MyStoreProposals($status: ProposalStatus, $limit: Int, $cursor: String) {
+  myStoreProposals(status: $status, limit: $limit, cursor: $cursor) {
+    edges {
+      cursor
+      node {
+        proposalId
+        kind
+        status
+        proposedName
+        proposedAddress
+        proposedLocation {
+          lat
+          lng
+        }
+        reason
+        createdAt
+        reviewedAt
+        reviewNote
+      }
+    }
+    hasNextPage
+  }
+}
