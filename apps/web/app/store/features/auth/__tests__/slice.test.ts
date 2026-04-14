@@ -13,6 +13,11 @@ describe('auth slice', () => {
     expect(reducer(undefined, { type: 'unknown' })).toEqual(initialState);
   });
 
+  it('should start with isAuthReady false', () => {
+    const state = reducer(undefined, { type: 'unknown' });
+    expect(state.isAuthReady).toBe(false);
+  });
+
   it('should handle setAuth', () => {
     const user = {
       displayName: 'Test User',
@@ -24,6 +29,7 @@ describe('auth slice', () => {
     const actual = reducer(initialState, setAuth({ idToken, user }));
     expect(actual.idToken).toBe(idToken);
     expect(actual.isAuthenticated).toBe(true);
+    expect(actual.isAuthReady).toBe(true);
     expect(actual.user).toEqual(user);
   });
 
@@ -42,6 +48,7 @@ describe('auth slice', () => {
     const actual = reducer(authenticatedState, clearAuth());
     expect(actual.idToken).toBeNull();
     expect(actual.isAuthenticated).toBe(false);
+    expect(actual.isAuthReady).toBe(true);
     expect(actual.user).toBeNull();
   });
 

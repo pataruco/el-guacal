@@ -347,3 +347,62 @@ pub fn proposal_from_row(row: &sqlx::postgres::PgRow) -> StoreProposal {
         review_note: row.get("review_note"),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_proposal_kind_as_db_str() {
+        assert_eq!(ProposalKind::Create.as_db_str(), "create");
+        assert_eq!(ProposalKind::Update.as_db_str(), "update");
+        assert_eq!(ProposalKind::Delete.as_db_str(), "delete");
+    }
+
+    #[test]
+    fn test_proposal_kind_from_db_str() {
+        assert_eq!(ProposalKind::from_db_str("create"), Some(ProposalKind::Create));
+        assert_eq!(ProposalKind::from_db_str("update"), Some(ProposalKind::Update));
+        assert_eq!(ProposalKind::from_db_str("delete"), Some(ProposalKind::Delete));
+        assert_eq!(ProposalKind::from_db_str("invalid"), None);
+    }
+
+    #[test]
+    fn test_proposal_status_as_db_str() {
+        assert_eq!(ProposalStatus::Pending.as_db_str(), "pending");
+        assert_eq!(ProposalStatus::Approved.as_db_str(), "approved");
+        assert_eq!(ProposalStatus::Rejected.as_db_str(), "rejected");
+        assert_eq!(ProposalStatus::Withdrawn.as_db_str(), "withdrawn");
+        assert_eq!(ProposalStatus::Superseded.as_db_str(), "superseded");
+    }
+
+    #[test]
+    fn test_proposal_status_from_db_str() {
+        assert_eq!(ProposalStatus::from_db_str("pending"), Some(ProposalStatus::Pending));
+        assert_eq!(ProposalStatus::from_db_str("approved"), Some(ProposalStatus::Approved));
+        assert_eq!(ProposalStatus::from_db_str("rejected"), Some(ProposalStatus::Rejected));
+        assert_eq!(ProposalStatus::from_db_str("withdrawn"), Some(ProposalStatus::Withdrawn));
+        assert_eq!(ProposalStatus::from_db_str("superseded"), Some(ProposalStatus::Superseded));
+        assert_eq!(ProposalStatus::from_db_str("unknown"), None);
+    }
+
+    #[test]
+    fn test_proposal_kind_roundtrip() {
+        for kind in [ProposalKind::Create, ProposalKind::Update, ProposalKind::Delete] {
+            assert_eq!(ProposalKind::from_db_str(kind.as_db_str()), Some(kind));
+        }
+    }
+
+    #[test]
+    fn test_proposal_status_roundtrip() {
+        for status in [
+            ProposalStatus::Pending,
+            ProposalStatus::Approved,
+            ProposalStatus::Rejected,
+            ProposalStatus::Withdrawn,
+            ProposalStatus::Superseded,
+        ] {
+            assert_eq!(ProposalStatus::from_db_str(status.as_db_str()), Some(status));
+        }
+    }
+}

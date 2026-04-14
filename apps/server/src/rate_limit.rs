@@ -48,3 +48,42 @@ pub fn rate_limit_params(role: &str, trust_score: i32) -> (i32, f64) {
         _ => (20, 1.0 / 900.0),                        // +1 every 15 min
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_admin_gets_high_capacity() {
+        let (capacity, refill) = rate_limit_params("admin", 0);
+        assert_eq!(capacity, 500);
+        assert!((refill - 1.0).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_moderator_gets_high_capacity() {
+        let (capacity, refill) = rate_limit_params("moderator", 0);
+        assert_eq!(capacity, 500);
+        assert!((refill - 1.0).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_trusted_contributor_gets_medium_capacity() {
+        let (capacity, _) = rate_limit_params("contributor", 10);
+        assert_eq!(capacity, 100);
+    }
+
+    #[test]
+    fn test_new_contributor_gets_low_capacity() {
+        let (capacity, _) = rate_limit_params("contributor", 0);
+        assert_eq!(capacity, 20);
+    }
+
+    #[test]
+    fn test_trust_threshold_boundary() {
+        let (low_cap, _) = rate_limit_params("contributor", 9);
+        let (high_cap, _) = rate_limit_params("contributor", 10);
+        assert_eq!(low_cap, 20);
+        assert_eq!(high_cap, 100);
+    }
+}
