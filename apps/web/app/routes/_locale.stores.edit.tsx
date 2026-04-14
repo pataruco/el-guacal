@@ -29,7 +29,9 @@ const EditStorePage = () => {
 
   const { data, isLoading } = useGetStoreByIdQuery({ storeId: id as string });
   const [submitProposal] = useSubmitUpdateStoreProposalMutation();
-  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitted'>('idle');
+  const [submissionStatus, setSubmissionStatus] = useState<
+    'idle' | 'submitted'
+  >('idle');
 
   useEffect(() => {
     if (!isAuthenticated) {

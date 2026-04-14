@@ -11,12 +11,6 @@
     "signInWithGoogle": "Sign in with Google",
     "signUp": "Sign up"
   },
-  "mySubmissions": {
-    "title": "My submissions",
-    "empty": "You haven't submitted any store suggestions yet.",
-    "deletion": "Store removal request",
-    "moderatorNote": "Moderator note"
-  },
   "common": {
     "loading": "Loading...",
     "notFound": "Page not found"
@@ -34,24 +28,11 @@
   "map": {
     "locateMe": "Find my location"
   },
-  "proposal": {
-    "submitted": {
-      "title": "Suggestion submitted",
-      "message": "Thank you! Your suggestion has been submitted and is waiting for review. This usually takes up to 72 hours.",
-      "backToMap": "Back to map"
-    },
-    "status": {
-      "pending": "Pending review",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "withdrawn": "Withdrawn",
-      "superseded": "Superseded"
-    },
-    "kind": {
-      "create": "New store",
-      "update": "Edit",
-      "delete": "Removal"
-    }
+  "mySubmissions": {
+    "deletion": "Store removal request",
+    "empty": "You haven't submitted any store suggestions yet.",
+    "moderatorNote": "Moderator note",
+    "title": "My store proposals"
   },
   "nav": {
     "about": "About",
@@ -62,7 +43,8 @@
     "languageSelector": "Select language",
     "login": "Log in",
     "logout": "Log out",
-    "menu": "Menu"
+    "menu": "Menu",
+    "mySubmissions": "My store proposals"
   },
   "pages": {
     "blog": {
@@ -78,6 +60,25 @@
       "storesCsv": "A list of all stores with their names, addresses, coordinates, and associated product IDs.",
       "title": "Open data",
       "whatsIncluded": "What's included?"
+    }
+  },
+  "proposal": {
+    "kind": {
+      "create": "New store",
+      "delete": "Removal",
+      "update": "Edit"
+    },
+    "status": {
+      "approved": "Approved",
+      "pending": "Pending review",
+      "rejected": "Rejected",
+      "superseded": "Superseded",
+      "withdrawn": "Withdrawn"
+    },
+    "submitted": {
+      "backToMap": "Back to map",
+      "message": "Thank you! Your suggestion has been submitted and is waiting for review. This usually takes up to 72 hours.",
+      "title": "Suggestion submitted"
     }
   },
   "search": {
@@ -115,8 +116,8 @@
       "title": "El Guacal - Local Store Finder"
     },
     "mySubmissions": {
-      "title": "My submissions — El Guacal",
-      "description": "View your store suggestions and their review status."
+      "description": "View your store suggestions and their review status.",
+      "title": "My store proposals — El Guacal"
     },
     "stores": {
       "edit": {

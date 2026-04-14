@@ -25,7 +25,9 @@ const NewStorePage = () => {
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const [submitProposal] = useSubmitCreateStoreProposalMutation();
-  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitted'>('idle');
+  const [submissionStatus, setSubmissionStatus] = useState<
+    'idle' | 'submitted'
+  >('idle');
 
   useEffect(() => {
     if (!isAuthenticated) {

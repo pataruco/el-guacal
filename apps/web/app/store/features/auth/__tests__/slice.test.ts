@@ -5,6 +5,7 @@ describe('auth slice', () => {
   const initialState = {
     idToken: null,
     isAuthenticated: false,
+    isAuthReady: false,
     user: null,
   };
 
@@ -30,6 +31,7 @@ describe('auth slice', () => {
     const authenticatedState = {
       idToken: 'fake-token',
       isAuthenticated: true,
+      isAuthReady: true,
       user: {
         displayName: 'Test User',
         email: 'test@example.com',
@@ -48,6 +50,7 @@ describe('auth slice', () => {
       auth: {
         idToken: 'token',
         isAuthenticated: true,
+        isAuthReady: true,
         user: {
           displayName: 'Test',
           email: 'test@example.com',

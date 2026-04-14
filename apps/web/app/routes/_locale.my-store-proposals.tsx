@@ -8,71 +8,78 @@ import i18n from '@/i18n/config';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { getSeoMeta } from '@/utils/seo';
+import styles from './my-store-proposals.module.scss';
 
 export const meta: MetaFunction = ({ params }) => {
   const locale = params.locale || 'en-GB';
   return getSeoMeta({
     description: i18n.t('seo.mySubmissions.description', { lng: locale }),
     locale,
-    path: `/${locale}/my-submissions`,
+    path: `/${locale}/my-store-proposals`,
     title: i18n.t('seo.mySubmissions.title', { lng: locale }),
   });
 };
 
-const MySubmissionsPage = () => {
+const MyStoreProposalsPage = () => {
   const { locale } = useParams<{ locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { isAuthenticated } = useAppSelector(selectAuth);
-  const { data, isLoading } = useMyStoreProposalsQuery({});
+  const { isAuthenticated, isAuthReady } = useAppSelector(selectAuth);
+  const { data, isLoading } = useMyStoreProposalsQuery(
+    {},
+    { skip: !isAuthenticated },
+  );
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (isAuthReady && !isAuthenticated) {
       navigate(`/${locale}/auth`);
     }
-  }, [isAuthenticated, navigate, locale]);
+  }, [isAuthenticated, isAuthReady, navigate, locale]);
 
-  if (!isAuthenticated) return null;
+  if (!isAuthReady || !isAuthenticated) return null;
 
   return (
     <Page>
-      <div style={{ margin: '0 auto', maxWidth: '800px', padding: '1rem' }}>
-        <h1>{t('mySubmissions.title')}</h1>
+      <div className={styles['c-proposals']}>
+        <h1 className={styles['c-proposals__title']}>
+          {t('mySubmissions.title')}
+        </h1>
 
         {isLoading && <output aria-live="polite">{t('common.loading')}</output>}
 
         {data?.myStoreProposals.edges.length === 0 && !isLoading && (
-          <p>{t('mySubmissions.empty')}</p>
+          <p className={styles['c-proposals__empty']}>
+            {t('mySubmissions.empty')}
+          </p>
         )}
 
         {data?.myStoreProposals.edges.map(({ node }) => (
           <article
             key={node.proposalId}
-            style={{
-              borderBottom: '1px solid var(--color-border, #e5e7eb)',
-              padding: '1rem 0',
-            }}
+            className={styles['c-proposals__card']}
           >
-            <div style={{ alignItems: 'center', display: 'flex', gap: '0.5rem' }}>
-              <strong>{node.proposedName || t('mySubmissions.deletion')}</strong>
+            <div className={styles['c-proposals__header']}>
+              <strong className={styles['c-proposals__name']}>
+                {node.proposedName || t('mySubmissions.deletion')}
+              </strong>
               <ProposalStatusBadge status={node.status} />
-              <span style={{ color: 'var(--color-muted, #6b7280)', fontSize: '0.875rem' }}>
+              <span className={styles['c-proposals__kind']}>
                 {t(`proposal.kind.${node.kind.toLowerCase()}`)}
               </span>
             </div>
             {node.proposedAddress && (
-              <p style={{ color: 'var(--color-muted, #6b7280)', fontSize: '0.875rem', margin: '0.25rem 0' }}>
+              <p className={styles['c-proposals__address']}>
                 {node.proposedAddress}
               </p>
             )}
             {node.reviewNote && node.status === 'REJECTED' && (
-              <p style={{ color: 'var(--color-danger, #ef4444)', fontSize: '0.875rem', margin: '0.25rem 0' }}>
+              <p className={styles['c-proposals__review-note']}>
                 {t('mySubmissions.moderatorNote')}: {node.reviewNote}
               </p>
             )}
             <time
               dateTime={node.createdAt}
-              style={{ color: 'var(--color-muted, #6b7280)', fontSize: '0.75rem' }}
+              className={styles['c-proposals__date']}
             >
               {new Date(node.createdAt).toLocaleDateString()}
             </time>
@@ -83,4 +90,4 @@ const MySubmissionsPage = () => {
   );
 };
 
-export default MySubmissionsPage;
+export default MyStoreProposalsPage;
