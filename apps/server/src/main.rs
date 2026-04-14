@@ -37,6 +37,12 @@ async fn main() {
         .await
         .expect("Failed to run migrations");
 
+    if let Some(admin_uid) = &config.seed_admin_firebase_uid {
+        server::auth::seed_admin(&pool, admin_uid)
+            .await
+            .expect("Failed to seed admin user");
+    }
+
     let allowed_origins: Vec<axum::http::HeaderValue> = config
         .cors_allowed_origins
         .iter()

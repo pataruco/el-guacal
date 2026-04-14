@@ -24,9 +24,15 @@ input LocationInput {
 }
 
 type Mutation {
-	createStore(input: CreateStoreInput!): Store!
-	updateStore(input: UpdateStoreInput!): Store!
-	deleteStore(id: UUID!): Boolean!
+	createStore(input: CreateStoreInput!): Store! @deprecated(reason: "Use submitCreateStoreProposal. Kept for admin bulk imports.")
+	updateStore(input: UpdateStoreInput!): Store! @deprecated(reason: "Use submitUpdateStoreProposal. Kept for admin bulk imports.")
+	deleteStore(id: UUID!): Boolean! @deprecated(reason: "Use submitDeleteStoreProposal. Kept for admin emergencies.")
+	submitCreateStoreProposal(input: SubmitCreateStoreProposalInput!): StoreProposal!
+	submitUpdateStoreProposal(input: SubmitUpdateStoreProposalInput!): StoreProposal!
+	submitDeleteStoreProposal(input: SubmitDeleteStoreProposalInput!): StoreProposal!
+	withdrawStoreProposal(proposalId: UUID!): StoreProposal!
+	reviewStoreProposal(input: ReviewProposalInput!): StoreProposal!
+	setUserRole(input: SetUserRoleInput!): User!
 }
 
 type Product {
@@ -37,10 +43,27 @@ type Product {
 	updatedAt: DateTime!
 }
 
+enum ProposalKind {
+	CREATE
+	UPDATE
+	DELETE
+}
+
+enum ProposalStatus {
+	PENDING
+	APPROVED
+	REJECTED
+	WITHDRAWN
+	SUPERSEDED
+}
+
 type Query {
 	storesNear(location: LocationInput!, radius: Radius!, productIds: [UUID!]): [Store!]!
 	getStoreById(id: UUID!): Store
 	allProducts: [Product!]!
+	storeProposal(id: UUID!): StoreProposal
+	myStoreProposals(status: ProposalStatus, limit: Int, cursor: String): StoreProposalConnection!
+	pendingStoreProposals(region: String, kind: ProposalKind, limit: Int, cursor: String): StoreProposalConnection!
 }
 
 enum Radius {
@@ -58,14 +81,102 @@ enum Radius {
 	ZOOM_22
 }
 
+enum ReviewDecision {
+	APPROVE
+	REJECT
+}
+
+input ReviewProposalInput {
+	proposalId: UUID!
+	decision: ReviewDecision!
+	note: String
+}
+
+input SetUserRoleInput {
+	firebaseUid: String!
+	role: String!
+	region: String
+}
+
 type Store {
 	storeId: UUID!
 	name: String!
 	address: String!
 	location: Location!
 	createdAt: DateTime!
+	version: Int!
 	updatedAt: DateTime!
 	products: [Product!]!
+}
+
+type StoreDiff {
+	field: String!
+	before: String
+	after: String
+}
+
+type StoreProposal {
+	proposalId: UUID!
+	kind: ProposalKind!
+	status: ProposalStatus!
+	targetStoreId: UUID
+	targetVersion: Int
+	proposedName: String
+	proposedAddress: String
+	proposedLocation: Location
+	reason: String
+	clientNonce: String!
+	createdAt: DateTime!
+	reviewedAt: DateTime
+	reviewNote: String
+	proposer: User
+	reviewedByUser: User
+	possibleDuplicates: [Store!]!
+	diffAgainstCurrent: [StoreDiff!]!
+}
+
+"""
+Cursor-based pagination connection
+"""
+type StoreProposalConnection {
+	edges: [StoreProposalEdge!]!
+	hasNextPage: Boolean!
+}
+
+"""
+Cursor-based pagination edge
+"""
+type StoreProposalEdge {
+	cursor: String!
+	node: StoreProposal!
+}
+
+input SubmitCreateStoreProposalInput {
+	name: String!
+	address: String!
+	lat: Float!
+	lng: Float!
+	productIds: [UUID!]!
+	clientNonce: String!
+	notADuplicate: Boolean
+}
+
+input SubmitDeleteStoreProposalInput {
+	targetStoreId: UUID!
+	expectedVersion: Int!
+	reason: String!
+	clientNonce: String!
+}
+
+input SubmitUpdateStoreProposalInput {
+	targetStoreId: UUID!
+	expectedVersion: Int!
+	name: String
+	address: String
+	lat: Float
+	lng: Float
+	productIds: [UUID!]
+	clientNonce: String!
 }
 
 """
@@ -89,6 +200,18 @@ input UpdateStoreInput {
 	productIds: [UUID!]
 }
 
+type User {
+	userId: UUID!
+	displayName: String
+	role: String!
+	trustScore: Int!
+	region: String
+}
+
+"""
+Marks an element of a GraphQL schema as no longer supported.
+"""
+directive @deprecated(reason: String = "No longer supported") on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
 """
 Directs the executor to include this field or fragment only when the `if` argument is true.
 """

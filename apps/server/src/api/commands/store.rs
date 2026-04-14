@@ -1,4 +1,4 @@
-use crate::auth::FirebaseUser;
+use crate::auth::{AuthenticatedUser, FirebaseUser};
 use crate::model::location::Location;
 use crate::model::store::Store;
 use async_graphql::{Context, InputObject, Object};
@@ -30,6 +30,7 @@ pub struct UpdateStoreInput {
 
 #[Object]
 impl StoreCommand {
+    #[graphql(deprecation = "Use submitCreateStoreProposal. Kept for admin bulk imports.")]
     async fn create_store(
         &self,
         ctx: &Context<'_>,
@@ -39,6 +40,15 @@ impl StoreCommand {
             .data_opt::<FirebaseUser>()
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
 
+        // Gate to admin only (deprecated — use submitCreateStoreProposal)
+        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>() {
+            if auth.role != "admin" {
+                return Err(async_graphql::Error::new(
+                    "Forbidden: use submitCreateStoreProposal instead. Direct mutations are admin-only.",
+                ));
+            }
+        }
+
         let pool = ctx.data::<PgPool>()?;
 
         let mut tx = pool.begin().await?;
@@ -47,7 +57,7 @@ impl StoreCommand {
             r"
             INSERT INTO stores (name, address, location)
             VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326)::geography)
-            RETURNING store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, created_at, updated_at
+            RETURNING store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, version, created_at, updated_at
             ",
         )
         .bind(&input.name)
@@ -65,6 +75,7 @@ impl StoreCommand {
                 lat: row.get::<f64, _>("lat"),
                 lng: row.get::<f64, _>("lng"),
             },
+            version: row.get::<i64, _>("version"),
             created_at: row.get::<DateTime<Utc>, _>("created_at"),
             updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
         };
@@ -82,6 +93,7 @@ impl StoreCommand {
         Ok(store)
     }
 
+    #[graphql(deprecation = "Use submitUpdateStoreProposal. Kept for admin bulk imports.")]
     async fn update_store(
         &self,
         ctx: &Context<'_>,
@@ -90,6 +102,15 @@ impl StoreCommand {
         let _user = ctx
             .data_opt::<FirebaseUser>()
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
+
+        // Gate to admin only (deprecated — use submitUpdateStoreProposal)
+        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>() {
+            if auth.role != "admin" {
+                return Err(async_graphql::Error::new(
+                    "Forbidden: use submitUpdateStoreProposal instead. Direct mutations are admin-only.",
+                ));
+            }
+        }
 
         let pool = ctx.data::<PgPool>()?;
         let mut tx = pool.begin().await?;
@@ -138,7 +159,7 @@ impl StoreCommand {
 
         let row = sqlx::query(
             r"
-            SELECT store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, created_at, updated_at
+            SELECT store_id, name, address, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng, version, created_at, updated_at
             FROM stores
             WHERE store_id = $1
             ",
@@ -155,6 +176,7 @@ impl StoreCommand {
                 lat: row.get::<f64, _>("lat"),
                 lng: row.get::<f64, _>("lng"),
             },
+            version: row.get::<i64, _>("version"),
             created_at: row.get::<DateTime<Utc>, _>("created_at"),
             updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
         };
@@ -164,10 +186,20 @@ impl StoreCommand {
         Ok(store)
     }
 
+    #[graphql(deprecation = "Use submitDeleteStoreProposal. Kept for admin emergencies.")]
     async fn delete_store(&self, ctx: &Context<'_>, id: Uuid) -> async_graphql::Result<bool> {
         let _user = ctx
             .data_opt::<FirebaseUser>()
             .ok_or_else(|| async_graphql::Error::new("Unauthorized"))?;
+
+        // Gate to admin only (deprecated — use submitDeleteStoreProposal)
+        if let Some(auth) = ctx.data_opt::<AuthenticatedUser>() {
+            if auth.role != "admin" {
+                return Err(async_graphql::Error::new(
+                    "Forbidden: use submitDeleteStoreProposal instead. Direct mutations are admin-only.",
+                ));
+            }
+        }
 
         let pool = ctx.data::<PgPool>()?;
 

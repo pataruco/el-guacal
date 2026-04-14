@@ -92,6 +92,7 @@ impl StoreQuery {
                 address,
                 ST_Y(location::geometry) as lat,
                 ST_X(location::geometry) as lng,
+                version,
                 created_at,
                 updated_at
             FROM stores s
@@ -126,6 +127,7 @@ impl StoreQuery {
                         lat: row.get::<f64, _>("lat"),
                         lng: row.get::<f64, _>("lng"),
                     },
+                    version: row.get::<i64, _>("version"),
                     created_at: row.get::<DateTime<Utc>, _>("created_at"),
                     updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
                 }
@@ -150,6 +152,7 @@ impl StoreQuery {
                 address,
                 ST_Y(location::geometry) as lat,
                 ST_X(location::geometry) as lng,
+                version,
                 created_at,
                 updated_at
             FROM stores
@@ -170,6 +173,7 @@ impl StoreQuery {
                     lat: row.get::<f64, _>("lat"),
                     lng: row.get::<f64, _>("lng"),
                 },
+                version: row.get::<i64, _>("version"),
                 created_at: row.get::<DateTime<Utc>, _>("created_at"),
                 updated_at: row.get::<DateTime<Utc>, _>("updated_at"),
             }
