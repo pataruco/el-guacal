@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/pataruco/el-guacal/compare/server-v0.9.0...server-v0.10.0) (2026-04-14)
+
+
+### Features
+
+* change store wiring mechanism ([e7be8f1](https://github.com/pataruco/el-guacal/commit/e7be8f12a2734ec755beff3a14a632812f852a96))
+* create proposal mutations ([12cf6d8](https://github.com/pataruco/el-guacal/commit/12cf6d865cd5e1f2641b431d004ebd9097f567f2))
+* moderation ([#147](https://github.com/pataruco/el-guacal/issues/147)) ([635aa54](https://github.com/pataruco/el-guacal/commit/635aa545ce343ee4424bf2e10692694e58c471ab))
+* **server:** add contribution & moderation migration ([051eef5](https://github.com/pataruco/el-guacal/commit/051eef5dec9371ca04d89c14eb36148a7c16b341))
+* **server:** add User model, upsert-on-auth, and seed admin config ([e4ddbf5](https://github.com/pataruco/el-guacal/commit/e4ddbf54bbf7841b8c8aa1597c5d51a2858602c4))
+* set moderation ([216a06f](https://github.com/pataruco/el-guacal/commit/216a06fd0b3a65fa4f967713ff28ae15327da57b))
+
 ## [0.9.0](https://github.com/pataruco/el-guacal/compare/server-v0.8.0...server-v0.9.0) (2026-04-02)
 
 

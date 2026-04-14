@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.12.0](https://github.com/pataruco/el-guacal/compare/web-v1.11.1...web-v1.12.0) (2026-04-14)
+
+
+### Features
+
+* add licence ([ad3d0a7](https://github.com/pataruco/el-guacal/commit/ad3d0a7af8ca34ac53c933a382570505011fdff1))
+* add privacy policy ([4177c74](https://github.com/pataruco/el-guacal/commit/4177c7486cf9844f13077d887042a4a6e1a153e1))
+* add privacy policy ([#142](https://github.com/pataruco/el-guacal/issues/142)) ([7ee07f2](https://github.com/pataruco/el-guacal/commit/7ee07f260175ce84db1974fd518dab50beaa9615))
+* change store wiring mechanism ([e7be8f1](https://github.com/pataruco/el-guacal/commit/e7be8f12a2734ec755beff3a14a632812f852a96))
+* filter positiioning ([927ee24](https://github.com/pataruco/el-guacal/commit/927ee240f6b4f4e92abd1241586e63a2b12c4a83))
+* moderation ([#147](https://github.com/pataruco/el-guacal/issues/147)) ([635aa54](https://github.com/pataruco/el-guacal/commit/635aa545ce343ee4424bf2e10692694e58c471ab))
+* set moderation ([216a06f](https://github.com/pataruco/el-guacal/commit/216a06fd0b3a65fa4f967713ff28ae15327da57b))
+* **web:** add SEO metadata and JSON-LD microdata to all pages ([b9512ec](https://github.com/pataruco/el-guacal/commit/b9512ec9d193cba491799c70c23ed490caaf3f75))
+* **web:** add SEO metadata and JSON-LD microdata to all pages ([bbb20df](https://github.com/pataruco/el-guacal/commit/bbb20df3d93073d7a7d993703fca20c5f6fed952))
+* **web:** add SEO metadata and JSON-LD microdata to all pages ([#143](https://github.com/pataruco/el-guacal/issues/143)) ([dd15b9f](https://github.com/pataruco/el-guacal/commit/dd15b9fe37b478d71f50d182e1a6676d1059a337))
+* **web:** add XML sitemap and robots.txt ([4d10c17](https://github.com/pataruco/el-guacal/commit/4d10c1745a0b38cf19e2839cf5d37293f1344c00))
+* **web:** add XML sitemap and robots.txt ([#138](https://github.com/pataruco/el-guacal/issues/138)) ([797874c](https://github.com/pataruco/el-guacal/commit/797874cc152acca496157cf269f76551d420fd2d))
+
+
+### Bug Fixes
+
+* cookie banner styles ([4497b35](https://github.com/pataruco/el-guacal/commit/4497b3555a05f56cb66bd6dbb26b7663b6d26c31))
+* cookie banner styles ([#140](https://github.com/pataruco/el-guacal/issues/140)) ([3c42618](https://github.com/pataruco/el-guacal/commit/3c42618f13b5e5498c116e516185a2f9a18bff09))
+* gtm ([586da2f](https://github.com/pataruco/el-guacal/commit/586da2f916e4e86ae7bb8455574f1ca797177fea))
+* set google tag manager in the head ([f394464](https://github.com/pataruco/el-guacal/commit/f394464c00bbc2e3fdd4e62c54f9d44ac2e2a3d8))
+
 ## [1.11.1](https://github.com/pataruco/el-guacal/compare/web-v1.11.0...web-v1.11.1) (2026-04-05)
 
 
