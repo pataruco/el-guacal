@@ -33,6 +33,12 @@ variable "google_oauth_client_secret" {
   sensitive   = true
 }
 
+variable "seed_admin_firebase_uid" {
+  type        = string
+  description = "Firebase UID to seed as admin on server startup"
+  sensitive   = true
+}
+
 variable "domain_name" {
   type        = string
   description = "The custom domain name for the application (e.g., elguacal.com)"

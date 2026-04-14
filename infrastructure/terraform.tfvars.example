@@ -4,6 +4,9 @@ project_id = "your-gcp-project-id"
 # GCP region to deploy resources in (optional, defaults to europe-west2)
 # region = "europe-west2"
 
+# Firebase UID to seed as admin on server startup (required, sensitive)
+seed_admin_firebase_uid = "your-firebase-uid"
+
 # Database password for the 'pataruco' user (required, sensitive)
 db_password = "your-secure-database-password"
 

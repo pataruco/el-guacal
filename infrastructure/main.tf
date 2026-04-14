@@ -81,6 +81,11 @@ resource "google_cloud_run_v2_service" "api" {
         value = var.project_id
       }
 
+      env {
+        name  = "SEED_ADMIN_FIREBASE_UID"
+        value = var.seed_admin_firebase_uid
+      }
+
       volume_mounts {
         name       = "cloudsql"
         mount_path = "/cloudsql"
