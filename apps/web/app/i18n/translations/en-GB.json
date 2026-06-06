@@ -17,8 +17,15 @@
     "signUp": "Sign up",
     "useDifferentEmail": "Use a different email"
   },
+  "about": {
+    "ctaBody": "Register an account to submit locations to El Guacal.",
+    "ctaTitle": "Contribute to our dataset"
+  },
   "browse": {
-    "favouritesTitle": "Search for your favourites"
+    "findStoreTitle": "Find a store",
+    "noResults": "No results yet — try zooming out or selecting different products.",
+    "resultsCount_one": "{{count}} result for \"{{query}}\"",
+    "resultsCount_other": "{{count}} results for \"{{query}}\""
   },
   "common": {
     "loading": "Loading...",
@@ -46,7 +53,6 @@
   "nav": {
     "about": "About",
     "addLocation": "Add location",
-    "addStore": "Add store",
     "blog": "Blog",
     "close": "Close",
     "dataset": "Open data",
@@ -94,7 +100,7 @@
   "search": {
     "filterByProducts": "Filter by products",
     "loading": "Loading search results",
-    "placeholder": "Search for a product or location",
+    "placeholder": "Search for a location",
     "productsSelected": "{{count}} products selected",
     "productsSelected_one": "1 product selected"
   },
@@ -153,10 +159,11 @@
   "storeForm": {
     "address": "Address",
     "addressPlaceholder": "e.g., 123 High Street, London",
-    "addTitle": "Suggest a store",
+    "addTitle": "Submit a location",
     "banner": "Your suggestion will be reviewed by the El Guacal community before it appears on the map.",
     "cancel": "Cancel",
     "editTitle": "Suggest an edit",
+    "licenseConfirmation": "By submitting, I confirm the information is accurate and I grant El Guacal a licence to publish it under the project's open data terms.",
     "locateMe": "Find my location",
     "location": "Location",
     "mapHintAddress": "The address fills in automatically. You can also edit it.",
@@ -164,10 +171,11 @@
     "noProductsFound": "No products found",
     "products": "Products",
     "removeProduct": "Remove product",
-    "saveStore": "Submit suggestion",
+    "saveStore": "Submit",
     "searchProducts": "Search products...",
-    "storeName": "Store name",
+    "storeName": "Name",
     "storeNamePlaceholder": "e.g., Bodega La Esquina",
+    "subtitle": "Help us map this product or location by adding the details below.",
     "validation": {
       "addressRequired": "Address is required",
       "nameRequired": "Name is required",

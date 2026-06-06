@@ -37,9 +37,13 @@
     // gov.uk direction.
     border-bottom: var(--border-width-hairline) solid var(--color-border);
 
+    // Header content fills the viewport edge-to-edge per Figma
+    // (nav bar instances are full 1440px wide with no inner
+    // max-width cap). The page-gutter padding lives on the outer
+    // `.c-header` element (`var(--space-5)` left/right), so the
+    // logo sits flush-left and the action group flush-right at
+    // any viewport width.
     &__container {
-      max-width: var(--content-max);
-      margin: 0 auto;
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -250,14 +254,6 @@
       }
     }
 
-    // Mobile search slot (Stage E). When the in-header search bar
-    // hides at < 768px (see `__search`), SearchBar instead renders
-    // here at the top of the mobile menu so mobile users still
-    // have search — just one tap deeper than desktop.
-    &__mobile-search {
-      width: 100%;
-    }
-
     &__mobile-nav {
       display: flex;
       flex-direction: column;
@@ -281,25 +277,6 @@
         &:hover {
           color: var(--color-link);
         }
-      }
-    }
-
-    // Centred search bar (Stage B). Sits between `__branding` and
-    // `__actions` in the desktop flex row, growing to fill the
-    // available space with a sensible max-width so it doesn't
-    // dominate on ultra-wide screens.
-    //
-    // Hidden on mobile — Figma's mobile header is just logo +
-    // hamburger. Stage E will wire mobile search into the
-    // hamburger menu so functionality isn't lost.
-    &__search {
-      display: none;
-
-      @media (min-width: 768px) {
-        display: block;
-        flex: 1;
-        max-width: 40rem;
-        margin: 0 var(--space-5);
       }
     }
 

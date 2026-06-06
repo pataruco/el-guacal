@@ -1,82 +1,74 @@
-// Page wrapper styles — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). Zero SCSS
-// imports.
+// Page wrapper styles — restyled to Figma direction (see
+// project_figma_design_direction memory). Used by `.Page`
+// component for static content pages (about, privacy-policy,
+// etc.) that share a common layout.
 //
-// The `.c-page__*` BEM classes are used by the `Page` component
-// wrapper for generic static pages (privacy policy, about, etc.)
-// that don't have a route-specific SCSS module. Classes like
-// `__title`, `__text`, `__section`, `__list`, `__btn` are the
-// default typography and layout primitives for those pages.
+// Visual model: pale-blue page background (Figma `background/accent/blue`)
+// frames a centred white-readable content column. The content
+// column itself stays on the page surface (no inner card) — the
+// pale blue is purely a backdrop tint. Sentence-case typography,
+// no uppercase, no heavy ink borders.
 //
-// Wrapped in `@layer components`. Like every other ported
-// component module, this now composes correctly with
-// `tokens.css @layer utilities` for focus and with
-// `tokens.css @layer reset` for element defaults — and it beats
-// the generic reset button/list defaults without needing
-// specificity gymnastics.
+// Wrapped in `@layer components` to compose correctly with
+// `tokens.css @layer utilities` (focus ring) and the universal
+// reset.
 
 @layer components {
   .c-page {
-    padding: var(--space-5);
-    max-width: 50rem;
-    margin: 0 auto;
+    background-color: var(--color-blue-50);
+    padding: var(--space-6) var(--space-5);
     width: 100%;
+    min-height: calc(100vh - 4rem);
 
+    // Inner readable column. Centred, max-width caps the line
+    // length. The h1 + content live here so the pale background
+    // can flow edge-to-edge.
+    > * {
+      max-width: 50rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    // Page heading. Figma `header/large` family scaled up for
+    // the static-page hero: Inter SemiBold, sentence case (no
+    // uppercase), no letter-spacing. Dropped the 2px ink bottom
+    // border — pale blue page background carries the visual
+    // separation without a hard rule.
     &__title {
-      // Display-size title for static pages. `--text-4xl` is the
-      // biggest type size in the scale (clamp(2rem, 1.5rem +
-      // 2.5vw, 3rem)) — larger than the route h1 (`--text-3xl`)
-      // because static pages are pure reading surface with no
-      // competing navigation.
-      font-size: var(--text-4xl);
-      // Stepped down from font-weight-black (900) to bold (700)
-      // — same step applied to every heading in the migration.
-      font-weight: var(--weight-bold);
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-semibold);
       color: var(--color-ink);
-      text-transform: uppercase;
-      // `--tracking-tight` (-0.015em) replaces the old -0.05em.
-      // Minor visual loosening at this size.
-      letter-spacing: var(--tracking-tight);
       line-height: var(--leading-tight);
       margin-bottom: var(--space-5);
-      padding-bottom: var(--space-2);
-      border-bottom: var(--border-width-structural) solid
-        var(--color-border-strong);
     }
 
     &__text {
       line-height: var(--leading-relaxed);
       margin-bottom: var(--space-4);
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
       color: var(--color-ink);
     }
 
-    // A callout section inside a static page. White surface, 2px
-    // ink border, flat — same pattern as `.c-form` (StoreForm).
-    // Sections are content containers, not pressable; no
-    // elevation strip.
+    // Section callout. Flat white card with a soft border + soft
+    // shadow — Figma's softer aesthetic vs the prior 2px ink
+    // hard-bounded section.
     &__section {
       background-color: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-3);
       padding: var(--space-5);
       margin-bottom: var(--space-5);
 
       h2 {
-        font-size: var(--text-2xl);
+        font-size: var(--text-xl);
         color: var(--color-ink);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-tight);
-        line-height: var(--leading-tight);
-        margin-bottom: var(--space-4);
-        font-weight: var(--weight-bold);
+        line-height: var(--leading-snug);
+        margin-bottom: var(--space-3);
+        font-weight: var(--weight-semibold);
       }
     }
 
-    // Em-dash list — the `::before` with content '—' replaces
-    // the default list marker with a typographic dash. The
-    // `content: '—' / ''` syntax with slash pair is the CSS
-    // Level 3 pattern for providing a pronounciation hint to
-    // screen readers (alternative text after the slash).
     &__list {
       padding: 0;
       margin-bottom: var(--space-4);
@@ -91,45 +83,102 @@
           content: '—' / '';
           position: absolute;
           left: 0;
-          // Dash colour goes to ink (not --color-primary) because
-          // on a white page, yellow bullets would be ~1.8:1
-          // against white and effectively invisible. Ink at 18:1
-          // reads as a proper typographic bullet.
-          color: var(--color-ink);
+          color: var(--color-ink-muted);
         }
       }
     }
 
-    // Primary button. Same pattern as every other yellow primary
-    // in the system: flag yellow fill + ink text + 2px ink
-    // border + elevation-1 strip + gov.uk press affordance.
+    // CTA card — Figma's "Contribute to our dataset" prompt that
+    // sits at the bottom of the about page. White surface, soft
+    // border + shadow, 4px radius. Two-column flex on desktop:
+    // text+button left, hero image right. Stacks vertically on
+    // mobile so the image doesn't crowd the content.
+    &__cta {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-surface-page);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-3);
+      overflow: hidden;
+      margin-top: var(--space-6);
+      max-width: 50rem;
+      margin-left: auto;
+      margin-right: auto;
+
+      @media (min-width: 640px) {
+        flex-direction: row;
+        align-items: stretch;
+      }
+
+      &-body {
+        padding: var(--space-5);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        flex: 1;
+      }
+
+      h2 {
+        font-size: var(--text-lg);
+        font-weight: var(--weight-semibold);
+        color: var(--color-ink);
+        line-height: var(--leading-snug);
+      }
+
+      p {
+        font-size: var(--text-sm);
+        color: var(--color-ink-muted);
+        line-height: var(--leading-normal);
+      }
+
+      // Image / hero side. Stage placeholder = diagonal blue
+      // gradient (same pattern as auth and home favourites).
+      // Swap for a real photo when ready by replacing the
+      // background with `url('/path/to/asset')`.
+      &-hero {
+        background: linear-gradient(
+          135deg,
+          var(--color-blue-100) 0%,
+          var(--color-blue-300) 100%
+        );
+        min-height: 8rem;
+
+        @media (min-width: 640px) {
+          width: 16rem;
+          min-height: auto;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    // Primary button (used in the CTA card and any other inline
+    // CTA on a static page). Solid blue, white bold label, flat.
+    // Matches the system primary-button pattern (auth submit,
+    // header Add location).
     &__btn {
+      align-self: flex-start;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       min-height: var(--target-min);
       background-color: var(--color-primary);
       color: var(--color-primary-ink);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      padding: var(--space-2) var(--space-5);
-      font-size: var(--text-xs);
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--text-sm);
       font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-tight);
-      text-transform: uppercase;
-      box-shadow: var(--elevation-1);
       text-decoration: none;
       cursor: pointer;
-      transition:
-        transform var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard),
-        background-color var(--duration-fast) var(--ease-standard);
+      transition: background-color var(--duration-fast) var(--ease-standard);
 
       &:hover {
         background-color: var(--color-primary-hover);
       }
 
       &:active {
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
+        background-color: var(--color-primary-active);
       }
     }
   }

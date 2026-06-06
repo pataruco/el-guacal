@@ -7,7 +7,6 @@ import { type ContentLocale, SUPPORTED_LOCALES } from '@/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
-import SearchBar from '../search-bar';
 import styles from './index.module.scss';
 
 const languageLabels: Record<ContentLocale, string> = {
@@ -110,36 +109,20 @@ const Header = () => {
           <nav className={styles['c-header__nav']}>
             <ul className={styles['c-header__nav-list']}>
               {isAuthenticated && (
-                <>
-                  <li className={styles['c-header__nav-item']}>
-                    <Link
-                      to={`/${currentLocale}/stores/new`}
-                      className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/stores/new`) ? styles['c-header__nav-link--active'] : ''}`}
-                      aria-current={
-                        isActive(`/${currentLocale}/stores/new`)
-                          ? 'page'
-                          : undefined
-                      }
-                      aria-label={t('nav.addStore')}
-                    >
-                      {t('nav.addStore')}
-                    </Link>
-                  </li>
-                  <li className={styles['c-header__nav-item']}>
-                    <Link
-                      to={`/${currentLocale}/my-store-proposals`}
-                      className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/my-store-proposals`) ? styles['c-header__nav-link--active'] : ''}`}
-                      aria-current={
-                        isActive(`/${currentLocale}/my-store-proposals`)
-                          ? 'page'
-                          : undefined
-                      }
-                      aria-label={t('nav.mySubmissions')}
-                    >
-                      {t('nav.mySubmissions')}
-                    </Link>
-                  </li>
-                </>
+                <li className={styles['c-header__nav-item']}>
+                  <Link
+                    to={`/${currentLocale}/my-store-proposals`}
+                    className={`${styles['c-header__nav-link']} ${isActive(`/${currentLocale}/my-store-proposals`) ? styles['c-header__nav-link--active'] : ''}`}
+                    aria-current={
+                      isActive(`/${currentLocale}/my-store-proposals`)
+                        ? 'page'
+                        : undefined
+                    }
+                    aria-label={t('nav.mySubmissions')}
+                  >
+                    {t('nav.mySubmissions')}
+                  </Link>
+                </li>
               )}
               <li className={styles['c-header__nav-item']}>
                 <Link
@@ -221,27 +204,14 @@ const Header = () => {
             </button>
           </div>
           <nav className={styles['c-header__mobile-nav']}>
-            <div className={styles['c-header__mobile-search']}>
-              <SearchBar />
-            </div>
-            <hr className={styles['c-header__mobile-menu-divider']} />
             {isAuthenticated && (
-              <>
-                <Link
-                  to={`/${currentLocale}/stores/new`}
-                  onClick={toggleMenu}
-                  className={styles['c-header__mobile-nav-link']}
-                >
-                  {t('nav.addStore')}
-                </Link>
-                <Link
-                  to={`/${currentLocale}/my-store-proposals`}
-                  onClick={toggleMenu}
-                  className={styles['c-header__mobile-nav-link']}
-                >
-                  {t('nav.mySubmissions')}
-                </Link>
-              </>
+              <Link
+                to={`/${currentLocale}/my-store-proposals`}
+                onClick={toggleMenu}
+                className={styles['c-header__mobile-nav-link']}
+              >
+                {t('nav.mySubmissions')}
+              </Link>
             )}
             <Link
               to={`/${currentLocale}/dataset`}
@@ -287,10 +257,6 @@ const Header = () => {
               <LanguageSelector />
             </div>
           </nav>
-        </div>
-
-        <div className={styles['c-header__search']}>
-          <SearchBar />
         </div>
 
         <div className={styles['c-header__actions']}>

@@ -1,5 +1,6 @@
 import { Combobox } from '@base-ui/react/combobox';
 import {
+  AdvancedMarker,
   APIProvider,
   Map as GoogleMap,
   type MapCameraChangedEvent,
@@ -10,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import LocateMeButton from '@/components/locate-me-button';
 import { useAllProductsQuery } from '@/graphql/queries/all-products/index.generated';
 import { useLazyGetReverseGeocodeQuery } from '@/store/features/google-maps/api';
 import { selectMap, setCenter } from '@/store/features/map/slice';
@@ -108,36 +108,13 @@ const StoreForm: React.FC<StoreFormProps> = ({
         enableReinitialize
       >
         {({ values, setFieldValue, errors, touched }) => (
-          <Form>
-            <div className={styles['c-form__map-section']}>
-              <div className={styles['c-form__map-wrapper']}>
-                <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                  <GoogleMap
-                    defaultZoom={15}
-                    center={{ lat: values.lat, lng: values.lng }}
-                    onCameraChanged={(ev: MapCameraChangedEvent) =>
-                      handleCameraChanged(ev, setFieldValue)
-                    }
-                    mapId={GOOGLE_MAPS_ID}
-                    disableDefaultUI
-                    reuseMaps
-                  />
-                  <div className={styles['c-form__crosshair']}>+</div>
-                </APIProvider>
-                <LocateMeButton />
-              </div>
-              <div className={styles['c-form__coordinates']}>
-                Lat: {values.lat.toFixed(6)}, Lng: {values.lng.toFixed(6)}
-              </div>
-              <p className={styles['c-form__map-hint']}>
-                {t('storeForm.mapHintLocation')}
-                <br />
-                {t('storeForm.mapHintAddress')}
-              </p>
-            </div>
-
+          <Form className={styles['c-form__layout']}>
             <div className={styles['c-form-container']}>
               <h1>{title}</h1>
+              <p className={styles['c-form__subtitle']}>
+                {t('storeForm.subtitle')}
+              </p>
+
               <div className={styles['c-form']}>
                 <div className={styles['c-form__field']}>
                   <label htmlFor="name">{t('storeForm.storeName')}</label>
@@ -275,13 +252,11 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   )}
                 </div>
 
+                <p className={styles['c-form__license']}>
+                  {t('storeForm.licenseConfirmation')}
+                </p>
+
                 <div className={styles['c-form__actions']}>
-                  <button
-                    type="submit"
-                    className={`${styles['c-form__btn']} ${styles['c-form__btn--submit']}`}
-                  >
-                    {t('storeForm.saveStore')}
-                  </button>
                   <button
                     type="button"
                     className={`${styles['c-form__btn']} ${styles['c-form__btn--cancel']}`}
@@ -289,7 +264,39 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   >
                     {t('storeForm.cancel')}
                   </button>
+                  <button
+                    type="submit"
+                    className={`${styles['c-form__btn']} ${styles['c-form__btn--submit']}`}
+                  >
+                    {t('storeForm.saveStore')}
+                  </button>
                 </div>
+              </div>
+            </div>
+
+            {/* Map section — display-only preview of the location.
+                Crosshair + lat/lng readout removed; the map shows a
+                pin at the current (lat, lng). User can still drag
+                the map to fine-tune; camera-changed handler updates
+                lat/lng silently and reverse-geocodes the address. */}
+            <div className={styles['c-form__map-section']}>
+              <div className={styles['c-form__map-wrapper']}>
+                <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+                  <GoogleMap
+                    defaultZoom={15}
+                    center={{ lat: values.lat, lng: values.lng }}
+                    onCameraChanged={(ev: MapCameraChangedEvent) =>
+                      handleCameraChanged(ev, setFieldValue)
+                    }
+                    mapId={GOOGLE_MAPS_ID}
+                    disableDefaultUI
+                    reuseMaps
+                  >
+                    <AdvancedMarker
+                      position={{ lat: values.lat, lng: values.lng }}
+                    />
+                  </GoogleMap>
+                </APIProvider>
               </div>
             </div>
           </Form>

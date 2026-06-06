@@ -17,8 +17,15 @@
     "signUp": "Registrarse",
     "useDifferentEmail": "Usar otro correo"
   },
+  "about": {
+    "ctaBody": "Regístrate para añadir ubicaciones a El Guacal.",
+    "ctaTitle": "Contribuye a nuestro dataset"
+  },
   "browse": {
-    "favouritesTitle": "Busca tus favoritos"
+    "findStoreTitle": "Encuentra una tienda",
+    "noResults": "Sin resultados — prueba a alejar el mapa o cambiar de productos.",
+    "resultsCount_one": "{{count}} resultado para \"{{query}}\"",
+    "resultsCount_other": "{{count}} resultados para \"{{query}}\""
   },
   "common": {
     "loading": "Cargando...",
@@ -46,7 +53,6 @@
   "nav": {
     "about": "Nosotros",
     "addLocation": "Agregar ubicación",
-    "addStore": "Agregar tienda",
     "blog": "Blog",
     "close": "Cerrar",
     "dataset": "Datos abiertos",
@@ -94,7 +100,7 @@
   "search": {
     "filterByProducts": "Filtrar por productos",
     "loading": "Cargando resultados de búsqueda",
-    "placeholder": "Buscar un producto o ubicación",
+    "placeholder": "Buscar una ubicación",
     "productsSelected": "{{count}} productos seleccionados",
     "productsSelected_one": "1 producto seleccionado"
   },
@@ -153,10 +159,11 @@
   "storeForm": {
     "address": "Dirección",
     "addressPlaceholder": "ej., Av. Libertador, Caracas",
-    "addTitle": "Sugerir una tienda",
+    "addTitle": "Agregar una ubicación",
     "banner": "Su sugerencia será revisada por la comunidad de El Guacal antes de aparecer en el mapa.",
     "cancel": "Cancelar",
     "editTitle": "Sugerir una edición",
+    "licenseConfirmation": "Al enviar, confirmo que la información es correcta y otorgo a El Guacal una licencia para publicarla bajo los términos de datos abiertos del proyecto.",
     "locateMe": "Buscar mi ubicación",
     "location": "Ubicación",
     "mapHintAddress": "La dirección se completa automáticamente. También puedes editarla.",
@@ -164,10 +171,11 @@
     "noProductsFound": "No se encontraron productos",
     "products": "Productos",
     "removeProduct": "Eliminar producto",
-    "saveStore": "Enviar sugerencia",
+    "saveStore": "Enviar",
     "searchProducts": "Buscar productos...",
-    "storeName": "Nombre de la tienda",
+    "storeName": "Nombre",
     "storeNamePlaceholder": "ej., Bodega La Esquina",
+    "subtitle": "Ayúdanos a mapear este producto o ubicación añadiendo los detalles abajo.",
     "validation": {
       "addressRequired": "La dirección es obligatoria",
       "nameRequired": "El nombre es obligatorio",

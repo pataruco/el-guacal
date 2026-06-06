@@ -1,4 +1,5 @@
-import { type MetaFunction, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { Link, type MetaFunction, useParams } from 'react-router';
 import type { AboutPage, WithContext } from 'schema-dts';
 import JsonLd from '@/components/json-ld';
 import Page from '@/components/page';
@@ -33,7 +34,9 @@ export const meta: MetaFunction = ({ params }) => {
 
 export default function About() {
   const { locale } = useParams<{ locale: string }>();
+  const { t } = useTranslation();
   const about = getAboutContent((locale as ContentLocale) ?? 'en');
+  const currentLocale = locale || 'en';
 
   if (!about) return null;
 
@@ -59,6 +62,24 @@ export default function About() {
         className="c-blog__content"
         dangerouslySetInnerHTML={{ __html: about.html }}
       />
+
+      {/* "Contribute to our dataset" CTA card (Figma section
+          77:11488). Bottom of the about page, prompts readers to
+          register and add locations. Hero panel is a gradient
+          placeholder until a real photo asset arrives. */}
+      <aside className="c-page__cta">
+        <div className="c-page__cta-body">
+          <h2>{t('about.ctaTitle')}</h2>
+          <p>{t('about.ctaBody')}</p>
+          <Link
+            to={`/${currentLocale}/stores/new`}
+            className="c-page__btn"
+          >
+            {t('nav.addLocation')}
+          </Link>
+        </div>
+        <div className="c-page__cta-hero" aria-hidden="true" />
+      </aside>
     </Page>
   );
 }

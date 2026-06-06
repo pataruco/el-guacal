@@ -103,6 +103,29 @@
       }
     }
 
+    // Search controls (SearchBar + ProductFilter) shown above the
+    // SearchResults list when an active search/filter is in
+    // progress. Same surface treatment as the favourites card so
+    // the visual identity stays consistent across the two
+    // sidebar states.
+    &__search-controls {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      pointer-events: all;
+      margin-top: var(--space-4);
+      padding: var(--space-3);
+      width: 21rem;
+      background-color: var(--color-surface-page);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-3);
+
+      @media (min-width: 768px) {
+        margin-top: var(--space-5);
+      }
+    }
+
     // Title above the ProductFilter — Inter SemiBold 16 (Figma
     // header/medium). Sentence case, no uppercase.
     &__favourites-title {

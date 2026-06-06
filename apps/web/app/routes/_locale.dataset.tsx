@@ -44,6 +44,7 @@ export default function DatasetPage() {
 
       <section className="c-page__section">
         <a className="c-page__btn" href={downloadUrl} download>
+          <span aria-hidden="true">↓ </span>
           {i18n.t('pages.dataset.download')} ({today}) — ZIP
         </a>
       </section>
