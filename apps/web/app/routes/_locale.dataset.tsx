@@ -37,13 +37,14 @@ export default function DatasetPage() {
   };
 
   return (
-    <Page className="c-page">
+    <Page className="c-page c-page--prose">
       <JsonLd data={jsonLd} />
       <h1 className="c-page__title">{i18n.t('pages.dataset.title')}</h1>
       <p className="c-page__text">{i18n.t('pages.dataset.description')}</p>
 
       <section className="c-page__section">
         <a className="c-page__btn" href={downloadUrl} download>
+          <span aria-hidden="true">↓ </span>
           {i18n.t('pages.dataset.download')} ({today}) — ZIP
         </a>
       </section>

@@ -63,33 +63,38 @@
     padding-right: 60%;
     background-color: var(--color-surface-page);
 
-    // Right-side image placeholder (Stage 3). The Figma design
-    // calls for a hero food photo here; until we have the asset,
-    // we paint a diagonal blue gradient so the surface reads as
-    // an intentional design choice, not a forgotten background.
-    //
-    // Direction: 135° from top-left to bottom-right.
-    // Stops: blue-100 (Figma `background/accent/blue`, very pale)
-    // → blue-300 (mid-light). Both come from the Figma primitive
-    // scale, so when the real photo lands the surrounding visual
-    // tone won't shift dramatically.
-    //
-    // When the asset arrives, replace the `linear-gradient(...)`
-    // value with `url('/path/to/auth-hero.jpg') center / cover
-    // no-repeat`. The position + sizing of this pseudo-element
-    // doesn't change.
-    &::after {
-      content: '';
+    // Right-side brand hero panel. Was a gradient placeholder
+    // (::after pseudo-element); now a real element with the
+    // logo SVG + "El Guacal" wordmark on a solid blue surface.
+    &__hero {
       position: absolute;
       top: 0;
       right: 0;
       width: 60%;
       height: 100%;
-      background: linear-gradient(
-        135deg,
-        var(--color-blue-100) 0%,
-        var(--color-blue-300) 100%
-      );
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-4);
+
+      @media (max-width: 47.9375em) {
+        display: none;
+      }
+    }
+
+    &__hero-icon {
+      width: 8rem;
+      height: 7.5rem;
+    }
+
+    &__hero-title {
+      font-size: var(--text-4xl);
+      font-weight: var(--weight-bold);
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
     }
 
     // Mobile: drop the split layout. Image side hides; form flows
@@ -104,19 +109,20 @@
     }
 
     // Page heading. Figma uses `header/large`: Inter SemiBold 24px
-    // (line-height 30). Dropped uppercase + tight tracking — Figma
-    // sentence-cases its headings. The narrower vertical rhythm
-    // pairs with the form fields below.
+    // (line-height 30). Sentence case, no tracking. Same width
+    // pattern as the form below (100% width capped at 25rem) so
+    // the title's left edge aligns with the form's left edge.
+    // Crucially NOT `align-self: stretch` — that would beat the
+    // parent's `align-items: center` and push the title flush-left
+    // while the form stays centered.
     &__title {
       font-size: var(--text-2xl);
       font-weight: var(--weight-semibold);
       line-height: var(--leading-snug);
       color: var(--color-ink);
       margin-bottom: var(--space-5);
-      align-self: stretch;
       max-width: 25rem;
       width: 100%;
-      text-align: left;
     }
 
     // The email/password form. NO outer border or card surface

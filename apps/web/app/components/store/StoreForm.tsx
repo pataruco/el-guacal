@@ -1,5 +1,6 @@
 import { Combobox } from '@base-ui/react/combobox';
 import {
+  AdvancedMarker,
   APIProvider,
   Map as GoogleMap,
   type MapCameraChangedEvent,
@@ -10,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import LocateMeButton from '@/components/locate-me-button';
 import { useAllProductsQuery } from '@/graphql/queries/all-products/index.generated';
 import { useLazyGetReverseGeocodeQuery } from '@/store/features/google-maps/api';
 import { selectMap, setCenter } from '@/store/features/map/slice';
@@ -108,36 +108,13 @@ const StoreForm: React.FC<StoreFormProps> = ({
         enableReinitialize
       >
         {({ values, setFieldValue, errors, touched }) => (
-          <Form>
-            <div className={styles['c-form__map-section']}>
-              <div className={styles['c-form__map-wrapper']}>
-                <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                  <GoogleMap
-                    defaultZoom={15}
-                    center={{ lat: values.lat, lng: values.lng }}
-                    onCameraChanged={(ev: MapCameraChangedEvent) =>
-                      handleCameraChanged(ev, setFieldValue)
-                    }
-                    mapId={GOOGLE_MAPS_ID}
-                    disableDefaultUI
-                    reuseMaps
-                  />
-                  <div className={styles['c-form__crosshair']}>+</div>
-                </APIProvider>
-                <LocateMeButton />
-              </div>
-              <div className={styles['c-form__coordinates']}>
-                Lat: {values.lat.toFixed(6)}, Lng: {values.lng.toFixed(6)}
-              </div>
-              <p className={styles['c-form__map-hint']}>
-                {t('storeForm.mapHintLocation')}
-                <br />
-                {t('storeForm.mapHintAddress')}
-              </p>
-            </div>
-
+          <Form className={styles['c-form__layout']}>
             <div className={styles['c-form-container']}>
               <h1>{title}</h1>
+              <p className={styles['c-form__subtitle']}>
+                {t('storeForm.subtitle')}
+              </p>
+
               <div className={styles['c-form']}>
                 <div className={styles['c-form__field']}>
                   <label htmlFor="name">{t('storeForm.storeName')}</label>
@@ -275,13 +252,11 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   )}
                 </div>
 
+                <p className={styles['c-form__license']}>
+                  {t('storeForm.licenseConfirmation')}
+                </p>
+
                 <div className={styles['c-form__actions']}>
-                  <button
-                    type="submit"
-                    className={`${styles['c-form__btn']} ${styles['c-form__btn--submit']}`}
-                  >
-                    {t('storeForm.saveStore')}
-                  </button>
                   <button
                     type="button"
                     className={`${styles['c-form__btn']} ${styles['c-form__btn--cancel']}`}
@@ -289,7 +264,67 @@ const StoreForm: React.FC<StoreFormProps> = ({
                   >
                     {t('storeForm.cancel')}
                   </button>
+                  <button
+                    type="submit"
+                    className={`${styles['c-form__btn']} ${styles['c-form__btn--submit']}`}
+                  >
+                    {t('storeForm.saveStore')}
+                  </button>
                 </div>
+              </div>
+            </div>
+
+            {/* Map section — display-only preview of the location.
+                Crosshair + lat/lng readout removed; the map shows a
+                pin at the current (lat, lng). User can still drag
+                the map to fine-tune; camera-changed handler updates
+                lat/lng silently and reverse-geocodes the address. */}
+            <div className={styles['c-form__map-section']}>
+              <div className={styles['c-form__map-wrapper']}>
+                <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+                  <GoogleMap
+                    defaultZoom={15}
+                    center={{ lat: values.lat, lng: values.lng }}
+                    onCameraChanged={(ev: MapCameraChangedEvent) =>
+                      handleCameraChanged(ev, setFieldValue)
+                    }
+                    mapId={GOOGLE_MAPS_ID}
+                    disableDefaultUI
+                    reuseMaps
+                  >
+                    <AdvancedMarker
+                      position={{ lat: values.lat, lng: values.lng }}
+                    >
+                      {/* Inline Figma marker SVG (node 109:1438
+                          default variant). Matches the home page
+                          markers — blue teardrop, grey-300 stroke,
+                          white dot centre. Without a child, the
+                          AdvancedMarker falls back to Google's
+                          red default pin. */}
+                      <svg
+                        width="32"
+                        height="43"
+                        viewBox="0 0 36 47.9588"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M18 44.9268L17.248 45.5869L18 46.4424L18.752 45.5869L18 44.9268ZM18 44.9268L18.752 45.5859L18.7529 45.585C18.7535 45.5843 18.754 45.5831 18.7549 45.582C18.757 45.5796 18.7607 45.5768 18.7646 45.5723C18.7727 45.563 18.7843 45.549 18.7998 45.5312C18.8309 45.4955 18.8771 45.4428 18.9365 45.374C19.0555 45.2363 19.2294 45.0336 19.4502 44.7734C19.8917 44.2531 20.5213 43.5007 21.2764 42.5713C22.7856 40.7136 24.8 38.1422 26.8164 35.291C28.8304 32.4433 30.8601 29.2966 32.3906 26.292C33.904 23.3209 34.9999 20.356 35 17.9102C35 8.56574 27.3835 1 18 1C8.61649 1 1 8.56574 1 17.9102C1.00006 20.356 2.09596 23.3209 3.60938 26.292C5.13991 29.2966 7.16959 32.4433 9.18359 35.291C11.2 38.1422 13.2144 40.7136 14.7236 42.5713C15.4787 43.5007 16.1083 44.2531 16.5498 44.7734C16.7706 45.0336 16.9445 45.2363 17.0635 45.374C17.1229 45.4428 17.1691 45.4955 17.2002 45.5312C17.2157 45.549 17.2273 45.563 17.2354 45.5723C17.2393 45.5768 17.243 45.5796 17.2451 45.582C17.246 45.5831 17.2465 45.5843 17.2471 45.585L17.248 45.5859L18 44.9268Z"
+                          fill="var(--color-primary)"
+                          stroke="var(--color-border)"
+                          strokeWidth="2"
+                        />
+                        <circle
+                          cx="18"
+                          cy="18"
+                          r="4"
+                          fill="var(--color-white)"
+                        />
+                      </svg>
+                    </AdvancedMarker>
+                  </GoogleMap>
+                </APIProvider>
               </div>
             </div>
           </Form>

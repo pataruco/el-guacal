@@ -28,7 +28,7 @@ export default function PrivacyPolicy() {
 
   // Content is self-authored markdown files bundled at build time
   return (
-    <Page className="c-page">
+    <Page className="c-page c-page--prose">
       <h1 className="c-page__title">{privacyPolicy.title}</h1>
       <div
         className="c-blog__content"

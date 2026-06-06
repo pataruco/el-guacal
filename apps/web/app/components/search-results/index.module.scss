@@ -1,0 +1,99 @@
+// SearchResults list pane — Figma section 77:11036.
+//
+// Appears in the home page left column when the user has selected
+// products via ProductFilter (replaces the favourites card). List
+// of matching stores; clicking a row opens the store detail panel
+// and visually highlights the row.
+//
+// Wrapped in `@layer components` for the universal :focus-visible
+// rule to win against any box-shadow declarations here.
+@layer components {
+  .c-search-results {
+    pointer-events: all;
+    width: 21rem;
+    background-color: var(--color-surface-page);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-3);
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    // Cap height so the list scrolls without pushing the page
+    // overflow. The minus is the header (~64px) + page gutter (~24px)
+    // + this component's own margin-top (~16px).
+    max-height: calc(100vh - 7rem);
+
+    @media (min-width: 768px) {
+      margin-top: var(--space-5);
+    }
+
+    // "32 results for 'caraotas negras'" header.
+    &__header {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      color: var(--color-ink);
+      line-height: var(--leading-snug);
+      padding-bottom: var(--space-2);
+      border-bottom: var(--border-width-hairline) solid var(--color-border);
+    }
+
+    &__empty {
+      font-size: var(--text-sm);
+      color: var(--color-ink-muted);
+      padding: var(--space-3);
+      text-align: center;
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    &__item {
+      // Reserve the left indicator strip so the selected state
+      // doesn't shift the layout horizontally.
+      border-left: 3px solid transparent;
+      border-radius: var(--radius-md);
+      transition: background-color var(--duration-fast) var(--ease-standard);
+
+      &:hover {
+        background-color: var(--color-surface-hover);
+      }
+
+      // Selected state — Figma highlights the active result with a
+      // soft blue background and a blue left-indicator strip,
+      // matching the selected-pin language on the map.
+      &--selected {
+        background-color: var(--color-interactive-accent-bg);
+        border-left-color: var(--color-link);
+
+        &:hover {
+          background-color: var(--color-interactive-hover-bg);
+        }
+      }
+    }
+
+    &__item-button {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      padding: var(--space-2) var(--space-3);
+      text-align: left;
+      cursor: pointer;
+      color: var(--color-ink);
+      font-size: var(--text-sm);
+    }
+
+    &__item-name {
+      font-weight: var(--weight-semibold);
+    }
+  }
+}

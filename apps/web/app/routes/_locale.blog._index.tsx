@@ -40,7 +40,7 @@ export default function BlogIndex() {
   };
 
   return (
-    <Page className="c-page">
+    <Page className="c-page c-page--prose">
       <JsonLd data={jsonLd} />
       <h1 className="c-page__title">{t('pages.blog.title')}</h1>
       {posts.length === 0 ? (

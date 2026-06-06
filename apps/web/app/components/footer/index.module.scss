@@ -1,58 +1,45 @@
-// Footer — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). Fifth component
-// ported. Closes the page-chrome loop: after this file, every piece
-// of non-map chrome (header + footer) lives on the new system and
-// only map-surface components, the cookie banner, the search bar /
-// shared `o-select` object, and `product-filter` are left.
+// Footer — restyled to Figma direction. Pairs with the slim,
+// full-width header chrome: sunken-surface bar at the bottom with
+// a hairline top border (not the prior 2px ink), full-width
+// content (no max-width cap), and a soft text link.
 //
-// The React component (see `./index.tsx`) currently renders a single
-// <nav> with one link to the privacy policy. A larger credit-line
-// footer lives in the same file as commented-out code (your commit
-// 64b21bb) — if it comes back, the `p` and `__cc` rules come back
-// with it. This file deliberately styles only the live markup.
-
-// Wrapped in `@layer components` so the universal `:focus-visible`
-// rule in `@layer utilities` (tokens.css) beats any `box-shadow`
-// declarations inside this file. See header/index.module.scss for
-// the full architectural rationale.
+// Wrapped in `@layer components` so the universal :focus-visible
+// rule in @layer utilities beats any box-shadow declarations.
 @layer components {
-.c-footer {
-  width: 100%;
-  padding: var(--space-4) var(--space-5);
-  // Sunken surface is the one "not pure white" token in the scale —
-  // it exists for de-emphasised blocks like this footer. Flag blue
-  // links on sunken still clear AAA (~12:1).
-  background-color: var(--color-surface-sunken);
-  // Mirror of the header's structural border. The page now has a
-  // hard top and a hard bottom edge; that's the gov.uk sensibility.
-  // No upward elevation strip — the footer is in document flow, not
-  // hanging off an edge, so the 2px ink line carries it alone.
-  border-top: var(--border-width-structural) solid var(--color-border-strong);
-  font-size: var(--text-xs);
-  color: var(--color-ink-muted);
-
-  &__container {
+  .c-footer {
     width: 100%;
-    max-width: var(--content-max);
-    margin: 0 auto;
-  }
+    padding: var(--space-4) var(--space-5);
+    // White surface to match the rest of the page chrome and
+    // content. Sunken grey-100 was a gov.uk-era choice that
+    // looked like a de-emphasised block, but now reads as an
+    // unwanted visual break against the white content surfaces
+    // we use everywhere else.
+    background-color: var(--color-surface-page);
+    border-top: var(--border-width-hairline) solid var(--color-border);
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
 
-  // Privacy-policy link. `--color-link` is flag blue, matching the
-  // header's active-nav indicator and the universal focus ring —
-  // "link", "current page", and "focused" all read as one coherent
-  // blue system. Underline treatment mirrors the hover style used
-  // on `c-header__auth-link`, `c-store__close` and the dialog's
-  // cancel button, so every underlined interactive in the system
-  // lands at the same offset and thickness.
-  a {
-    color: var(--color-link);
-    text-decoration: underline;
-    text-underline-offset: 0.25rem;
-    text-decoration-thickness: 2px;
+    // Full-width content row — same change we made to the header
+    // (no max-width cap). Privacy link sits flush-left with the
+    // page gutter, matching the header logo column.
+    &__container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
 
-    &:hover {
-      color: var(--color-link-hover);
+    a {
+      color: var(--color-link);
+      font-weight: var(--weight-semibold);
+      text-decoration: underline;
+      text-underline-offset: 0.25rem;
+      text-decoration-thickness: 2px;
+      padding: var(--space-1) 0;
+      transition: color var(--duration-fast) var(--ease-standard);
+
+      &:hover {
+        color: var(--color-link-hover);
+      }
     }
   }
-}
 }

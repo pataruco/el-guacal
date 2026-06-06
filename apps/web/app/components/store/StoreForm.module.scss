@@ -1,347 +1,293 @@
-// Store form — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). Eleventh
-// component ported. Zero SCSS imports. This is the admin-side form
-// for creating and editing stores (routes `_locale.stores.new.tsx`
-// and `_locale.stores.edit.tsx`).
-//
-// The React component (see `./StoreForm.tsx`) uses Formik + a Base
-// UI multi-select Combobox that composes with the shared `o-select`
-// object's `__control` / `__input` / `__control-trigger` form-field
-// pattern (see `apps/web/app/styles/_select.scss`). The file below
-// only contains store-form-specific classes layered on top.
-//
-// Note on BEM nesting: `c-form__map-section`, `c-form__crosshair`
-// and friends are declared as SCSS-nested children of `.c-form`
-// below, even though the corresponding elements live OUTSIDE the
-// `.c-form` element in the DOM (the map section sits above the
-// form container, the form container holds the h1, the form card
-// lives inside the container). SCSS `&__foo` is a string
-// substitution that compiles to `.c-form__foo` as a flat selector,
-// which matches the BEM elements wherever they appear in the DOM.
-// Keeping them nested here preserves the BEM naming intent without
-// breaking the flat compiled output.
+// Store form — restyled to Figma "submit new location" (section
+// 77:11411). All 5 stages of the restyle landed in one rewrite:
+//   1. Split layout (form-left, map-right on desktop, stacked on
+//      mobile).
+//   2. Form input + button restyle (thin grey-500 borders, solid
+//      blue submit, blue-outlined cancel).
+//   3. Google Maps URL field — see StoreForm.tsx for the parser.
+//   4. Helper subtitle + license confirmation text.
+//   5. Map simplified: crosshair + lat/lng readout dropped, the
+//      map shows a static pin at the current (lat, lng). Drag
+//      still works as a fine-tune fallback.
 //
 // Wrapped in `@layer components` so the universal `:focus-visible`
-// rule in `@layer utilities` beats button box-shadow declarations
-// on focus. See `header/index.module.scss` for the architectural
-// rationale.
+// rule in `@layer utilities` beats anything inside.
 @layer components {
-  // Outer page wrapper. No styling of its own — exists so
-  // `StoreForm.tsx` can hand a className to the root div, and to
-  // provide an anchor for future page-level concerns.
   .c-form-page {
     width: 100%;
   }
 
-  // Max-width column that holds the h1 and the form card. 600px
-  // max width is a gov.uk-ish reading-width for forms; not in the
-  // token scale so kept as a literal.
-  .c-form-container {
-    padding: var(--space-4) var(--space-5);
-    max-width: 37.5rem;
-    margin: 0 auto;
-    width: 100%;
+  // Split layout — form column on the left, map column on the
+  // right (Figma frames 88:1935/2077/2238). Stacked vertically
+  // on mobile so the form is readable at narrow widths and the
+  // map sits below.
+  .c-form__layout {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 4rem);
 
-    // Page heading. Matches the scale used by the store card h2 in
-    // spirit (uppercase, ink, bold, tight tracking) but one step
-    // larger (`--text-3xl` vs `--text-2xl`) because this is the
-    // page title, not a card title. Bottom border + padding is the
-    // gov.uk page-heading pattern.
-    h1 {
-      font-size: var(--text-3xl);
-      font-weight: var(--weight-bold);
-      color: var(--color-ink);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      line-height: var(--leading-tight);
-      margin-bottom: var(--space-5);
-      padding-bottom: var(--space-2);
-      border-bottom: var(--border-width-structural) solid
-        var(--color-border-strong);
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: stretch;
     }
   }
 
-  // The form card itself. White fill on white page — the 2px ink
-  // border alone carries the visual separation, matching gov.uk
-  // form pages. NO box-shadow: form containers are flat, pressable
-  // elements (buttons) are elevated. This is the same distinction
-  // `_select.scss`'s `__control` wrapper establishes for combobox
-  // form fields.
+  .c-form-container {
+    padding: var(--space-5);
+    width: 100%;
+
+    @media (min-width: 768px) {
+      flex: 1 1 50%;
+      max-width: 36rem;
+      padding: var(--space-6) var(--space-5);
+      overflow-y: auto;
+    }
+
+    // Figma `header/large`: Inter SemiBold 24, sentence case,
+    // no uppercase. Same treatment as the auth page and the
+    // store-detail card title.
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-semibold);
+      color: var(--color-ink);
+      line-height: var(--leading-snug);
+      margin-bottom: var(--space-2);
+    }
+  }
+
+  // Subtitle helper text below the h1. Muted body copy explaining
+  // what the form does.
+  .c-form__subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+    margin-bottom: var(--space-5);
+    max-width: 32rem;
+  }
+
+  // The form column itself. Flat — no border, no card outline.
+  // Inputs carry their own borders and the column is the same
+  // background as the page.
   .c-form {
     background-color: var(--color-surface-page);
-    border: var(--border-width-structural) solid var(--color-border-strong);
-    padding: var(--space-5);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
 
-    // Each form row: label stacked above input with a small gap.
-    // The label and input styles are defined via element selectors
-    // to avoid polluting the BEM namespace with per-field classes.
     &__field {
       display: flex;
       flex-direction: column;
       gap: var(--space-1);
 
+      // Figma `header/small`: Inter SemiBold 14, sentence case.
+      // Was uppercase + tight-tracking + xs in the gov.uk direction.
       label {
-        font-size: var(--text-xs);
-        font-weight: var(--weight-bold);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-wide);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-semibold);
         color: var(--color-ink);
       }
 
-      // Text inputs. 2px ink border + white fill + ink text. No
-      // component-level `:focus-visible` override — the universal
-      // ring in `@layer utilities` handles focus. The italic muted
-      // placeholder matches the pattern used in _select.scss's
-      // `__input` rule and c-search__input's `::placeholder`.
+      // Text inputs. 1px grey-500 border at 4px radius, sentence
+      // case. Borderless on focus is handled by the universal
+      // :focus-visible ring in @layer utilities (tokens.css).
       //
-      // Formik's <Field> renders a native <input> by default, so
-      // these element selectors catch the rendered markup even
-      // though the tsx doesn't hand each input its own class.
-      input[type='text'],
-      input[type='email'] {
+      // Formik's <Field> renders a native <input> by default;
+      // the Google Maps URL field uses a bare <input> outside
+      // Formik state. Element selectors catch both.
+      //
+      // The `:not(.o-select__input)` exclusion stops the rule
+      // from also applying to the Combobox's input — the
+      // o-select component already wraps its input in a
+      // `.o-select__control` that carries the visible border,
+      // so adding another 1px border on the inner input
+      // produced a visible double-border seam.
+      input[type='text']:not(:global(.o-select__input)),
+      input[type='email']:not(:global(.o-select__input)),
+      input:not([type]):not(:global(.o-select__input)) {
         width: 100%;
         padding: var(--space-2) var(--space-3);
         min-height: var(--target-min);
-        border: var(--border-width-structural) solid
-          var(--color-border-strong);
+        border: var(--border-width-hairline) solid var(--color-border-input);
+        border-radius: var(--radius-md);
         background-color: var(--color-surface-page);
         font-family: inherit;
         font-size: var(--text-base);
         color: var(--color-ink);
+        transition: border-color var(--duration-fast) var(--ease-standard);
+
+        &:hover {
+          border-color: var(--color-border-input-hover);
+        }
+
+        &:active {
+          border-color: var(--color-border-input-active);
+        }
 
         &::placeholder {
           color: var(--color-ink-muted);
-          font-style: italic;
         }
       }
     }
 
-    // Validation error text. Using `--color-ink` + bold weight,
-    // NOT `--color-danger`. Rationale: ADR 0014 mandates AAA
-    // contrast for every text pair, and `--color-danger` on white
-    // clocks ~5.7:1 (AA normal, not AAA). Position and weight
-    // convey "error" without needing a red tint. If you want
-    // coloured error text, the right fix is to add a new token
-    // `--color-danger-ink` at oklch ~25% lightness (AAA on white)
-    // — flagged for decision.
+    // Validation error text. `--color-danger` (red-800) on white
+    // hits ~8.2:1 AAA Normal — see feedback_accessibility_first
+    // memory. Semibold for emphasis.
     &__error {
-      color: var(--color-ink);
-      font-size: var(--text-xs);
-      font-weight: var(--weight-bold);
-    }
-
-    // Map section sits at the top of the form, full-width. The
-    // user pans the map to pick coordinates; the reverse-geocoded
-    // address populates the address field below.
-    &__map-section {
-      width: 100%;
-      border-bottom: var(--border-width-structural) solid
-        var(--color-border-strong);
-      position: relative;
-    }
-
-    &__map-wrapper {
-      width: 100%;
-      height: 18.75rem;
-      position: relative;
-
-      @media (min-width: 768px) {
-        height: 25rem;
-      }
-    }
-
-    // Crosshair `+` at the exact center of the map. 4rem font size
-    // makes it a large graphic, not text — 1.4.11 applies (3:1 for
-    // non-text UI), and `--color-danger` on white clocks ~5.7:1
-    // comfortably. Red is the universal "pin is going here"
-    // signal, reusing the same token as `c-marker`'s fill so the
-    // map's "live marker" and "preview location" read as one
-    // visual language.
-    //
-    // Two text-shadow glows give the crosshair legibility against
-    // arbitrary map tile colors (cream streets, green parks, grey
-    // buildings, blue water) without needing a background box.
-    // Using `--color-ink-inverse` (white) for the glow at two
-    // offsets matches the old pattern.
-    &__crosshair {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       color: var(--color-danger);
-      font-size: 4rem;
-      font-weight: var(--weight-regular);
-      pointer-events: none;
-      // Local stacking within the StoreForm map preview — sits
-      // above the Google Maps iframe but doesn't participate in
-      // the global `--z-*` scale.
-      z-index: 10;
-      text-shadow:
-        0 0 0.125rem var(--color-ink-inverse),
-        0 0 0.25rem var(--color-ink-inverse);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
     }
 
-    // Lat/lng readout overlay at the bottom-right of the map. The
-    // semi-transparent white background uses `color-mix` with the
-    // ink-inverse token — consistent with how every other scrim
-    // in the system is built (dialog backdrop, mobile overlay,
-    // map loading shimmer). 2px ink border gives it a clear edge
-    // against any map tile color.
-    &__coordinates {
-      position: absolute;
-      bottom: var(--space-2);
-      right: var(--space-2);
-      padding: var(--space-1) var(--space-2);
-      font-size: var(--text-xs);
-      font-weight: var(--weight-medium);
-      color: var(--color-ink);
-      background-color: color-mix(
-        in oklch,
-        var(--color-ink-inverse) 85%,
-        transparent
-      );
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      // Local stacking — same as the marker indicator above.
-      z-index: 10;
-    }
-
-    // "Drag the map to pick location / address fills in automatically"
-    // hint below the map. Italic muted caption, same pattern as
-    // `c-product-filter__empty` and the combobox `__no-results`
-    // state.
-    &__map-hint {
-      padding: var(--space-2) var(--space-3);
-      margin: 0;
-      font-size: var(--text-xs);
-      color: var(--color-ink-muted);
-      font-style: italic;
-    }
-
-    // Wrapper around the Combobox and its selected-chip list.
-    // Vertical flex so the chips sit below the combobox control.
+    // Combobox + selected chips wrapper.
     &__combobox-wrapper {
       display: flex;
       flex-direction: column;
       gap: var(--space-2);
     }
 
-    // Empty state inside the combobox popup when the search query
-    // returns no products. Same muted italic caption pattern.
     &__no-results {
       padding: var(--space-4);
       text-align: center;
-      font-size: var(--text-xs);
-      font-style: italic;
+      font-size: var(--text-sm);
       color: var(--color-ink-muted);
     }
 
-    // List of selected products as pill chips. Pill radius
-    // (--radius-full) is reserved in tokens.css specifically for
-    // tag chips — same pattern as `c-store__product`.
+    // Selected products chip list. Light pill chips with a small
+    // remove × button. Matches the Figma compact-chip aesthetic
+    // (was 2px ink + uppercase in the gov.uk direction).
     &__selected-list {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-2);
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
 
     &__selected-item {
       display: inline-flex;
       align-items: center;
       gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
-      min-height: var(--target-min);
-      background-color: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
+      padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
+      background-color: var(--color-interactive-accent-bg);
+      border: var(--border-width-hairline) solid var(--color-blue-200);
       border-radius: var(--radius-full);
-      font-size: var(--text-xs);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
+      font-size: var(--text-sm);
       color: var(--color-ink);
     }
 
-    // Remove button on each chip. This is the first place in the
-    // migration where `--color-danger` means what its name says:
-    // hovering over × signals "you're about to destroy this
-    // selection". Focus ring on the button comes from the
-    // universal `:focus-visible` rule in @layer utilities.
     &__remove-item-btn {
       background: transparent;
       border: 0;
       padding: 0;
+      width: 1.25rem;
+      height: 1.25rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
       cursor: pointer;
-      color: var(--color-ink);
+      color: var(--color-ink-muted);
       font-size: var(--text-base);
-      transition: color var(--duration-fast) var(--ease-standard);
+      border-radius: var(--radius-full);
+      transition:
+        color var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard);
 
       &:hover {
         color: var(--color-danger);
+        background-color: var(--color-red-50);
       }
     }
 
-    // Submit / Cancel button row.
-    &__actions {
-      display: flex;
-      gap: var(--space-4);
-      margin-top: var(--space-4);
+    // License confirmation paragraph. Muted small text — disclosure,
+    // not a warning.
+    &__license {
+      font-size: var(--text-xs);
+      color: var(--color-ink-muted);
+      margin-top: var(--space-2);
     }
 
-    // Shared button base. Submit is the yellow primary; Cancel is
-    // the ghost text-button used by every other "quiet dismiss"
-    // action in the system (c-store__close, c-header__auth-link,
-    // c-dialog__btn--cancel). Same pattern throughout.
+    // Submit / Cancel button row. Figma has Cancel first (left),
+    // Submit second (right) — matches Material/iOS conventions for
+    // "destructive option on left, confirming option on right".
+    &__actions {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-2);
+    }
+
     &__btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: var(--space-2) var(--space-5);
       min-height: var(--target-min);
-      font-size: var(--text-xs);
+      font-size: var(--text-sm);
       font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-tight);
-      text-transform: uppercase;
+      border-radius: var(--radius-md);
       cursor: pointer;
       transition:
-        transform var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard),
         background-color var(--duration-fast) var(--ease-standard),
-        color var(--duration-fast) var(--ease-standard);
+        color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
 
+      // Submit — solid blue primary. Bold label so 14px qualifies
+      // as WCAG Large (14pt bold = ~18.67px bold), and white on
+      // blue-700 gives ~7.13:1 AAA Normal anyway.
       &--submit {
         background-color: var(--color-primary);
         color: var(--color-primary-ink);
-        border: var(--border-width-structural) solid
-          var(--color-border-strong);
-        box-shadow: var(--elevation-1);
+        border: 0;
 
         &:hover {
           background-color: var(--color-primary-hover);
         }
 
         &:active {
-          transform: translateY(2px);
-          box-shadow: var(--elevation-0);
+          background-color: var(--color-primary-active);
         }
       }
 
+      // Cancel — blue-outlined secondary. Same pattern as the
+      // auth provider button and the header Sign in/Register
+      // button for consistency across the system.
       &--cancel {
-        background-color: transparent;
-        color: var(--color-ink);
-        border: var(--border-width-structural) solid transparent;
+        background-color: var(--color-surface-page);
+        color: var(--color-link);
+        border: var(--border-width-hairline) solid var(--color-link);
 
         &:hover {
-          text-decoration: underline;
-          text-underline-offset: 0.25rem;
-          text-decoration-thickness: 2px;
+          color: var(--color-link-hover);
+          border-color: var(--color-link-hover);
+          background-color: var(--color-interactive-hover-bg);
+        }
+
+        &:active {
+          background-color: var(--color-interactive-active-bg);
         }
       }
     }
+  }
+
+  // Map section — right column on desktop, full-width below the
+  // form on mobile. Crosshair, lat/lng readout, and map hint
+  // dropped (Stage 5).
+  .c-form__map-section {
+    width: 100%;
+    height: 20rem;
+
+    @media (min-width: 768px) {
+      flex: 1 1 50%;
+      height: auto;
+      min-height: 100%;
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  .c-form__map-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 20rem;
   }
 }

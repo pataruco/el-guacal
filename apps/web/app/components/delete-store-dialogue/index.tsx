@@ -1,3 +1,9 @@
+// "Suggest deletion" dialog. Used to propose removal of a store
+// rather than hard-delete it — submission becomes a pending
+// proposal that a moderator reviews, mirroring the edit flow.
+// Asks for a reason (required) explaining why the location
+// should be removed; that text lands in the proposal record for
+// the moderator to read.
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.scss';
@@ -5,9 +11,8 @@ import styles from './index.module.scss';
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (reason: string) => void;
   itemName: string;
-  itemType: string;
 }
 
 const DeleteConfirmationDialog = ({
@@ -15,11 +20,10 @@ const DeleteConfirmationDialog = ({
   onClose,
   onConfirm,
   itemName,
-  itemType,
 }: DeleteConfirmationDialogProps) => {
   const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [reason, setReason] = useState('');
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -33,7 +37,7 @@ const DeleteConfirmationDialog = ({
       if (dialog.open) {
         dialog.close();
       }
-      setInputValue('');
+      setReason('');
     }
   }, [isOpen]);
 
@@ -42,9 +46,9 @@ const DeleteConfirmationDialog = ({
   };
 
   const handleConfirm = () => {
-    if (inputValue === itemName) {
-      onConfirm();
-    }
+    const trimmed = reason.trim();
+    if (trimmed.length === 0) return;
+    onConfirm(trimmed);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -60,31 +64,26 @@ const DeleteConfirmationDialog = ({
       onClose={onClose}
       onKeyDown={handleKeyDown}
     >
-      <h2 className={styles['c-dialog__title']}>
-        {t('deleteDialog.title', { type: itemType })}
-      </h2>
-      <p className={styles['c-dialog__warning']}>
-        {t('deleteDialog.warning', { type: itemType.toLowerCase() })}
-      </p>
+      <h2 className={styles['c-dialog__title']}>{t('deleteDialog.title')}</h2>
+      <p className={styles['c-dialog__warning']}>{t('deleteDialog.warning')}</p>
       <p
-        id="delete-confirm-description"
+        id="delete-reason-description"
         className={styles['c-dialog__suggestion']}
       >
-        {t('deleteDialog.confirmPrompt')} <strong>{itemName}</strong>
+        {t('deleteDialog.reasonPrompt', { name: itemName })}
       </p>
-      <label htmlFor="delete-confirm-input" className="sr-only">
-        {t('deleteDialog.inputLabel', { type: itemType.toLowerCase() })}
+      <label htmlFor="delete-reason-input" className="sr-only">
+        {t('deleteDialog.inputLabel', { name: itemName })}
       </label>
-      <input
-        id="delete-confirm-input"
-        type="text"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder={t('deleteDialog.inputPlaceholder', {
-          type: itemType.toLowerCase(),
-        })}
-        className={styles['c-dialog__input']}
-        aria-describedby="delete-confirm-description"
+      <textarea
+        id="delete-reason-input"
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        placeholder={t('deleteDialog.inputPlaceholder')}
+        className={styles['c-dialog__textarea']}
+        aria-describedby="delete-reason-description"
+        rows={3}
+        required
         autoFocus
       />
       <div className={styles['c-dialog__actions']}>
@@ -98,7 +97,7 @@ const DeleteConfirmationDialog = ({
         <button
           type="button"
           onClick={handleConfirm}
-          disabled={inputValue !== itemName}
+          disabled={reason.trim().length === 0}
           className={`${styles['c-dialog__btn']} ${styles['c-dialog__btn--delete']}`}
         >
           {t('deleteDialog.confirm')}

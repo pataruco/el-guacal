@@ -79,16 +79,21 @@
       }
     }
 
-    // Chevron icon inside the trigger. Rotates 180° when the popup is
-    // open. Kept as a unicode `▼` in the tsx — no icon font, no svg.
+    // Chevron icon inside the trigger. Rotates 180° when the popup
+    // is open. Selector targets `aria-expanded="true"` on the
+    // ancestor trigger — that's the universal ARIA attribute Base
+    // UI sets on Select, Combobox, AND Popover triggers, so one
+    // rule handles all three consumer patterns. (Earlier `[data-expanded]`
+    // and `[data-state='open']` selectors were Base-UI-version-specific
+    // and didn't match the Popover used by ProductFilter, which sets
+    // `data-popup-open` instead.)
     &__icon {
       font-size: var(--text-xs);
       line-height: 1;
       color: var(--color-ink-muted);
       transition: transform var(--duration-base) var(--ease-standard);
 
-      [data-expanded] &,
-      [data-state='open'] & {
+      [aria-expanded='true'] & {
         transform: rotate(180deg);
       }
     }
@@ -111,17 +116,22 @@
 
     // ---------------------------------------------------------------
     // Individual item inside the popup. Sentence case, regular weight.
-    // Visual states:
+    // Visual states (softened to the standard dropdown pattern —
+    // light blue tints rather than aggressive primary-button-style
+    // dark blue fills):
     //   · base                              → ink text on white
-    //   · hover                             → surface-hover fill
-    //   · [data-highlighted]                → link-blue fill + white
-    //                                          text (keyboard focus)
-    //   · [data-selected]                   → surface-hover fill +
-    //                                          ink left indicator
-    //   · [data-selected][data-highlighted] → link-blue + white text
+    //   · hover                             → light blue tint
+    //   · [data-highlighted]                → light blue tint + blue
+    //                                          left indicator
+    //   · [data-selected]                   → soft surface-hover +
+    //                                          ink left indicator +
+    //                                          semibold weight
+    //   · [data-selected][data-highlighted] → light blue + blue left
+    //                                          indicator + semibold
     //
     // The `border-left` is reserved as transparent on the base state
-    // so switching to ink on selected doesn't shift item alignment.
+    // so switching to ink/blue on selected/highlighted doesn't shift
+    // item alignment.
     // ---------------------------------------------------------------
     &__item {
       display: flex;
@@ -140,16 +150,16 @@
         border-left-color var(--duration-fast) var(--ease-standard);
 
       &:hover {
-        background-color: var(--color-surface-hover);
-        border-left-color: var(--color-ink);
+        background-color: var(--color-interactive-hover-bg);
+        border-left-color: var(--color-link);
       }
 
-      // Keyboard-navigation highlight. White text on link-blue —
-      // blue-800 gives ~10.5:1 contrast (AAA Normal).
+      // Keyboard-navigation highlight. Light blue tint + blue left
+      // indicator (was strong blue-800 + white text — too aggressive,
+      // read as a primary button rather than a dropdown item).
       &[data-highlighted] {
-        background-color: var(--color-link);
-        color: var(--color-ink-inverse);
-        border-left-color: var(--color-ink-inverse);
+        background-color: var(--color-interactive-hover-bg);
+        border-left-color: var(--color-link);
       }
 
       // Sticky "this is selected" state.
@@ -159,12 +169,14 @@
         border-left-color: var(--color-ink);
         font-weight: var(--weight-semibold);
 
-        // Selected AND keyboard-focused → blue fill wins.
+        // Selected AND keyboard-focused → light blue + blue
+        // left indicator wins. Stays in the same light-tint
+        // language as the regular highlight, just paired with
+        // the selected-state semibold weight.
         &[data-highlighted],
         &:hover {
-          background-color: var(--color-link);
-          color: var(--color-ink-inverse);
-          border-left-color: var(--color-ink-inverse);
+          background-color: var(--color-interactive-hover-bg);
+          border-left-color: var(--color-link);
         }
       }
     }
@@ -174,8 +186,9 @@
     // <input type="checkbox"> inside a <label className="o-select__item">.
     //
     // Base state: white fill, 1px grey-500 border, 2px radius.
-    // Checked: link-blue fill, white tick.
-    // Inside [data-highlighted] row: inverts — white fill, blue tick.
+    // Checked: link-blue fill, white tick. Highlighted row now uses
+    // a light blue tint (not dark blue), so the checkbox stays on
+    // the same theme — no need for inverted styles.
     // ---------------------------------------------------------------
     &__checkbox {
       width: 1rem;
@@ -201,18 +214,6 @@
         background-size: 0.75rem;
         background-position: center;
         background-repeat: no-repeat;
-      }
-
-      // Inside a [data-highlighted] row, the row fills with link-blue
-      // and text goes white. The checkbox has to stay visible — invert
-      // to white fill with a blue tick.
-      [data-highlighted] & {
-        border-color: var(--color-ink-inverse);
-      }
-      [data-highlighted] &:checked {
-        background-color: var(--color-ink-inverse);
-        border-color: var(--color-ink-inverse);
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230f34be'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
       }
     }
 

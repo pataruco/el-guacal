@@ -32,7 +32,7 @@ export default function BlogPost() {
 
   if (!post) {
     return (
-      <Page className="c-page">
+      <Page className="c-page c-page--prose">
         <h1 className="c-page__title">404</h1>
         <p className="c-page__text">{t('common.notFound')}</p>
         <Link to={`/${locale}/blog`} className="c-page__btn">
@@ -57,7 +57,7 @@ export default function BlogPost() {
   };
 
   return (
-    <Page className="c-page">
+    <Page className="c-page c-page--prose">
       <JsonLd data={jsonLd} />
       <article className="c-blog__post">
         <header className="c-blog__post-header">
