@@ -1,4 +1,8 @@
 {
+  "about": {
+    "ctaBody": "Register an account to submit locations to El Guacal.",
+    "ctaTitle": "Contribute to our dataset"
+  },
   "auth": {
     "alreadyHaveAccount": "Already have an account?",
     "continue": "Continue",
@@ -17,10 +21,6 @@
     "signUp": "Sign up",
     "useDifferentEmail": "Use a different email"
   },
-  "about": {
-    "ctaBody": "Register an account to submit locations to El Guacal.",
-    "ctaTitle": "Contribute to our dataset"
-  },
   "browse": {
     "findStoreTitle": "Find a store",
     "noResults": "No results yet — try zooming out or selecting different products.",
@@ -33,12 +33,12 @@
   },
   "deleteDialog": {
     "cancel": "Cancel",
-    "confirm": "Delete",
-    "confirmPrompt": "Type the name to confirm:",
-    "inputLabel": "Type the {{type}} name to confirm deletion",
-    "inputPlaceholder": "Type the {{type}} name",
-    "title": "Delete {{type}}",
-    "warning": "This action cannot be undone. All data associated with this {{type}} will be permanently deleted."
+    "confirm": "Submit suggestion",
+    "inputLabel": "Reason for suggesting deletion of {{name}}",
+    "inputPlaceholder": "e.g. closed permanently, moved, duplicate listing",
+    "reasonPrompt": "Why should {{name}} be removed?",
+    "title": "Suggest deletion",
+    "warning": "Your suggestion will be reviewed by a moderator before the location is removed."
   },
   "footer": {},
   "map": {
@@ -111,8 +111,8 @@
     },
     "auth": {
       "login": {
-        "description": "Log in to El Guacal to contribute to our community-driven store map.",
-        "title": "Log in - El Guacal"
+        "description": "Sign in or register on El Guacal to contribute to our community-driven store map.",
+        "title": "Sign in or register - El Guacal"
       },
       "signup": {
         "description": "Join El Guacal to start adding and updating local stores and products.",
@@ -147,7 +147,7 @@
   "store": {
     "address": "Address",
     "close": "Close",
-    "delete": "Delete",
+    "delete": "Suggest deletion",
     "directions": "Directions",
     "edit": "Edit",
     "lastUpdated": "Last updated",

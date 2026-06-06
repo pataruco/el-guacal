@@ -59,10 +59,11 @@
       }
     }
 
-    // Text input — same treatment as auth/storeform inputs.
-    // 1px grey-500 border + 4px radius. Universal focus ring in
-    // @layer utilities handles :focus-visible.
-    &__input {
+    // Reason textarea — same treatment as the auth/storeform
+    // inputs (1px grey-500, 4px radius, hover/active border
+    // progression). Multi-line because the user is writing a
+    // free-form explanation, not a short token.
+    &__textarea {
       width: 100%;
       padding: var(--space-2) var(--space-3);
       min-height: var(--target-min);
@@ -72,7 +73,9 @@
       color: var(--color-ink);
       font-family: inherit;
       font-size: var(--text-base);
+      line-height: var(--leading-normal);
       margin-bottom: var(--space-5);
+      resize: vertical;
       transition: border-color var(--duration-fast) var(--ease-standard);
 
       &:hover {
@@ -82,6 +85,10 @@
       &:active,
       &:focus {
         border-color: var(--color-border-input-active);
+      }
+
+      &::placeholder {
+        color: var(--color-ink-muted);
       }
     }
 

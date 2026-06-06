@@ -18,7 +18,14 @@
     background-color: var(--color-blue-50);
     padding: var(--space-6) var(--space-5);
     width: 100%;
-    min-height: calc(100vh - 4rem);
+    // No min-height here — the Page wrapper already has
+    // min-height: 100vh and main has flex: 1, which together
+    // implement the sticky-footer pattern correctly. Setting
+    // min-height: calc(100vh - 4rem) HERE pushed the main past
+    // the available space (because the actual header height
+    // isn't always exactly 4rem), making the layout overflow
+    // 100vh and the footer disappear below the viewport on
+    // short content pages.
 
     // Modifier for content-heavy routes (blog posts, long-form
     // privacy/terms pages). Switches the page surface to plain
@@ -83,6 +90,12 @@
       padding: 0;
       margin-bottom: var(--space-4);
 
+      // Bullet-pointed item. `::before` renders the bullet so it
+      // stays at a controlled position + colour (lighter than the
+      // text). The `/ ''` after the content string is the
+      // CSS-Level-3 alt-text pattern: screen readers read the
+      // alt (empty) instead of the bullet character, so listening
+      // users hear "stores.csv: ..." not "bullet stores.csv: ...".
       &-item {
         margin-bottom: var(--space-2);
         padding-left: var(--space-4);
@@ -90,9 +103,9 @@
         color: var(--color-ink);
 
         &::before {
-          content: '—' / '';
+          content: '•' / '';
           position: absolute;
-          left: 0;
+          left: var(--space-1);
           color: var(--color-ink-muted);
         }
       }
@@ -142,23 +155,27 @@
         line-height: var(--leading-normal);
       }
 
-      // Image / hero side. Stage placeholder = diagonal blue
-      // gradient (same pattern as auth and home favourites).
-      // Swap for a real photo when ready by replacing the
-      // background with `url('/path/to/asset')`.
+      // Hero side — solid brand-blue surface with the centered
+      // logo glyph. Same pattern as the auth page's hero panel.
       &-hero {
-        background: linear-gradient(
-          135deg,
-          var(--color-blue-100) 0%,
-          var(--color-blue-300) 100%
-        );
+        background-color: var(--color-primary);
+        color: var(--color-white);
         min-height: 8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-5);
 
         @media (min-width: 640px) {
           width: 16rem;
           min-height: auto;
           flex-shrink: 0;
         }
+      }
+
+      &-hero-icon {
+        width: 5rem;
+        height: 4.7rem;
       }
     }
 

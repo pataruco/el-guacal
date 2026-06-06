@@ -125,20 +125,6 @@
       line-height: var(--leading-snug);
     }
 
-    // Hero image placeholder — Stage 5 replaces the gradient with
-    // a real food photo. Aspect ratio roughly 4:3 matches Figma's
-    // hero image proportions. Diagonal blue gradient signals
-    // "intentional placeholder", same pattern as the auth page
-    // Stage 3 (see auth.module.scss).
-    &__favourites-hero {
-      aspect-ratio: 4 / 3;
-      border-radius: var(--radius-md);
-      background: linear-gradient(
-        135deg,
-        var(--color-blue-100) 0%,
-        var(--color-blue-300) 100%
-      );
-    }
 
     &__map-container {
       flex: 1;

@@ -109,16 +109,11 @@
       //   · :active        → darker blue tint (interactive-active-bg)
       //   · :focus-visible → universal dual-ring (utility layer in
       //                       tokens.css)
-      //   · --active variant → current-page underline (blue)
-      //
-      // Hover uses the blue interactive surface (not the neutral
-      // surface-hover) so the nav reads as a coherent blue-flavoured
-      // interactive system, matching the hamburger and mobile-close
-      // hover states.
-      //
-      // Reserve a 2px transparent bottom border so the
-      // current-page indicator doesn't shift the baseline when
-      // navigating tabs.
+      //   · --active variant → current-page underline (blue,
+      //                          drawn via text-decoration so it
+      //                          sits directly under the text
+      //                          glyph rather than at the bottom
+      //                          of the 44px tap area)
       &-link {
         font-size: var(--text-sm);
         font-weight: var(--weight-semibold);
@@ -128,7 +123,6 @@
         align-items: center;
         background: transparent;
         border: 0;
-        border-bottom: var(--border-width-structural) solid transparent;
         border-radius: var(--radius-md);
         cursor: pointer;
         color: var(--color-ink);
@@ -147,14 +141,20 @@
           color: var(--color-link-hover);
         }
 
-        // Current-page indicator. Underline + blue text marks
-        // "you are here". Hover does NOT add a background tint
-        // when active — you're already on this page, no need to
-        // also signal "you can click this." The underline + blue
-        // colour are enough state to read as "current page".
+        // Current-page indicator. Underline drawn under the text
+        // glyph (text-decoration), not at the bottom of the
+        // 44px tap area (border-bottom would visibly detach).
+        // Same offset + thickness as every other system text link
+        // (footer privacy, store suggest-edit, auth toggle), so
+        // "this is a link" reads consistent across the app.
+        // Hover does NOT add a background tint when active —
+        // you're already on this page.
         &--active {
-          border-bottom-color: var(--color-link);
           color: var(--color-link);
+          text-decoration: underline;
+          text-decoration-color: var(--color-link);
+          text-decoration-thickness: 2px;
+          text-underline-offset: 0.25rem;
 
           &:hover,
           &:active {

@@ -95,9 +95,7 @@ const SearchResults: React.FC = () => {
               <li
                 key={store.storeId}
                 className={`${styles['c-search-results__item']} ${
-                  isSelected
-                    ? styles['c-search-results__item--selected']
-                    : ''
+                  isSelected ? styles['c-search-results__item--selected'] : ''
                 }`}
               >
                 <button

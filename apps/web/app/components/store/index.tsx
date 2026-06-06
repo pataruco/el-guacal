@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
-import { useDeleteStoreMutation } from '@/graphql/mutations/delete-store/index.generated';
+import { useSubmitDeleteStoreProposalMutation } from '@/graphql/mutations/submit-delete-proposal/index.generated';
 import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.generated';
 import type { Language } from '@/i18n/config';
 import { formatDate } from '@/i18n/date';
@@ -19,6 +19,12 @@ const Store: React.FC = () => {
 
   const { storeId, show } = useAppSelector(selectStoreState);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  // Stable nonce for idempotent proposal submission. Re-keys when
+  // the user opens a fresh store; one nonce per open-store
+  // session keeps Submit-twice clicks idempotent without giving
+  // a server-side duplicate.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we only need to re-key when storeId changes
+  const deleteProposalNonce = useMemo(() => crypto.randomUUID(), [storeId]);
 
   const handleOnClose = () => {
     dispatch(setShowStore(false));
@@ -33,7 +39,7 @@ const Store: React.FC = () => {
     { storeId },
     { skip: !show || !storeId },
   );
-  const [deleteStore] = useDeleteStoreMutation();
+  const [submitDeleteProposal] = useSubmitDeleteStoreProposalMutation();
 
   if (!show || isError || isLoading || !data) return null;
 
@@ -48,18 +54,31 @@ const Store: React.FC = () => {
     location,
     products = [],
     updatedAt,
+    version,
   } = store;
   const lastUpdatedDatetime = updatedAt
     ? formatDate({ date: new Date(updatedAt), lang })
     : null;
 
-  const handleDelete = async () => {
+  // Suggest deletion (proposal flow). Submits a delete proposal
+  // that a moderator reviews — mirrors the edit flow which also
+  // goes through proposals. Was a direct hard-delete (useDeleteStoreMutation)
+  // before; community users shouldn't be able to remove locations
+  // without moderator review.
+  const handleDelete = async (reason: string) => {
     try {
-      await deleteStore({ id }).unwrap();
+      await submitDeleteProposal({
+        input: {
+          clientNonce: deleteProposalNonce,
+          expectedVersion: version,
+          reason,
+          targetStoreId: id,
+        },
+      }).unwrap();
       setIsDeleteDialogOpen(false);
       handleOnClose();
     } catch (error) {
-      console.error('Failed to delete store:', error);
+      console.error('Failed to submit delete proposal:', error);
     }
   };
 
@@ -153,7 +172,6 @@ const Store: React.FC = () => {
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleDelete}
         itemName={name}
-        itemType="Store"
       />
     </div>
   );

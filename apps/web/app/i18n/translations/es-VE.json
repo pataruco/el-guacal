@@ -1,4 +1,8 @@
 {
+  "about": {
+    "ctaBody": "Regístrate para añadir ubicaciones a El Guacal.",
+    "ctaTitle": "Contribuye a nuestro dataset"
+  },
   "auth": {
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "continue": "Continuar",
@@ -17,10 +21,6 @@
     "signUp": "Registrarse",
     "useDifferentEmail": "Usar otro correo"
   },
-  "about": {
-    "ctaBody": "Regístrate para añadir ubicaciones a El Guacal.",
-    "ctaTitle": "Contribuye a nuestro dataset"
-  },
   "browse": {
     "findStoreTitle": "Encuentra una tienda",
     "noResults": "Sin resultados — prueba a alejar el mapa o cambiar de productos.",
@@ -33,12 +33,12 @@
   },
   "deleteDialog": {
     "cancel": "Cancelar",
-    "confirm": "Eliminar",
-    "confirmPrompt": "Escribe el nombre para confirmar:",
-    "inputLabel": "Escribe el nombre del {{type}} para confirmar la eliminación",
-    "inputPlaceholder": "Escribe el nombre del {{type}}",
-    "title": "Eliminar {{type}}",
-    "warning": "Esta acción no se puede deshacer. Todos los datos asociados con este {{type}} serán eliminados permanentemente."
+    "confirm": "Enviar sugerencia",
+    "inputLabel": "Razón para sugerir la eliminación de {{name}}",
+    "inputPlaceholder": "ej. cerrado, mudado, duplicado",
+    "reasonPrompt": "¿Por qué se debería eliminar {{name}}?",
+    "title": "Sugerir eliminación",
+    "warning": "Tu sugerencia será revisada por un moderador antes de que la ubicación se elimine."
   },
   "footer": {},
   "map": {
@@ -111,8 +111,8 @@
     },
     "auth": {
       "login": {
-        "description": "Ingresa a El Guacal para contribuir a nuestro mapa de tiendas impulsado por la comunidad.",
-        "title": "Ingresar - El Guacal"
+        "description": "Ingresa o regístrate en El Guacal para contribuir a nuestro mapa de tiendas impulsado por la comunidad.",
+        "title": "Ingresar o registrarse - El Guacal"
       },
       "signup": {
         "description": "Únete a El Guacal para comenzar a agregar y actualizar tiendas y productos locales.",
@@ -147,7 +147,7 @@
   "store": {
     "address": "Dirección",
     "close": "Cerrar",
-    "delete": "Eliminar",
+    "delete": "Sugerir eliminación",
     "directions": "Cómo llegar",
     "edit": "Editar",
     "lastUpdated": "Última actualización",

@@ -1,10 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  type MetaFunction,
-  useParams,
-  useSearchParams,
-} from 'react-router';
+import { type MetaFunction, useParams, useSearchParams } from 'react-router';
 import type { WebSite, WithContext } from 'schema-dts';
 import JsonLd from '../components/json-ld';
 import MapComponent from '../components/map';
@@ -14,10 +10,7 @@ import SearchBar from '../components/search-bar';
 import SearchResults from '../components/search-results';
 import StoreComponent from '../components/store';
 import i18n from '../i18n/config';
-import {
-  selectMap,
-  setSelectedProductIds,
-} from '../store/features/map/slice';
+import { selectMap, setSelectedProductIds } from '../store/features/map/slice';
 import { selectStoreState } from '../store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { getSeoMeta } from '../utils/seo';
@@ -124,12 +117,6 @@ export default function Home() {
                     the left. */}
                 <SearchBar />
                 <ProductFilter />
-                {/* Hero placeholder — gradient until a real photo
-                    asset arrives. */}
-                <div
-                  className={styles['p-home__favourites-hero']}
-                  aria-hidden="true"
-                />
               </div>
             )}
           </div>

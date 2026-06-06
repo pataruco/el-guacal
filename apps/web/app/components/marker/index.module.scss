@@ -1,79 +1,41 @@
-// Marker — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see project_figma_design_direction
-// memory for the 2026-06-06 blue-primary pivot).
-//
-// The React component (see `./index.tsx`) renders an inline SVG
-// teardrop pin inside a `<div class="c-marker">` wrapper. The SVG
-// hardcodes three hex colors as PRESENTATION ATTRIBUTES on the path
-// and circle elements (legacy red/ink/white fallbacks). These are
-// left untouched in the tsx because SVG presentation attributes have
-// the lowest CSS priority: any CSS `fill` / `stroke` declaration
-// targeting the child elements wins automatically. The effect is
-// that the old hex values become FALLBACK values if this stylesheet
-// ever fails to load, and the live values come from the design
-// tokens below.
-//
-// Wrapped in `@layer components` so the universal `:focus-visible`
-// rule in `@layer utilities` can beat anything at rest inside this
-// file. (Markers don't currently have a focus state — Google Maps'
-// AdvancedMarker handles clicks via its own `gmp-click` event, not
-// via keyboard focus on the DOM element — but the wrap is there for
-// consistency with every other ported component module.)
+// Map marker styles — Figma node 109:1438. The SVG renders the
+// pin geometry; this file only handles the wrapper (cursor, hover
+// scale, drop shadow). Two visual variants land via SVG selection
+// in the React component (`.c-marker--active` is the modifier on
+// the wrapper but actually unused for styling — the SVG difference
+// is what makes default vs active visually distinct).
 @layer components {
   .c-marker {
     cursor: pointer;
-
-    // gov.uk-style flat ink shadow below the pin. `drop-shadow` is
-    // the SVG-filter equivalent of the 2px ink strip that sits below
-    // every button in the system (see tokens.css `--elevation-1`).
-    // We can't use the `--elevation-1` token directly here because
-    // it's defined as a `box-shadow`, and SVG children aren't
-    // rectangular — `drop-shadow` follows the actual teardrop
-    // silhouette, which is the whole point of using it over
-    // `box-shadow` on this one component.
-    // Soft drop-shadow follows the SVG teardrop silhouette. Was a
-    // 2px ink strip in the gov.uk direction; softened here to match
-    // the rest of the new system's flat-with-shadow aesthetic.
+    // Soft drop shadow lifts the pin off the map tiles. Replaces
+    // the prior 2px ink-strip pattern with a Figma-aligned soft
+    // shadow that reads as a real shadow rather than a graphic.
     filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.25));
 
     transition:
       transform var(--duration-fast) var(--ease-standard),
       filter var(--duration-fast) var(--ease-standard);
 
-    // Paint the SVG children via CSS so the color layer is
-    // token-driven. SVG `fill` and `stroke` are CSS properties that
-    // accept custom properties, and CSS wins against the tsx's
-    // hardcoded hex presentation attributes. The inner white circle
-    // is mapped to `--color-ink-inverse` for the same reason.
-    //
-    // Pin colour moved from red (`--color-danger`) to brand blue
-    // (`--color-primary`, blue-700) per Figma — see
-    // project_figma_design_direction memory. The dark ink stroke
-    // provides definition against light AND dark map tiles so the
-    // earlier "blue fuses with water" concern no longer holds; the
-    // stroke carries the silhouette regardless of fill colour.
-    svg path {
-      fill: var(--color-primary);
-      stroke: var(--color-ink);
-    }
-    svg circle {
-      fill: var(--color-ink-inverse);
-    }
-
-    // Scale-up affordance on hover. 10% pop matches Google Maps'
-    // native marker hover scale.
+    // Subtle hover lift — 10% scale matches Google Maps' native
+    // marker hover.
     &:hover {
       transform: scale(1.1);
     }
 
-    // Press affordance. The pin compresses its shadow on press,
-    // mimicking a button strip collapse. Different visual from
-    // box-shadow elevation because the drop-shadow is SVG-shaped,
-    // but the gesture is the same: "this thing moved because you
-    // pressed it".
     &:active {
       transform: scale(1);
       filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
+    }
+
+    // Active variant — the currently-selected store's pin. Slightly
+    // stronger shadow so the bigger marker reads as "lifted higher"
+    // off the map than its unselected siblings.
+    &--active {
+      filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.3));
+
+      &:active {
+        filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.3));
+      }
     }
   }
 }

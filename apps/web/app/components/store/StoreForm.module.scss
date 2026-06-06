@@ -93,9 +93,16 @@
       // Formik's <Field> renders a native <input> by default;
       // the Google Maps URL field uses a bare <input> outside
       // Formik state. Element selectors catch both.
-      input[type='text'],
-      input[type='email'],
-      input:not([type]) {
+      //
+      // The `:not(.o-select__input)` exclusion stops the rule
+      // from also applying to the Combobox's input — the
+      // o-select component already wraps its input in a
+      // `.o-select__control` that carries the visible border,
+      // so adding another 1px border on the inner input
+      // produced a visible double-border seam.
+      input[type='text']:not(:global(.o-select__input)),
+      input[type='email']:not(:global(.o-select__input)),
+      input:not([type]):not(:global(.o-select__input)) {
         width: 100%;
         padding: var(--space-2) var(--space-3);
         min-height: var(--target-min);
