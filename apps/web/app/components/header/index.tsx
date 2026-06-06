@@ -7,6 +7,7 @@ import { type ContentLocale, SUPPORTED_LOCALES } from '@/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
+import SearchBar from '../search-bar';
 import styles from './index.module.scss';
 
 const languageLabels: Record<ContentLocale, string> = {
@@ -27,11 +28,16 @@ const LanguageSelector = () => {
     navigate(newPath);
   };
 
+  // aria-label includes the visible language name so the
+  // accessible name contains "English" / "Español". WCAG 2.5.3
+  // ("Label in Name") requires this — a voice-control user
+  // saying "click English" needs the trigger to be addressable
+  // by its visible text.
   return (
     <Select.Root value={currentLocale} onValueChange={handleLanguageChange}>
       <Select.Trigger
         className="o-select__trigger"
-        aria-label={t('nav.languageSelector')}
+        aria-label={`${t('nav.languageSelector')}: ${languageLabels[currentLocale]}`}
       >
         <Select.Value>{languageLabels[currentLocale]}</Select.Value>
         <Select.Icon className="o-select__icon">▼</Select.Icon>
@@ -76,6 +82,29 @@ const Header = () => {
       <div className={styles['c-header__container']}>
         <div className={styles['c-header__branding']}>
           <Link to={`/${currentLocale}`} className={styles['c-header__logo']}>
+            {/* Approximation of the Figma logo (node 3:145) — three
+                stacked hexagonal layers in the blue scale. Replace
+                with the exported Figma asset once available. */}
+            <svg
+              className={styles['c-header__logo-icon']}
+              viewBox="0 0 40 30"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M2 6 L8 12 L32 12 L38 6 L32 0 L8 0 Z"
+                fill="var(--color-blue-400)"
+              />
+              <path
+                d="M2 15 L8 21 L32 21 L38 15 L32 9 L8 9 Z"
+                fill="var(--color-blue-700)"
+              />
+              <path
+                d="M2 24 L8 30 L32 30 L38 24 L32 18 L8 18 Z"
+                fill="var(--color-blue-900)"
+              />
+            </svg>
             <h1>El Guacal</h1>
           </Link>
           <nav className={styles['c-header__nav']}>
@@ -166,7 +195,20 @@ const Header = () => {
           role="dialog"
           aria-modal="true"
           aria-label={t('nav.menu')}
-          aria-hidden={!isMenuOpen}
+          // `inert` (React 19+ native prop) removes the entire
+          // subtree from the tab order AND from the accessibility
+          // tree when the menu is closed. Replaces the previous
+          // `aria-hidden={!isMenuOpen}`, which left focusable
+          // children tabbable — accesslint flagged 6 violations
+          // against that pattern.
+          //
+          // aria-hidden is INTENTIONALLY dropped. Doubling up with
+          // inert sounds defensive but axe-core's aria-hidden-focus
+          // rule fires on the aria-hidden side regardless of inert,
+          // so the audit stays red. Inert is baseline-supported in
+          // all modern browsers + screen readers (NVDA, JAWS,
+          // VoiceOver) since 2023.
+          inert={!isMenuOpen}
         >
           <div className={styles['c-header__mobile-menu-header']}>
             <button
@@ -179,6 +221,10 @@ const Header = () => {
             </button>
           </div>
           <nav className={styles['c-header__mobile-nav']}>
+            <div className={styles['c-header__mobile-search']}>
+              <SearchBar />
+            </div>
+            <hr className={styles['c-header__mobile-menu-divider']} />
             {isAuthenticated && (
               <>
                 <Link
@@ -243,6 +289,10 @@ const Header = () => {
           </nav>
         </div>
 
+        <div className={styles['c-header__search']}>
+          <SearchBar />
+        </div>
+
         <div className={styles['c-header__actions']}>
           <button
             type="button"
@@ -252,6 +302,12 @@ const Header = () => {
           >
             {t('nav.menu')}
           </button>
+          <Link
+            to={`/${currentLocale}/stores/new`}
+            className={styles['c-header__add-location']}
+          >
+            {t('nav.addLocation')}
+          </Link>
           <div className={styles['c-header__lang-selector']}>
             <LanguageSelector />
           </div>

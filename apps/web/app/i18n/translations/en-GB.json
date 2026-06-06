@@ -1,15 +1,21 @@
 {
   "auth": {
     "alreadyHaveAccount": "Already have an account?",
+    "continue": "Continue",
+    "createAccountTitle": "Please create an account",
     "dontHaveAccount": "Don't have an account?",
     "email": "Email",
+    "emailExistsWithGoogle": "This email is already registered with Google. Please use the Google button below.",
     "emailPlaceholder": "name@example.com",
+    "enterPasswordTitle": "Please enter your password",
     "login": "Log in",
     "or": "or",
     "password": "Password",
     "passwordPlaceholder": "Your password",
+    "signInOrCreateTitle": "Create your account or sign in",
     "signInWithGoogle": "Sign in with Google",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "useDifferentEmail": "Use a different email"
   },
   "common": {
     "loading": "Loading...",
@@ -36,12 +42,13 @@
   },
   "nav": {
     "about": "About",
+    "addLocation": "Add location",
     "addStore": "Add store",
     "blog": "Blog",
     "close": "Close",
     "dataset": "Open data",
     "languageSelector": "Select language",
-    "login": "Log in",
+    "login": "Sign in / Register",
     "logout": "Log out",
     "menu": "Menu",
     "mySubmissions": "My store proposals"

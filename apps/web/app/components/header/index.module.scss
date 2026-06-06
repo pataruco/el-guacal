@@ -1,313 +1,432 @@
-// Header — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). This file deliberately
-// no longer imports `settings.colors`, `settings.globals`,
-// `settings.typography` or `tools.mixins`: every design decision now
-// comes from CSS custom properties so the token layer can evolve
-// without touching component SCSS.
-
+// Header — Stage A of the Figma reimplementation (see Figma
+// node 70:6705 "nav bar"). Stage A is CSS-only — no markup
+// changes. Typography, borders, button styles update to match
+// Figma; structural changes (integrated search bar, Add location
+// CTA, logo icon) land in Stages B-E.
+//
+// Style shifts vs the prior gov.uk-era Direction A header:
+//   1. Flat: drop --elevation-1 ink strip + 2px ink border-bottom.
+//      Use a 1px grey-300 hairline border. Figma headers don't
+//      hang off any edge — they float in document flow.
+//   2. Typography: drop UPPERCASE + tight tracking on logo, nav
+//      links, hamburger, and auth buttons. Sentence case
+//      everywhere. Logo is bold non-italic.
+//   3. Auth link + Logout: restyle as Figma "secondary button"
+//      pattern — white fill, blue-link border + text, 4px radius,
+//      no ink-strip elevation.
+//   4. Hamburger: minimal — blue icon button without the 2px ink
+//      border and elevation strip. Tap area preserved by padding.
+//   5. Mobile menu close + nav links: same flat treatment.
+//   6. Active-page indicator stays (border-bottom-color shift on
+//      `&--active`). Figma doesn't show an active variant, but
+//      losing the indicator removes a real usability cue —
+//      keeping it as a deliberate divergence.
+//
 // Wrapped in `@layer components` so the universal `:focus-visible`
 // rule in `@layer utilities` (tokens.css) can correctly beat any
-// `box-shadow` declaration inside this file on focus. Unlayered rules
-// otherwise win against every named layer, which silently disables
-// the dual-ring focus indicator.
+// `box-shadow` declaration inside this file on focus. Unlayered
+// rules otherwise win against every named layer, which silently
+// disables the dual-ring focus indicator.
 @layer components {
-.c-header {
-  width: 100%;
-  padding: var(--space-3) var(--space-5);
-  background-color: var(--color-surface-page);
-  border-bottom: var(--border-width-structural) solid var(--color-border-strong);
-  // gov.uk-style flat ink strip instead of a soft drop shadow — the
-  // header hangs on the edge of the page and needs a hard boundary,
-  // not a fade.
-  box-shadow: var(--elevation-1);
-
-  &__container {
-    max-width: var(--content-max);
-    margin: 0 auto;
+  .c-header {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    padding: var(--space-3) var(--space-5);
+    background-color: var(--color-surface-page);
+    // Flat hairline bottom border (Figma `border/default` grey-300).
+    // Was 2px ink + box-shadow elevation strip in the prior
+    // gov.uk direction.
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
 
-  &__branding {
-    display: flex;
-    align-items: center;
-    gap: var(--space-5);
-  }
-
-  &__logo {
-    text-decoration: none;
-    color: var(--color-ink);
-
-    h1 {
-      font-size: var(--text-2xl);
-      font-weight: var(--weight-bold);
-      color: inherit;
-      font-style: italic;
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      line-height: var(--leading-tight);
-    }
-  }
-
-  &__nav {
-    display: none;
-    gap: var(--space-4);
-    align-items: center;
-
-    @media (min-width: 768px) {
+    &__container {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      width: 100%;
       display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    &-list {
+    &__branding {
       display: flex;
-      gap: var(--space-4);
+      align-items: center;
+      gap: var(--space-5);
     }
 
-    &-item {
-      display: inline-block;
-    }
-
-    &-link {
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      padding: var(--space-2) var(--space-3);
-      min-height: var(--target-min);
+    &__logo {
+      text-decoration: none;
+      color: var(--color-blue-900);
       display: inline-flex;
       align-items: center;
+      gap: var(--space-2);
+
+      // Figma `header/large` style: Inter SemiBold 24/30, no
+      // italic, no uppercase, no tracking. The wordmark colour
+      // shifts from --color-ink to --color-blue-900 (Stage D) so
+      // the wordmark visually pairs with the icon's deepest layer
+      // — they read as one unit instead of an icon + black text.
+      h1 {
+        font-size: var(--text-2xl);
+        font-weight: var(--weight-bold);
+        color: inherit;
+        line-height: var(--leading-snug);
+      }
+    }
+
+    // Logo icon — inline SVG approximation of the Figma logo
+    // (node 3:145). Sized to pair with header/large 24px text.
+    // Stage D placeholder; replace path data with the exported
+    // Figma SVG when available.
+    &__logo-icon {
+      width: 32px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    &__nav {
+      display: none;
+      gap: var(--space-4);
+      align-items: center;
+
+      @media (min-width: 768px) {
+        display: flex;
+      }
+
+      &-list {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      &-item {
+        display: inline-block;
+      }
+
+      // Inter SemiBold 14 sentence case (Figma `link/medium`).
+      // Reserve a 2px transparent bottom border so the
+      // active-state indicator below doesn't shift the baseline
+      // when navigating tabs. Was a 4px reservation under the
+      // gov.uk direction — Figma uses thinner accents elsewhere
+      // so 2px reads as quieter and matches `--border-width-structural`.
+      &-link {
+        font-size: var(--text-sm);
+        font-weight: var(--weight-semibold);
+        padding: var(--space-2) var(--space-3);
+        min-height: var(--target-min);
+        display: inline-flex;
+        align-items: center;
+        background: transparent;
+        border: 0;
+        border-bottom: var(--border-width-structural) solid transparent;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        color: var(--color-ink);
+        text-decoration: none;
+        transition: background-color var(--duration-fast) var(--ease-standard);
+
+        &:hover {
+          background-color: var(--color-surface-hover);
+        }
+
+        // Current-page indicator. Kept as a deliberate divergence
+        // from Figma (which doesn't show an active variant) — it's
+        // a real navigation cue. `--color-link` (blue-800) hits
+        // ~10.5:1 on white so the underline reads clearly and
+        // matches the focus-ring colour for visual coherence.
+        &--active {
+          border-bottom-color: var(--color-link);
+        }
+      }
+    }
+
+    // Hamburger — minimal blue icon button. No 2px ink border, no
+    // elevation strip. Figma's mobile header just shows the ☰
+    // glyph in primary blue. Padding keeps the tap target ≥ 44px
+    // WCAG 2.5.5.
+    &__hamburger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: transparent;
-      // Reserve 4px of transparent border on the base state so the
-      // active indicator (`--active` below) doesn't shift the baseline
-      // when you navigate between tabs. gov.uk does this on the main
-      // navigation — the current-page underline is a 4px solid blue
-      // strip against a 4px transparent placeholder on every other
-      // link in the row.
       border: 0;
-      border-bottom: 4px solid transparent;
-      font-size: var(--text-sm);
       cursor: pointer;
-      color: var(--color-ink);
-      text-decoration: none;
+      padding: var(--space-2) var(--space-3);
+      min-height: var(--target-min);
+      min-width: var(--target-min);
+      font-size: var(--text-lg);
+      color: var(--color-link);
+      border-radius: var(--radius-md);
       transition: background-color var(--duration-fast) var(--ease-standard);
 
-      &:hover {
-        background-color: var(--color-surface-hover);
+      @media (min-width: 768px) {
+        display: none;
       }
 
-      // Current-page indicator. Deep flag blue, not yellow: yellow on
-      // white clocks ~1.8:1 and fails WCAG 2.2 1.4.11 (3:1 for
-      // non-text UI) as a standalone signal, whereas blue hits
-      // ~10.5:1. It also matches the focus-ring token, so "current
-      // page" and "focused/interactive" read as one coherent visual
-      // system and the yellow stays reserved for the primary action
-      // on the page. See ADR 0014.
-      &--active {
-        border-bottom-color: var(--color-accent-blue);
+      &:hover {
+        background-color: var(--color-interactive-hover-bg);
       }
     }
-  }
 
-  &__hamburger {
-    display: inline-flex;
-    align-items: center;
-    background: var(--color-surface-page);
-    border: var(--border-width-structural) solid var(--color-border-strong);
-    box-shadow: var(--elevation-1);
-    cursor: pointer;
-    padding: var(--space-2) var(--space-3);
-    min-height: var(--target-min);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-tight);
-    color: var(--color-ink);
-    transition:
-      transform var(--duration-fast) var(--ease-standard),
-      box-shadow var(--duration-fast) var(--ease-standard);
-
-    @media (min-width: 768px) {
+    &__mobile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      // Scrim sits behind the mobile menu. Using the ink token at 50%
+      // keeps it aligned with the rest of the palette rather than
+      // reintroducing the old navy RGB literal.
+      background: color-mix(in oklch, var(--color-ink) 50%, transparent);
+      z-index: var(--z-dialog);
       display: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+
+      &--open {
+        display: block;
+      }
     }
 
-    // gov.uk button affordance — on press the 2px ink strip collapses
-    // and the button translates 2px downward. `prefers-reduced-motion`
-    // collapses the duration token to 0ms upstream.
-    &:active {
-      transform: translateY(2px);
-      box-shadow: var(--elevation-0);
-    }
-  }
-
-  &__mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    // Scrim sits behind the mobile menu. Using the ink token at 50%
-    // keeps it aligned with the rest of the palette rather than
-    // reintroducing the old navy RGB literal.
-    background: color-mix(in oklch, var(--color-ink) 50%, transparent);
-    z-index: var(--z-dialog);
-    display: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-
-    &--open {
-      display: block;
-    }
-  }
-
-  &__mobile-menu {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 80%;
-    max-width: 300px;
-    height: 100vh;
-    background: var(--color-surface-page);
-    z-index: calc(var(--z-dialog) + 1);
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-5);
-    border-left: var(--border-width-structural) solid var(--color-border-strong);
-    box-shadow: -4px 0 0 0 var(--color-ink);
-    transform: translateX(100%);
-    transition: transform var(--duration-slow) var(--ease-emphasised);
-
-    &--open {
-      transform: translateX(0);
-    }
-
-    &-header {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: var(--space-5);
-    }
-
-    &-close {
+    &__mobile-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 80%;
+      max-width: 300px;
+      height: 100vh;
       background: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      box-shadow: var(--elevation-1);
-      padding: var(--space-2) var(--space-3);
-      min-height: var(--target-min);
-      font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      cursor: pointer;
-      color: var(--color-ink);
-      transition:
-        transform var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard);
+      z-index: calc(var(--z-dialog) + 1);
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-5);
+      // Soft elevation instead of the prior 2px ink border + 4px
+      // ink shadow combo. `--elevation-3` is the only non-none
+      // shadow we kept after the token migration.
+      box-shadow: var(--elevation-3);
+      transform: translateX(100%);
+      transition: transform var(--duration-slow) var(--ease-emphasised);
 
-      &:active {
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
+      &--open {
+        transform: translateX(0);
       }
-    }
 
-    &-divider {
-      border: 0;
-      border-top: var(--border-width-structural) solid
-        var(--color-border-strong);
-      margin: var(--space-5) 0;
-    }
-  }
+      &-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: var(--space-5);
+      }
 
-  &__mobile-nav {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-
-    &-link {
-      font-size: var(--text-lg);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--color-ink);
-      padding: var(--space-2) 0;
-      min-height: var(--target-min);
-      text-align: left;
-      background: transparent;
-      border: 0;
-      cursor: pointer;
-
-      &:hover {
+      // Mobile menu close. Same minimal blue-icon treatment as the
+      // hamburger — they're the open/close pair, should look like
+      // mirrored states of the same control.
+      &-close {
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        padding: var(--space-2) var(--space-3);
+        min-height: var(--target-min);
+        min-width: var(--target-min);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-semibold);
         color: var(--color-link);
+        border-radius: var(--radius-md);
+        transition: background-color var(--duration-fast) var(--ease-standard);
+
+        &:hover {
+          background-color: var(--color-interactive-hover-bg);
+        }
+      }
+
+      &-divider {
+        border: 0;
+        border-top: var(--border-width-hairline) solid var(--color-border);
+        margin: var(--space-5) 0;
       }
     }
-  }
 
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  &__lang-selector {
-    display: none;
-
-    @media (min-width: 768px) {
-      display: block;
+    // Mobile search slot (Stage E). When the in-header search bar
+    // hides at < 768px (see `__search`), SearchBar instead renders
+    // here at the top of the mobile menu so mobile users still
+    // have search — just one tap deeper than desktop.
+    &__mobile-search {
+      width: 100%;
     }
-  }
 
-  &__mobile-lang-selector {
-    margin-top: var(--space-4);
-  }
+    &__mobile-nav {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
 
-  &__auth-link {
-    display: none;
+      // Mobile nav links — sentence case, semibold. No uppercase
+      // (consistent with desktop nav). Use --color-ink for resting
+      // state, blue hover.
+      &-link {
+        font-size: var(--text-base);
+        font-weight: var(--weight-semibold);
+        text-decoration: none;
+        color: var(--color-ink);
+        padding: var(--space-2) 0;
+        min-height: var(--target-min);
+        text-align: left;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
 
-    @media (min-width: 768px) {
-      display: inline-flex;
-      align-items: center;
-      background-color: transparent;
-      color: var(--color-ink);
-      border: var(--border-width-structural) solid transparent;
-      padding: var(--space-2) var(--space-3);
-      min-height: var(--target-min);
-      font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      transition: color var(--duration-fast) var(--ease-standard);
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-        text-underline-offset: 0.25rem;
-        text-decoration-thickness: 2px;
+        &:hover {
+          color: var(--color-link);
+        }
       }
     }
-  }
 
-  &__logout-btn {
-    display: none;
+    // Centred search bar (Stage B). Sits between `__branding` and
+    // `__actions` in the desktop flex row, growing to fill the
+    // available space with a sensible max-width so it doesn't
+    // dominate on ultra-wide screens.
+    //
+    // Hidden on mobile — Figma's mobile header is just logo +
+    // hamburger. Stage E will wire mobile search into the
+    // hamburger menu so functionality isn't lost.
+    &__search {
+      display: none;
 
-    @media (min-width: 768px) {
+      @media (min-width: 768px) {
+        display: block;
+        flex: 1;
+        max-width: 40rem;
+        margin: 0 var(--space-5);
+      }
+    }
+
+    &__actions {
       display: flex;
       align-items: center;
-      background-color: transparent;
-      color: var(--color-ink);
-      border: var(--border-width-structural) solid transparent;
-      padding: var(--space-2) var(--space-3);
-      min-height: var(--target-min);
-      font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      transition: color var(--duration-fast) var(--ease-standard);
+      gap: var(--space-2);
+    }
 
-      &:hover {
-        text-decoration: underline;
-        text-underline-offset: 0.25rem;
-        text-decoration-thickness: 2px;
+    &__lang-selector {
+      display: none;
+
+      @media (min-width: 768px) {
+        display: block;
+      }
+    }
+
+    &__mobile-lang-selector {
+      margin-top: var(--space-4);
+    }
+
+    // "Add location" primary CTA (Stage C). Always visible on
+    // desktop in both authed and unauthed states (Figma). Links
+    // to /stores/new, which already redirects unauthed users to
+    // /auth — no extra gating logic needed in the header.
+    //
+    // Mirror of `.c-auth__submit-btn` styling — primary blue fill,
+    // white bold label, flat. Bold (not semibold) so the 14px
+    // label qualifies as WCAG Large for the AAA Large floor
+    // (white-on-blue-700 hits 7.13:1 anyway, but bold also
+    // gives us a safety margin if the token slides lighter
+    // later).
+    &__add-location {
+      display: none;
+
+      @media (min-width: 768px) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-primary);
+        color: var(--color-primary-ink);
+        border: 0;
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-4);
+        min-height: var(--target-min);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-bold);
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color var(--duration-fast)
+          var(--ease-standard);
+
+        &:hover {
+          background-color: var(--color-primary-hover);
+        }
+
+        &:active {
+          background-color: var(--color-primary-active);
+        }
+      }
+    }
+
+    // Auth link (Sign in/Register) — Figma "secondary button"
+    // pattern: white fill, blue-link border + text, 4px radius.
+    // Same treatment as `.c-auth__provider-btn` for consistency
+    // across the system. Was a plain underlined link in the
+    // gov.uk direction.
+    &__auth-link {
+      display: none;
+
+      @media (min-width: 768px) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-surface-page);
+        color: var(--color-link);
+        border: var(--border-width-hairline) solid var(--color-link);
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-4);
+        min-height: var(--target-min);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-semibold);
+        text-decoration: none;
+        transition:
+          color var(--duration-fast) var(--ease-standard),
+          border-color var(--duration-fast) var(--ease-standard),
+          background-color var(--duration-fast) var(--ease-standard);
+
+        &:hover {
+          color: var(--color-link-hover);
+          border-color: var(--color-link-hover);
+          background-color: var(--color-interactive-hover-bg);
+        }
+
+        &:active {
+          background-color: var(--color-interactive-active-bg);
+        }
+      }
+    }
+
+    // Logout button — same secondary-button treatment as the
+    // auth link, so the authed and unauthed states look like
+    // siblings in the header.
+    &__logout-btn {
+      display: none;
+
+      @media (min-width: 768px) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-surface-page);
+        color: var(--color-link);
+        border: var(--border-width-hairline) solid var(--color-link);
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-4);
+        min-height: var(--target-min);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-semibold);
+        cursor: pointer;
+        transition:
+          color var(--duration-fast) var(--ease-standard),
+          border-color var(--duration-fast) var(--ease-standard),
+          background-color var(--duration-fast) var(--ease-standard);
+
+        &:hover {
+          color: var(--color-link-hover);
+          border-color: var(--color-link-hover);
+          background-color: var(--color-interactive-hover-bg);
+        }
+
+        &:active {
+          background-color: var(--color-interactive-active-bg);
+        }
       }
     }
   }
-}
 }

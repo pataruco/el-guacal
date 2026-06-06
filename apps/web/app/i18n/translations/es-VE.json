@@ -1,15 +1,21 @@
 {
   "auth": {
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "continue": "Continuar",
+    "createAccountTitle": "Crea tu cuenta",
     "dontHaveAccount": "¿No tienes una cuenta?",
     "email": "Correo",
+    "emailExistsWithGoogle": "Este correo ya está registrado con Google. Por favor usa el botón de Google abajo.",
     "emailPlaceholder": "nombre@ejemplo.com",
+    "enterPasswordTitle": "Ingresa tu contraseña",
     "login": "Ingresar",
     "or": "o",
     "password": "Contraseña",
     "passwordPlaceholder": "Tu contraseña",
+    "signInOrCreateTitle": "Crea tu cuenta o ingresa",
     "signInWithGoogle": "Ingresar con Google",
-    "signUp": "Registrarse"
+    "signUp": "Registrarse",
+    "useDifferentEmail": "Usar otro correo"
   },
   "common": {
     "loading": "Cargando...",
@@ -36,12 +42,13 @@
   },
   "nav": {
     "about": "Nosotros",
+    "addLocation": "Agregar ubicación",
     "addStore": "Agregar tienda",
     "blog": "Blog",
     "close": "Cerrar",
     "dataset": "Datos abiertos",
     "languageSelector": "Seleccionar idioma",
-    "login": "Ingresar",
+    "login": "Ingresar / Registrarse",
     "logout": "Salir",
     "menu": "Menú",
     "mySubmissions": "Mis propuestas de tienda"

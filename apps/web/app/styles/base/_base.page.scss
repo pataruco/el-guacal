@@ -88,13 +88,22 @@
   // a keyboard user hits on every page — it bypasses the header
   // navigation for users who always want to skip past it.
   //
-  // Styled as the primary button pattern: flag yellow fill, ink
-  // text, 2px ink border, uppercase bold. The old file had
-  // `color: $color-background` (white) on `$color-primary` (red-
-  // ish), which worked when the old primary was red. With the new
-  // flag-yellow primary, white-on-yellow is ~1.8:1 — fails every
-  // contrast guideline. The fix is `var(--color-primary-ink)`
-  // (ink) on `var(--color-primary)` (yellow) → ~18:1 AAA.
+  // Colour rationale (after the 2026-06-06 blue-primary token
+  // pivot — see project_figma_design_direction memory):
+  //
+  // The skip link deliberately does NOT use --color-primary. After
+  // the pivot, --color-primary is blue/600 (#1458ff) and the text
+  // here is 14px bold = ~10.5pt — that's BELOW WCAG 1.4.6's "Large
+  // text" floor (14pt bold or 18pt regular), so Normal-text rules
+  // apply: 7:1 AAA. White-on-blue/600 is only 5.41:1 — fails.
+  //
+  // Solution: route through the demoted accent-yellow tokens. The
+  // Venezuelan flag yellow survives as a SOFT accent surface in
+  // tokens.css (--color-accent-yellow-bg #fffadb +
+  // --color-accent-yellow-ink #473d00 / dark olive). Olive on
+  // pale-cream gets ~13:1 — AAA Normal with headroom. Semantically
+  // satisfying too: the skip link is "emergency UX" for keyboard
+  // users, so a distinct surface from primary CTA is correct.
   //
   // z-index 10000 is intentionally outside the `--z-*` token
   // scale. The skip link semantically needs to sit above
@@ -111,8 +120,8 @@
     min-height: var(--target-min);
     display: inline-flex;
     align-items: center;
-    background-color: var(--color-primary);
-    color: var(--color-primary-ink);
+    background-color: var(--color-accent-yellow-bg);
+    color: var(--color-accent-yellow-ink);
     border: var(--border-width-structural) solid var(--color-border-strong);
     font-size: var(--text-sm);
     font-weight: var(--weight-bold);

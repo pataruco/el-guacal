@@ -5,7 +5,6 @@ import JsonLd from '../components/json-ld';
 import MapComponent from '../components/map';
 import Page from '../components/page';
 import ProductFilter from '../components/product-filter';
-import SearchBar from '../components/search-bar';
 import StoreComponent from '../components/store';
 import i18n from '../i18n/config';
 import { getSeoMeta } from '../utils/seo';
@@ -49,7 +48,6 @@ export default function Home() {
         <div className={styles['p-home__sidebar__container']}>
           <div className={styles['p-home__controls']}>
             <div className={styles['p-home__search-wrapper']}>
-              <SearchBar />
               <ProductFilter />
             </div>
           </div>
