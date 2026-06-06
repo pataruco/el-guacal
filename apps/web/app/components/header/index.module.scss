@@ -76,13 +76,12 @@
       }
     }
 
-    // Logo icon — inline SVG approximation of the Figma logo
-    // (node 3:145). Sized to pair with header/large 24px text.
-    // Stage D placeholder; replace path data with the exported
-    // Figma SVG when available.
+    // Logo icon — exact Figma SVG (node 3:145). Square aspect
+    // ratio (viewBox 82×77 → nearly 1:1). Sized to pair with
+    // header/large 24px wordmark next to it.
     &__logo-icon {
-      width: 32px;
-      height: 24px;
+      width: 28px;
+      height: 26px;
       flex-shrink: 0;
     }
 
@@ -105,11 +104,21 @@
       }
 
       // Inter SemiBold 14 sentence case (Figma `link/medium`).
+      // Three interactive states beyond the resting baseline:
+      //   · :hover         → soft blue tint (interactive-hover-bg)
+      //   · :active        → darker blue tint (interactive-active-bg)
+      //   · :focus-visible → universal dual-ring (utility layer in
+      //                       tokens.css)
+      //   · --active variant → current-page underline (blue)
+      //
+      // Hover uses the blue interactive surface (not the neutral
+      // surface-hover) so the nav reads as a coherent blue-flavoured
+      // interactive system, matching the hamburger and mobile-close
+      // hover states.
+      //
       // Reserve a 2px transparent bottom border so the
-      // active-state indicator below doesn't shift the baseline
-      // when navigating tabs. Was a 4px reservation under the
-      // gov.uk direction — Figma uses thinner accents elsewhere
-      // so 2px reads as quieter and matches `--border-width-structural`.
+      // current-page indicator doesn't shift the baseline when
+      // navigating tabs.
       &-link {
         font-size: var(--text-sm);
         font-weight: var(--weight-semibold);
@@ -124,19 +133,34 @@
         cursor: pointer;
         color: var(--color-ink);
         text-decoration: none;
-        transition: background-color var(--duration-fast) var(--ease-standard);
+        transition:
+          background-color var(--duration-fast) var(--ease-standard),
+          color var(--duration-fast) var(--ease-standard);
 
         &:hover {
-          background-color: var(--color-surface-hover);
+          background-color: var(--color-interactive-hover-bg);
+          color: var(--color-link);
         }
 
-        // Current-page indicator. Kept as a deliberate divergence
-        // from Figma (which doesn't show an active variant) — it's
-        // a real navigation cue. `--color-link` (blue-800) hits
-        // ~10.5:1 on white so the underline reads clearly and
-        // matches the focus-ring colour for visual coherence.
+        &:active {
+          background-color: var(--color-interactive-active-bg);
+          color: var(--color-link-hover);
+        }
+
+        // Current-page indicator. Underline + blue text marks
+        // "you are here". Hover does NOT add a background tint
+        // when active — you're already on this page, no need to
+        // also signal "you can click this." The underline + blue
+        // colour are enough state to read as "current page".
         &--active {
           border-bottom-color: var(--color-link);
+          color: var(--color-link);
+
+          &:hover,
+          &:active {
+            background-color: transparent;
+            color: var(--color-link);
+          }
         }
       }
     }
@@ -259,23 +283,33 @@
       flex-direction: column;
       gap: var(--space-4);
 
-      // Mobile nav links — sentence case, semibold. No uppercase
-      // (consistent with desktop nav). Use --color-ink for resting
-      // state, blue hover.
+      // Mobile nav links — sentence case, semibold. Matches the
+      // desktop nav state pattern (hover → soft blue background +
+      // blue text, active → darker tint).
       &-link {
         font-size: var(--text-base);
         font-weight: var(--weight-semibold);
         text-decoration: none;
         color: var(--color-ink);
-        padding: var(--space-2) 0;
+        padding: var(--space-2) var(--space-3);
         min-height: var(--target-min);
         text-align: left;
         background: transparent;
         border: 0;
+        border-radius: var(--radius-md);
         cursor: pointer;
+        transition:
+          background-color var(--duration-fast) var(--ease-standard),
+          color var(--duration-fast) var(--ease-standard);
 
         &:hover {
+          background-color: var(--color-interactive-hover-bg);
           color: var(--color-link);
+        }
+
+        &:active {
+          background-color: var(--color-interactive-active-bg);
+          color: var(--color-link-hover);
         }
       }
     }
@@ -286,11 +320,22 @@
       gap: var(--space-2);
     }
 
+    // Language selector — uses the shared `o-select` trigger styling
+    // (1px grey border, 4px radius, sentence case). The base o-select
+    // trigger renders with regular weight (designed for input
+    // contexts like search and filter), but in the HEADER context
+    // it's an action control sitting next to the Sign in/Register
+    // and Add location buttons — so we bump it to semibold to match
+    // the surrounding actions' visual weight.
     &__lang-selector {
       display: none;
 
       @media (min-width: 768px) {
         display: block;
+      }
+
+      :global(.o-select__trigger) {
+        font-weight: var(--weight-semibold);
       }
     }
 

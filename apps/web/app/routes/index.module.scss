@@ -46,7 +46,12 @@
 
     &__sidebar {
       position: absolute;
-      left: var(--space-4);
+      // Align with the header's left gutter (--space-5 = 24px)
+      // so the card's left edge lines up with the logo. The old
+      // mobile value (--space-4 = 16px) was 8px off; --space-5
+      // matches the header on both mobile and desktop.
+      top: 0;
+      left: var(--space-5);
       // Sidebar floats above the map but below all page chrome,
       // dialogs and modals. Tokenised as part of the z-scale sweep
       // (see tokens.css `--z-*` comment).
@@ -55,27 +60,12 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
-      width: 100%;
-
-      @media (min-width: 768px) {
-        top: 0;
-        left: 0;
-        right: auto;
-        height: 100%;
-        background: transparent;
-        // DO NOT set `pointer-events: all` here. See the file
-        // header comment — this is the bug that took ~30 minutes
-        // of debugging to find. `.p-home__controls` below handles
-        // its own pointer-events.
-        padding: 0 var(--space-5);
-        overflow-y: auto;
-        flex-direction: column;
-      }
 
       &__container {
-        width: 100%;
-        max-width: var(--content-max);
-        margin: 0 auto;
+        // Just a flow wrapper. Previously had max-width +
+        // margin: auto which centered the card on wide viewports,
+        // breaking the gutter alignment with the header logo.
+        width: max-content;
       }
     }
 

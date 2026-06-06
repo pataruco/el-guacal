@@ -20,6 +20,16 @@
     width: 100%;
     min-height: calc(100vh - 4rem);
 
+    // Modifier for content-heavy routes (blog posts, long-form
+    // privacy/terms pages). Switches the page surface to plain
+    // white so blue text on long-form prose doesn't read as
+    // hue-on-hue under WCAG's luminance-only contrast model.
+    // Pale-blue stays the default for hero/marketing-style
+    // routes (about landing, blog index, dataset).
+    &--prose {
+      background-color: var(--color-surface-page);
+    }
+
     // Inner readable column. Centred, max-width caps the line
     // length. The h1 + content live here so the pale background
     // can flow edge-to-edge.

@@ -39,7 +39,7 @@ const MyStoreProposalsPage = () => {
   if (!isAuthReady || !isAuthenticated) return null;
 
   return (
-    <Page>
+    <Page className="c-page c-page--prose">
       <div className={styles['c-proposals']}>
         <h1 className={styles['c-proposals__title']}>
           {t('mySubmissions.title')}

@@ -55,7 +55,7 @@ export default function About() {
   };
 
   return (
-    <Page className="c-page">
+    <Page className="c-page c-page--prose">
       <JsonLd data={jsonLd} />
       <h1 className="c-page__title">{about.title}</h1>
       <div

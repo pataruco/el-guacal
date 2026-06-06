@@ -119,7 +119,7 @@ const Store: React.FC = () => {
             handles auth-gating internally. Pencil icon prefix
             mirrors Figma's `Suggest an edit ✎` treatment. */}
         <Link
-          to={`/stores/${id}/edit`}
+          to={`/${locale}/stores/${id}/edit`}
           className={styles['c-store__suggest-edit']}
         >
           <span aria-hidden="true">✎ </span>

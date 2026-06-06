@@ -81,27 +81,32 @@ const Header = () => {
       <div className={styles['c-header__container']}>
         <div className={styles['c-header__branding']}>
           <Link to={`/${currentLocale}`} className={styles['c-header__logo']}>
-            {/* Approximation of the Figma logo (node 3:145) — three
-                stacked hexagonal layers in the blue scale. Replace
-                with the exported Figma asset once available. */}
+            {/* Exact Figma logo (node 3:145, "logo placeholder").
+                Four stacked saucer paths in a single fill — the top
+                path includes the spine cut-out. Fill is the brand
+                blue (--color-primary). */}
             <svg
               className={styles['c-header__logo-icon']}
-              viewBox="0 0 40 30"
+              viewBox="0 0 82 77"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
               <path
-                d="M2 6 L8 12 L32 12 L38 6 L32 0 L8 0 Z"
-                fill="var(--color-blue-400)"
+                d="M38.5165 10.0101L16.8085 20.1923L7.25441 15.6471L38.5165 0.61869C40.2369 -0.206229 42.3489 -0.206229 44.0693 0.61869L74.2545 16.0509L64.2227 21L44.0693 10.0101C42.3489 9.18516 40.2369 9.18516 38.5165 10.0101Z"
+                fill="var(--color-primary)"
               />
               <path
-                d="M2 15 L8 21 L32 21 L38 15 L32 9 L8 9 Z"
-                fill="var(--color-blue-700)"
+                d="M38.0942 36.4292L0 18V27.9175L38.0942 46.3467C39.8948 47.2178 42.1054 47.2178 43.9061 46.3467L82 27.9175V18L43.9061 36.4292C42.1054 37.3003 39.8948 37.3003 38.0942 36.4292Z"
+                fill="var(--color-primary)"
               />
               <path
-                d="M2 24 L8 30 L32 30 L38 24 L32 18 L8 18 Z"
-                fill="var(--color-blue-900)"
+                d="M38.0942 51.4292L0 33V42.9175L38.0942 61.3467C39.8948 62.2178 42.1054 62.2178 43.9061 61.3467L82 42.9175V33L43.9061 51.4292C42.1054 52.3003 39.8948 52.3003 38.0942 51.4292Z"
+                fill="var(--color-primary)"
+              />
+              <path
+                d="M38.0942 66.4292L0 48V57.9175L38.0942 76.3467C39.8948 77.2178 42.1054 77.2178 43.9061 76.3467L82 57.9175V48L43.9061 66.4292C42.1054 67.3003 39.8948 67.3003 38.0942 66.4292Z"
+                fill="var(--color-primary)"
               />
             </svg>
             <h1>El Guacal</h1>

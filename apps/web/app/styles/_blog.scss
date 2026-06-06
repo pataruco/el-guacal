@@ -1,24 +1,34 @@
-// Blog styles — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). Zero SCSS
-// imports.
+// Blog styles — restyled to Figma direction (2026-06-06
+// blue-primary pivot). Covers the blog index list, individual
+// post cards, the post header, and the rendered markdown
+// `.c-blog__content` block which is also used by the about page.
 //
-// Covers the blog index list, individual blog post cards, the
-// post header, and the rendered markdown `.c-blog__content` block
-// which is also used by the about page. Two visible surfaces:
+// Visual shifts from the prior gov.uk-era treatment:
+//   · Card surface: 2px ink border + --elevation-1 strip
+//        → 1px grey-300 hairline + --elevation-3 soft shadow
+//   · Card hover: translate(-2px,-2px) + elevation-2 deepen
+//        → soft brighter shadow + light blue background tint
+//   · All headings: UPPERCASE + tight-tracking
+//        → sentence case, no tracking, semibold
+//   · Back link: uppercase ink-bold
+//        → blue-link semibold with pencil-style underline
+//   · Post header: 2px ink bottom divider
+//        → hairline grey-300
+//   · Image/code-block 2px ink borders
+//        → hairline grey-300
 //
-//   · .c-blog__card       → index page, hoverable preview card
-//   · .c-blog__content    → rendered markdown (h2/h3/p/ul/ol/code/
-//                            pre/blockquote/img), shared with about
-//
-// Wrapped in `@layer components`. Same layer architecture as the
-// rest of the migration.
-
+// Wrapped in `@layer components` so the universal :focus-visible
+// rule in @layer utilities beats any box-shadow declarations.
 @layer components {
   .c-blog {
+    // `list-style: none` and `padding: 0` are explicit; margin is
+    // intentionally NOT reset here so `.c-page > *` can apply its
+    // max-width + auto-margin centering when this list is inside
+    // a `.c-page` route (blog index, etc.). The reset layer
+    // already handles default ul/ol margins for any other use.
     &__list {
       list-style: none;
       padding: 0;
-      margin: 0;
     }
 
     &__list-item {
@@ -31,39 +41,33 @@
       display: block;
     }
 
-    // Hoverable blog preview card. White surface, 2px ink
-    // border, elevation-1 strip. On hover the card "lifts" by
-    // translating up-and-left and the strip deepens to
-    // elevation-2. This is the one place in the system where a
-    // non-button surface gets an elevation affordance, because
-    // the entire card is a clickable link (the <a class="__link">
-    // wraps the whole thing).
+    // Hoverable blog preview card. White surface, hairline border,
+    // soft drop shadow that brightens on hover for the "lift"
+    // affordance. No translate transform — flat-with-shadow rather
+    // than the prior gov.uk strip-collapse.
     &__card {
       background-color: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
       padding: var(--space-5);
-      box-shadow: var(--elevation-1);
+      box-shadow: var(--elevation-3);
       transition:
-        transform var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard),
         box-shadow var(--duration-fast) var(--ease-standard);
 
       &:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: var(--elevation-2);
-      }
-
-      &:active {
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
+        background-color: var(--color-interactive-hover-bg);
+        box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
       }
     }
 
+    // Card title — sentence case, semibold (Figma header/large
+    // size for cards: text-xl which sits between body and the
+    // page h1).
     &__card-title {
-      font-size: var(--text-2xl);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      line-height: var(--leading-tight);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-semibold);
+      line-height: var(--leading-snug);
       margin: var(--space-2) 0;
       color: var(--color-ink);
     }
@@ -71,88 +75,79 @@
     &__date {
       font-size: var(--text-sm);
       color: var(--color-ink-muted);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      font-weight: var(--weight-semibold);
+      font-weight: var(--weight-regular);
     }
 
     &__excerpt {
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
       color: var(--color-ink);
       line-height: var(--leading-relaxed);
       margin: 0;
     }
 
-    // "← Back to all posts" link. Text-button pattern — uppercase
-    // bold ink with underline on hover. Same hover treatment as
-    // `c-store__close` and the footer's privacy-policy link.
+    // "← Back to all posts" link. Now uses the system text-link
+    // treatment (blue, semibold, underlined) — matches the
+    // footer's privacy-policy link and the auth-page sign-up link.
     &__back-link {
       display: inline-block;
-      margin-bottom: var(--space-4);
-      color: var(--color-ink);
-      text-decoration: none;
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
+      margin-bottom: var(--space-5);
+      color: var(--color-link);
+      text-decoration: underline;
+      text-underline-offset: 0.25rem;
+      text-decoration-thickness: 2px;
+      font-weight: var(--weight-semibold);
       font-size: var(--text-sm);
-      letter-spacing: var(--tracking-tight);
+      transition: color var(--duration-fast) var(--ease-standard);
 
       &:hover {
-        text-decoration: underline;
-        text-underline-offset: 0.25rem;
-        text-decoration-thickness: 2px;
+        color: var(--color-link-hover);
       }
     }
 
     &__post-header {
       margin-bottom: var(--space-6);
-      border-bottom: var(--border-width-structural) solid
-        var(--color-border-strong);
+      border-bottom: var(--border-width-hairline) solid var(--color-border);
       padding-bottom: var(--space-5);
     }
 
     // Rendered markdown HTML content. Shared between blog posts
-    // and the about page. Tags below are element selectors
-    // scoped to `.c-blog__content` so they only target rendered
-    // markdown, not arbitrary <h2>/<p>/<a> elsewhere in the app.
+    // and the about page. Tag selectors scoped to `.c-blog__content`
+    // so they only target rendered markdown.
     &__content {
       line-height: var(--leading-relaxed);
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
       color: var(--color-ink);
 
+      // Sentence-case headings, semibold. No uppercase, no
+      // ink-bordered underline (cleaner reading rhythm than the
+      // prior gov.uk h2 treatment).
       h2 {
         font-size: var(--text-2xl);
-        font-weight: var(--weight-bold);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-tight);
-        line-height: var(--leading-tight);
-        margin: var(--space-6) 0 var(--space-4);
-        border-bottom: var(--border-width-structural) solid
-          var(--color-border-strong);
-        padding-bottom: var(--space-2);
+        font-weight: var(--weight-semibold);
+        line-height: var(--leading-snug);
+        margin: var(--space-6) 0 var(--space-3);
+        color: var(--color-ink);
       }
 
       h3 {
         font-size: var(--text-xl);
-        font-weight: var(--weight-bold);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-tight);
-        line-height: var(--leading-tight);
+        font-weight: var(--weight-semibold);
+        line-height: var(--leading-snug);
         margin: var(--space-5) 0 var(--space-2);
+        color: var(--color-ink);
       }
 
       p {
         margin-bottom: var(--space-4);
       }
 
-      // Inline links in prose. Flag blue + underline — matches
-      // the footer's privacy link and the header's current-page
-      // indicator, keeping "blue = link" consistent across every
-      // surface in the system.
+      // Inline links in prose — blue-link semibold underlined.
       a {
         color: var(--color-link);
         text-decoration: underline;
         text-underline-offset: 0.25rem;
         font-weight: var(--weight-semibold);
+        transition: color var(--duration-fast) var(--ease-standard);
 
         &:hover {
           color: var(--color-link-hover);
@@ -169,43 +164,39 @@
         margin-bottom: var(--space-2);
       }
 
-      // Blockquote — left ink rule (matches the 2px structural
-      // border of the rest of the system), muted italic text.
-      // Old design used `$color-secondary` (orange) for the rule;
-      // orange isn't in the new palette, so ink is the closest
-      // equivalent. The visual weight reads as "editor's pull
-      // quote" rather than the old orange decorative accent.
+      // Blockquote — left blue rule replaces the prior ink rule.
+      // Pairs with the link color so editorial pull-quotes feel
+      // consistent with the rest of the editorial chrome.
       blockquote {
-        border-left: 0.25rem solid var(--color-ink);
+        border-left: 0.25rem solid var(--color-link);
         padding-left: var(--space-4);
         margin: var(--space-4) 0;
         color: var(--color-ink-muted);
         font-style: italic;
       }
 
-      // Inline code. Sunken surface with a hairline border —
-      // distinct from the 2px structural border used on form
-      // fields so inline code doesn't read as "input".
+      // Inline code. Sunken surface with hairline border + 4px
+      // radius so it reads as a chip, not as an input field.
       code {
         background-color: var(--color-surface-sunken);
         border: var(--border-width-hairline) solid var(--color-border);
+        border-radius: var(--radius-md);
         padding: 0.125rem var(--space-1);
-        font-size: var(--text-sm);
-        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
-          monospace;
+        font-size: 0.875em;
+        font-family:
+          'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
       }
 
-      // Code block. Same sunken surface + hairline border as
-      // inline code, plus elevation-1 strip. Code blocks are the
-      // one place where elevation on a non-button surface is
-      // warranted — they represent "copy me" content.
+      // Code block. Same sunken surface + hairline border + 4px
+      // radius + soft shadow (was --elevation-1 ink strip).
       pre {
         background-color: var(--color-surface-sunken);
         border: var(--border-width-hairline) solid var(--color-border);
+        border-radius: var(--radius-md);
         padding: var(--space-4);
         overflow-x: auto;
         margin-bottom: var(--space-4);
-        box-shadow: var(--elevation-1);
+        box-shadow: var(--elevation-3);
 
         code {
           border: 0;
@@ -214,11 +205,14 @@
         }
       }
 
+      // Embedded images — soft border + radius + shadow. Same
+      // visual language as section cards on the about page.
       img {
         max-width: 100%;
         height: auto;
-        border: var(--border-width-structural) solid var(--color-border-strong);
-        box-shadow: var(--elevation-1);
+        border: var(--border-width-hairline) solid var(--color-border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--elevation-3);
       }
     }
   }
