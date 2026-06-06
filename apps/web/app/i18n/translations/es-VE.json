@@ -17,6 +17,9 @@
     "signUp": "Registrarse",
     "useDifferentEmail": "Usar otro correo"
   },
+  "browse": {
+    "favouritesTitle": "Busca tus favoritos"
+  },
   "common": {
     "loading": "Cargando...",
     "notFound": "Página no encontrada"
@@ -142,8 +145,10 @@
     "directions": "Cómo llegar",
     "edit": "Editar",
     "lastUpdated": "Última actualización",
+    "lastUpdatedAt": "Última actualización: {{datetime}}",
     "opensInNewTab": "se abre en nueva pestaña",
-    "products": "Productos"
+    "products": "Productos",
+    "suggestEdit": "Sugerir un cambio"
   },
   "storeForm": {
     "address": "Dirección",

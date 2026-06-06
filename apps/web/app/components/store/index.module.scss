@@ -1,237 +1,280 @@
-// Store card — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). This file no longer
-// imports `settings.colors`, `settings.globals`, `settings.typography`
-// or `tools.mixins`: every design decision comes from CSS custom
-// properties so the token layer can evolve without touching component
-// SCSS. Second component to be ported after the header — the proof
-// that button variants (primary / secondary / danger) all compose
-// against a single focus ring and a single elevation language.
-
+// Store card — restyled to Figma "browse locations" (node 88:3646,
+// the pin-selected variant). Stage 2 of the browse-locations
+// restyle — see project_figma_design_direction memory.
+//
+// Shifts vs the prior gov.uk-era variant:
+//   1. Close = X icon (top-right). Was a labelled text button.
+//   2. Directions = blue-outlined secondary button (Figma). Was
+//      the yellow-fill primary in the gov.uk direction.
+//   3. Products = soft yellow pill section (--color-accent-yellow-bg)
+//      with checkmark bullets per product. Was 2px-ink-bordered pill
+//      chips on the white surface.
+//   4. Suggest-an-edit = blue link with pencil glyph. New element;
+//      not in the prior design.
+//   5. Last-updated timestamp displayed at the bottom in muted text.
+//      New element; not in the prior design.
+//   6. Delete (authed only) demoted to a bottom-aligned moderation
+//      action group. Edit is gone — the suggest-edit link replaces
+//      it and routes to the same /stores/{id}/edit page.
+//
+// Stage 3 will move this container from bottom slide-out to left
+// floating card; the inner content styling here is layout-agnostic.
+//
 // Wrapped in `@layer components` so the universal `:focus-visible`
-// rule in `@layer utilities` (tokens.css) beats the `box-shadow`
-// declarations inside this file. See header/index.module.scss for
-// the full architectural rationale.
+// rule in `@layer utilities` (tokens.css) beats anything inside.
 @layer components {
-.c-store-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  // Store sheet sits in the `--z-dialog` slot (300) — a page-level
-  // slide-out, above map overlays (sidebar, locate-me at z-100) but
-  // below the mobile menu (z-500) and any dropdowns opened inside
-  // it (z-600). See tokens.css `--z-*` comment.
-  z-index: var(--z-dialog);
-  width: 100%;
-}
+  // Container — positioned differently on mobile vs desktop per
+  // Stage 3 of the browse-locations restyle (Figma node 88:3646).
+  //   Mobile (< 768px): bottom-pinned full-width sheet. Same as
+  //   before — preserves screen real estate for the map.
+  //   Desktop (≥ 768px): left-floating card with a small offset
+  //   from the top edge to clear the header, and from the left
+  //   edge to feel like overlay chrome, not flush content.
+  .c-store-container {
+    position: fixed;
+    z-index: var(--z-dialog);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
 
-.c-store {
-  background-color: var(--color-surface-page);
-  border-top: var(--border-width-structural) solid var(--color-border-strong);
-  // Upward-facing elevation. `--elevation-1` is defined in tokens.css
-  // as a *downward* 2px ink strip; no upward-facing token exists yet,
-  // and this is the first component in the system that needs one. The
-  // 4px depth matches the header's `box-shadow: -4px 0 0 0 ink` on the
-  // mobile menu (which also hangs off an edge). If a second surface
-  // needs the same affordance, promote this to `--elevation-1-top`.
-  box-shadow: 0 -4px 0 0 var(--color-ink);
-  padding: var(--space-4);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  // Prevent the sheet from covering too much of the map — the map is
-  // the main event, the card is chrome around it. See ADR 0014.
-  max-height: 50vh;
-  overflow-y: auto;
-
-  @media (min-width: 768px) {
-    padding: var(--space-5);
-    max-height: 40vh;
-  }
-
-  &__header {
-    display: flex;
-    gap: var(--space-4);
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-
-  &__content {
-    flex: 1;
-
-    h2 {
-      font-size: var(--text-2xl);
-      // Old design called for `font-weight-black` (900). Token scale
-      // tops out at `--weight-bold` (700); Inter at 700 on ink is
-      // visually heavy enough at this size and keeps us inside the
-      // weights already registered on the Google Fonts request in
-      // root.tsx (no extra bytes). Flagged in migration notes.
-      font-weight: var(--weight-bold);
-      color: var(--color-ink);
-      text-transform: uppercase;
-      margin-bottom: var(--space-1);
-      letter-spacing: var(--tracking-tight);
-      line-height: var(--leading-tight);
+    @media (min-width: 768px) {
+      // Top offset clears the page header (~56-64px) plus a
+      // breathing-room gap. Bottom/right unset so the card can
+      // size itself to content, capped by max-height below.
+      top: 5rem;
+      bottom: auto;
+      right: auto;
+      left: var(--space-5);
+      width: 24rem;
+      max-width: calc(100vw - var(--space-9));
     }
   }
 
-  &__address {
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
-    // Ink-muted hits ~9.6:1 on white — AAA for normal text — and
-    // visibly de-emphasises the address line against the h2 above.
-    color: var(--color-ink-muted);
-  }
-
-  &__header-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  &__products {
-    border-top: var(--border-width-hairline) solid var(--color-border);
-    padding-top: var(--space-4);
-
-    h3 {
-      font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      margin-bottom: var(--space-2);
-      color: var(--color-ink);
-      // Old design used `letter-spacing: 0.05em` on this heading; the
-      // widest tracking token is `--tracking-wide` (0.02em). Small
-      // visual shift — shout if it's noticeable.
-      letter-spacing: var(--tracking-wide);
-    }
-  }
-
-  &__products-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  // Product tag chip. `--radius-full` is explicitly reserved in
-  // tokens.css for tag chips (see the `Radii` block comment), so the
-  // pill shape survives the migration unchanged.
-  &__product {
+  .c-store {
     background-color: var(--color-surface-page);
-    border: var(--border-width-structural) solid var(--color-border-strong);
-    border-radius: var(--radius-full);
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--text-xs);
-    font-weight: var(--weight-bold);
-    color: var(--color-ink);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    min-height: var(--target-min);
-    display: inline-flex;
-    align-items: center;
-  }
+    padding: var(--space-5);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-height: 50vh;
+    overflow-y: auto;
 
-  // Shared button surface — the three variants below differ only in
-  // fill colour and text colour. The 2px ink border, the elevation-1
-  // downward strip and the gov.uk press affordance (`translateY(2px)`
-  // + collapsing strip on `:active`) are identical across all three.
-  // This is the same pattern as `c-header__hamburger`.
-  &__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-2) var(--space-5);
-    min-height: var(--target-min);
-    font-weight: var(--weight-bold);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-tight);
-    border: var(--border-width-structural) solid var(--color-border-strong);
-    box-shadow: var(--elevation-1);
-    text-align: center;
-    cursor: pointer;
-    text-decoration: none;
-    // Only animate the two properties the press affordance touches.
-    // `all` was the old default and burns CPU on colour interpolation
-    // we don't want. `prefers-reduced-motion` collapses the duration
-    // token to 0ms upstream in tokens.css.
-    transition:
-      transform var(--duration-fast) var(--ease-standard),
-      box-shadow var(--duration-fast) var(--ease-standard),
-      background-color var(--duration-fast) var(--ease-standard);
+    // Mobile: top-edge border only — the sheet hangs off the
+    // bottom of the viewport and only needs one visible edge.
+    border-top: var(--border-width-hairline) solid var(--color-border);
+    box-shadow: var(--elevation-3);
 
-    &:active {
-      transform: translateY(2px);
-      box-shadow: var(--elevation-0);
+    @media (min-width: 768px) {
+      // Desktop: full card with border on all sides, rounded
+      // corners, soft shadow lifting it off the map.
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      max-height: calc(100vh - 7rem);
     }
 
-    // Primary — flag yellow with ink text. This is the Directions
-    // button, which ADR 0014 names as one of the three canonical
-    // primary actions in the product ("Add a store", "Open",
-    // "Directions"). The 2px ink border is *structurally* required
-    // against the white page: yellow-on-white clocks ~1.8:1 and fails
-    // 1.4.11 as a standalone boundary. See ADR 0014 Consequences.
-    &--primary {
-      background-color: var(--color-primary);
-      color: var(--color-primary-ink);
+    &__header {
+      display: flex;
+      gap: var(--space-4);
+      align-items: flex-start;
+      justify-content: space-between;
+    }
 
-      &:hover {
-        background-color: var(--color-primary-hover);
+    &__content {
+      flex: 1;
+
+      h2 {
+        font-size: var(--text-2xl);
+        // Figma's header/large is Inter SemiBold 24. Sentence case,
+        // no uppercase, no tight tracking — matches the auth title
+        // and the rest of the new system's typography rhythm.
+        font-weight: var(--weight-semibold);
+        color: var(--color-ink);
+        margin-bottom: var(--space-1);
+        line-height: var(--leading-snug);
       }
     }
 
-    // Secondary — white with ink text. Same surface + border + strip
-    // as `c-header__hamburger`; reads as "neutral action" next to the
-    // yellow CTA. Hover swaps to the sunken-hover surface from the
-    // token scale.
-    &--secondary {
-      background-color: var(--color-surface-page);
+    &__address {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-regular);
+      color: var(--color-ink-muted);
+    }
+
+    // X-icon close button. ~32px tappable square in the top-right.
+    // The `×` character is rendered as text inside an aria-hidden
+    // span; the button itself carries the accessible name via
+    // aria-label on the `<button>` (see tsx).
+    &__close {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
       color: var(--color-ink);
+      border: 0;
+      border-radius: var(--radius-md);
+      font-size: var(--text-xl);
+      line-height: 1;
+      cursor: pointer;
+      transition:
+        background-color var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard);
 
       &:hover {
         background-color: var(--color-surface-hover);
       }
     }
 
-    // Danger — darkened flag red. `--color-danger` is defined at
-    // `oklch(40% 0.2 27)` specifically so white ink on the fill hits
-    // WCAG AAA (the raw #CF142B flag red does not). The ink border
-    // stays — it keeps Delete visually consistent with the other two
-    // variants and gives the focus ring a surface to sit against.
-    &--danger {
-      background-color: var(--color-danger);
-      color: var(--color-ink-inverse);
+    // Directions — Figma's blue-outlined secondary button. White
+    // fill, blue-link border + text, 4px radius. Same treatment as
+    // `c-header__auth-link` for consistency across the system. The
+    // ↗ glyph signals "opens in new tab" and is decorative; the
+    // accessible name on the <a> includes the opens-in-new-tab i18n
+    // string per WCAG 2.4.4.
+    &__directions {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-4);
+      min-height: var(--target-min);
+      background-color: var(--color-surface-page);
+      color: var(--color-link);
+      border: var(--border-width-hairline) solid var(--color-link);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard);
 
       &:hover {
-        background-color: var(--color-danger-hover);
+        color: var(--color-link-hover);
+        border-color: var(--color-link-hover);
+        background-color: var(--color-interactive-hover-bg);
+      }
+
+      &:active {
+        background-color: var(--color-interactive-active-bg);
       }
     }
-  }
 
-  // Close is a text-only action, no border, no strip — it should read
-  // as "dismiss", not "do". Same pattern as `c-header__auth-link`.
-  &__close {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--space-2) var(--space-5);
-    min-height: var(--target-min);
-    background-color: transparent;
-    color: var(--color-ink);
-    border: var(--border-width-structural) solid transparent;
-    font-size: var(--text-xs);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-tight);
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-left: auto;
-    transition: color var(--duration-fast) var(--ease-standard);
+    // Products section — soft yellow accent pill per Figma. The
+    // pale cream (#fffadb) preserves the Venezuelan flag yellow
+    // identity at a low-attention surface intensity. Text on it
+    // uses `--color-accent-yellow-ink` (#473d00, AAA Normal at
+    // ~13:1 on the cream surface).
+    &__products {
+      background-color: var(--color-accent-yellow-bg);
+      color: var(--color-accent-yellow-ink);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
 
-    &:hover {
+    &__products-title {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      color: var(--color-accent-yellow-ink);
+    }
+
+    // Products list — vertical stack with checkmark bullets. The
+    // ✓ prefix is rendered via CSS ::before so the markup stays
+    // semantic (plain <li>).
+    &__products-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    &__product {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-regular);
+      color: var(--color-accent-yellow-ink);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+
+      &::before {
+        content: '✓';
+        font-weight: var(--weight-bold);
+        flex-shrink: 0;
+      }
+    }
+
+    // Suggest-an-edit link. Blue semibold text with underline,
+    // pencil glyph prefix. Same link treatment as the footer
+    // privacy-policy link and the auth toggle-btn.
+    &__suggest-edit {
+      align-self: flex-start;
+      color: var(--color-link);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
       text-decoration: underline;
       text-underline-offset: 0.25rem;
       text-decoration-thickness: 2px;
+      transition: color var(--duration-fast) var(--ease-standard);
+
+      &:hover {
+        color: var(--color-link-hover);
+      }
+    }
+
+    // Last-updated timestamp. Muted small text — tertiary
+    // information, sits below all the actions.
+    &__last-updated {
+      font-size: var(--text-xs);
+      color: var(--color-ink-muted);
+    }
+
+    // Moderation actions (authed-only). Visually demoted to the
+    // bottom of the card. Delete keeps the danger fill since it's
+    // a destructive action — Figma doesn't show this state but
+    // the AAA-safe red-800 from tokens carries the warning
+    // semantics regardless.
+    &__mod-actions {
+      display: flex;
+      gap: var(--space-2);
+      padding-top: var(--space-3);
+      border-top: var(--border-width-hairline) solid var(--color-border);
+    }
+
+    &__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2) var(--space-4);
+      min-height: var(--target-min);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
+      border: 0;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        background-color var(--duration-fast) var(--ease-standard);
+
+      &--danger {
+        background-color: var(--color-danger);
+        color: var(--color-ink-inverse);
+
+        &:hover {
+          background-color: var(--color-danger-hover);
+        }
+      }
     }
   }
-}
 }

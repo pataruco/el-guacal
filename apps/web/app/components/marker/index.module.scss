@@ -1,17 +1,17 @@
 // Marker — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). Eighth component
-// ported. Zero SCSS imports.
+// `apps/web/app/styles/tokens.css` (see project_figma_design_direction
+// memory for the 2026-06-06 blue-primary pivot).
 //
 // The React component (see `./index.tsx`) renders an inline SVG
 // teardrop pin inside a `<div class="c-marker">` wrapper. The SVG
 // hardcodes three hex colors as PRESENTATION ATTRIBUTES on the path
-// and circle elements — #990000 (body), #0A1931 (stroke), #ffffff
-// (inner dot). These are left untouched in the tsx because SVG
-// presentation attributes have the lowest CSS priority: any CSS
-// `fill` / `stroke` declaration targeting the child elements wins
-// automatically. The effect is that the old hex values become
-// FALLBACK values if this stylesheet ever fails to load, and the
-// live values come from the design tokens below.
+// and circle elements (legacy red/ink/white fallbacks). These are
+// left untouched in the tsx because SVG presentation attributes have
+// the lowest CSS priority: any CSS `fill` / `stroke` declaration
+// targeting the child elements wins automatically. The effect is
+// that the old hex values become FALLBACK values if this stylesheet
+// ever fails to load, and the live values come from the design
+// tokens below.
 //
 // Wrapped in `@layer components` so the universal `:focus-visible`
 // rule in `@layer utilities` can beat anything at rest inside this
@@ -31,7 +31,10 @@
     // rectangular — `drop-shadow` follows the actual teardrop
     // silhouette, which is the whole point of using it over
     // `box-shadow` on this one component.
-    filter: drop-shadow(2px 2px 0 var(--color-ink));
+    // Soft drop-shadow follows the SVG teardrop silhouette. Was a
+    // 2px ink strip in the gov.uk direction; softened here to match
+    // the rest of the new system's flat-with-shadow aesthetic.
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.25));
 
     transition:
       transform var(--duration-fast) var(--ease-standard),
@@ -43,15 +46,14 @@
     // hardcoded hex presentation attributes. The inner white circle
     // is mapped to `--color-ink-inverse` for the same reason.
     //
-    // Fill is `--color-danger` — the tokenized darkened flag red.
-    // Red is the universal "pin" signal, yellow stays reserved for
-    // primary CTAs (ADR 0014 is emphatic about this — the yellow
-    // fill only clears WCAG 1.4.11 when paired with a 2px ink
-    // border, which markers don't have), and blue would fuse with
-    // coastal water tiles. The "danger" semantic is a misnomer here
-    // — the token value is what matters, not its name.
+    // Pin colour moved from red (`--color-danger`) to brand blue
+    // (`--color-primary`, blue-700) per Figma — see
+    // project_figma_design_direction memory. The dark ink stroke
+    // provides definition against light AND dark map tiles so the
+    // earlier "blue fuses with water" concern no longer holds; the
+    // stroke carries the silhouette regardless of fill colour.
     svg path {
-      fill: var(--color-danger);
+      fill: var(--color-primary);
       stroke: var(--color-ink);
     }
     svg circle {
@@ -64,14 +66,14 @@
       transform: scale(1.1);
     }
 
-    // Press affordance. The pin translates 1px down-and-right and
-    // loses half its ink shadow, mimicking the button strip collapse
-    // used by `c-header__hamburger` and `c-store__btn`. Different
-    // visual because the drop-shadow is SVG-shaped, but the gesture
-    // is the same: "this thing moved because you pressed it".
+    // Press affordance. The pin compresses its shadow on press,
+    // mimicking a button strip collapse. Different visual from
+    // box-shadow elevation because the drop-shadow is SVG-shaped,
+    // but the gesture is the same: "this thing moved because you
+    // pressed it".
     &:active {
-      transform: translate(1px, 1px) scale(1);
-      filter: drop-shadow(1px 1px 0 var(--color-ink));
+      transform: scale(1);
+      filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
     }
   }
 }

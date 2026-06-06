@@ -79,22 +79,52 @@
       }
     }
 
-    &__controls {
+    // Favourites card (Stage 4 of browse-locations restyle, Figma
+    // node 88:3545). Replaces the bare-overlay `.p-home__controls`
+    // from the gov.uk direction. White-fill card, soft shadow,
+    // rounded corners — the idle/resting state of the left
+    // overlay zone. Hidden via React conditional when a store is
+    // selected (StoreComponent takes the same spot).
+    &__favourites-card {
       display: flex;
       flex-direction: column;
-      gap: var(--space-2);
+      gap: var(--space-3);
       pointer-events: all;
-      padding: var(--space-4) 0;
-      // 21rem (336px) is the canonical sidebar control column
-      // width on mobile. Not in the token scale — kept as a
-      // literal because it's a single-use layout constraint.
+      margin-top: var(--space-4);
+      padding: var(--space-4);
       width: 21rem;
+      background-color: var(--color-surface-page);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-3);
+
+      @media (min-width: 768px) {
+        margin-top: var(--space-5);
+      }
     }
 
-    &__search-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
+    // Title above the ProductFilter — Inter SemiBold 16 (Figma
+    // header/medium). Sentence case, no uppercase.
+    &__favourites-title {
+      font-size: var(--text-base);
+      font-weight: var(--weight-semibold);
+      color: var(--color-ink);
+      line-height: var(--leading-snug);
+    }
+
+    // Hero image placeholder — Stage 5 replaces the gradient with
+    // a real food photo. Aspect ratio roughly 4:3 matches Figma's
+    // hero image proportions. Diagonal blue gradient signals
+    // "intentional placeholder", same pattern as the auth page
+    // Stage 3 (see auth.module.scss).
+    &__favourites-hero {
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-md);
+      background: linear-gradient(
+        135deg,
+        var(--color-blue-100) 0%,
+        var(--color-blue-300) 100%
+      );
     }
 
     &__map-container {

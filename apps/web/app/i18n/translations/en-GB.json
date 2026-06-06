@@ -17,6 +17,9 @@
     "signUp": "Sign up",
     "useDifferentEmail": "Use a different email"
   },
+  "browse": {
+    "favouritesTitle": "Search for your favourites"
+  },
   "common": {
     "loading": "Loading...",
     "notFound": "Page not found"
@@ -142,8 +145,10 @@
     "directions": "Directions",
     "edit": "Edit",
     "lastUpdated": "Last updated",
+    "lastUpdatedAt": "Last updated at {{datetime}}",
     "opensInNewTab": "opens in new tab",
-    "products": "Products"
+    "products": "Products",
+    "suggestEdit": "Suggest an edit"
   },
   "storeForm": {
     "address": "Address",

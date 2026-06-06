@@ -7,6 +7,8 @@ import Page from '../components/page';
 import ProductFilter from '../components/product-filter';
 import StoreComponent from '../components/store';
 import i18n from '../i18n/config';
+import { selectStoreState } from '../store/features/stores/slice';
+import { useAppSelector } from '../store/hooks';
 import { getSeoMeta } from '../utils/seo';
 import styles from './index.module.scss';
 
@@ -23,6 +25,7 @@ export const meta: MetaFunction = ({ params }) => {
 export default function Home() {
   const { locale } = useParams<{ locale: string }>();
   const { t } = useTranslation();
+  const { show: isStoreShown } = useAppSelector(selectStoreState);
 
   const jsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',
@@ -44,15 +47,29 @@ export default function Home() {
   return (
     <Page className={styles['p-home']} isHome>
       <JsonLd data={jsonLd} />
-      <aside className={styles['p-home__sidebar']}>
-        <div className={styles['p-home__sidebar__container']}>
-          <div className={styles['p-home__controls']}>
-            <div className={styles['p-home__search-wrapper']}>
+      {/* Idle/resting sidebar — "Search for your favourites" card
+          (Figma node 88:3545). Hidden when a store is selected so
+          the StoreComponent detail card occupies the left zone
+          instead. Match Figma's state-machine: one card at a time
+          on the left. */}
+      {!isStoreShown && (
+        <aside className={styles['p-home__sidebar']}>
+          <div className={styles['p-home__sidebar__container']}>
+            <div className={styles['p-home__favourites-card']}>
+              <h2 className={styles['p-home__favourites-title']}>
+                {t('browse.favouritesTitle')}
+              </h2>
               <ProductFilter />
+              {/* Hero placeholder — Stage 5 swaps the gradient
+                  for the real food photo. */}
+              <div
+                className={styles['p-home__favourites-hero']}
+                aria-hidden="true"
+              />
             </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      )}
       <div className={styles['p-home__map-container']}>
         <MapComponent />
       </div>
