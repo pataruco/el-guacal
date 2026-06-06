@@ -1,5 +1,34 @@
+// Auth page — Stage 2 of the Figma reimplementation (see Figma
+// node 77:11414 "sign in / register", subsections "existing
+// account" and "new account").
+//
+// What changed in Stage 2 vs the prior single-page toggle:
+//   1. Multi-step flow:
+//        email → password (existing user)
+//        email → register (new user)
+//        email → google-only (account exists only via Google)
+//      The previous single-page form with isSignUp toggle is gone.
+//      Email-step submission calls `fetchSignInMethodsForEmail` to
+//      decide which branch to render. If email enumeration
+//      protection is on at the Firebase project level, the call
+//      returns [] for every email; we default to register and let
+//      `auth/email-already-in-use` from createUser route us back to
+//      the password step as a graceful fallback.
+//   2. `<main id="main-content">` wraps the page so the root-level
+//      skip link in `root.tsx` resolves to a real target. This
+//      fixes three pre-existing AAA audit findings at once:
+//      bypass-repeated-content, landmark-main, and the region
+//      check on the content div.
+//   3. Email is shown as small "you entered: …  use different email"
+//      text above the password/register steps, with a back-link to
+//      reset to the email step.
+//
+// Stage 1 (auth.module.scss) already added the visual scaffolding —
+// new BEM classes used here (`__email-display`, `__back-btn`,
+// `__info`) are styled in that file's accompanying update.
 import {
   createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -16,8 +45,6 @@ import styles from './auth.module.scss';
 
 export const meta: MetaFunction = ({ params }) => {
   const locale = params.locale || 'en-GB';
-  // Auth page can be both login and signup, but we'll use a generic "Log in" or "Auth" meta
-  // Since the UI toggles, maybe a combined one or just default to login
   return getSeoMeta({
     description: i18n.t('seo.auth.login.description', { lng: locale }),
     locale,
@@ -26,16 +53,18 @@ export const meta: MetaFunction = ({ params }) => {
   });
 };
 
+type Step = 'email' | 'password' | 'register' | 'google-only';
+
 const AuthPage = () => {
   const { locale } = useParams<{ locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isAuthenticated } = useAppSelector(selectAuth);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -54,15 +83,23 @@ const AuthPage = () => {
     }
   };
 
-  const handleEmailSubmit = async (e: FormEvent) => {
+  const handleEmailContinue = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
     try {
-      setError(null);
-      setLoading(true);
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      setLoading(false);
+      if (methods.includes('password')) {
+        setStep('password');
+      } else if (methods.length > 0 && methods.includes('google.com')) {
+        setStep('google-only');
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        // Either truly new, or email enumeration protection hid the
+        // methods. Default to register; if it's actually existing,
+        // createUserWithEmailAndPassword will throw with
+        // auth/email-already-in-use and we re-route to password.
+        setStep('register');
       }
     } catch (err) {
       setLoading(false);
@@ -70,84 +107,205 @@ const AuthPage = () => {
     }
   };
 
+  const handlePasswordSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      setLoading(false);
+      setError(err instanceof Error ? err.message : 'Sign in failed');
+    }
+  };
+
+  const handleRegisterSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      setLoading(false);
+      // Graceful fallback when email enumeration protection hid the
+      // existing account during the email-step check.
+      if (
+        err instanceof Error &&
+        'code' in err &&
+        err.code === 'auth/email-already-in-use'
+      ) {
+        setPassword('');
+        setStep('password');
+        return;
+      }
+      setError(err instanceof Error ? err.message : 'Sign up failed');
+    }
+  };
+
+  const handleChangeEmail = () => {
+    setStep('email');
+    setPassword('');
+    setError(null);
+  };
+
+  const title = (() => {
+    switch (step) {
+      case 'email':
+        return t('auth.signInOrCreateTitle');
+      case 'password':
+        return t('auth.enterPasswordTitle');
+      case 'register':
+        return t('auth.createAccountTitle');
+      case 'google-only':
+        return t('auth.signInOrCreateTitle');
+    }
+  })();
+
   return (
-    <div className={styles['c-auth']}>
-      <h1 className={styles['c-auth__title']}>
-        {isSignUp ? t('auth.signUp') : t('auth.login')}
-      </h1>
+    <main id="main-content" className={styles['c-auth']}>
+      <h1 className={styles['c-auth__title']}>{title}</h1>
 
-      <button
-        type="button"
-        disabled={loading}
-        className={styles['c-auth__provider-btn']}
-        onClick={handleGoogleSignIn}
-      >
-        {t('auth.signInWithGoogle')}
-      </button>
+      {step === 'email' && (
+        <>
+          <form
+            onSubmit={handleEmailContinue}
+            className={styles['c-auth__form']}
+          >
+            <label className={styles['c-auth__label']} htmlFor="email">
+              {t('auth.email')}
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              autoComplete="email"
+              className={styles['c-auth__input']}
+              value={email}
+              placeholder={t('auth.emailPlaceholder')}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className={styles['c-auth__submit-btn']}
+            >
+              {t('auth.continue')}
+            </button>
+          </form>
 
-      <div className={styles['c-auth__divider']}>
-        <span>{t('auth.or')}</span>
-      </div>
+          <div className={styles['c-auth__divider']}>
+            <span>{t('auth.or')}</span>
+          </div>
 
-      <form onSubmit={handleEmailSubmit} className={styles['c-auth__form']}>
-        <label className={styles['c-auth__label']} htmlFor="email">
-          {t('auth.email')}
-        </label>
-        <input
-          id="email"
-          type="email"
-          required
-          className={styles['c-auth__input']}
-          value={email}
-          placeholder={t('auth.emailPlaceholder')}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
-        />
+          <button
+            type="button"
+            disabled={loading}
+            className={styles['c-auth__provider-btn']}
+            onClick={handleGoogleSignIn}
+          >
+            {t('auth.signInWithGoogle')}
+          </button>
+        </>
+      )}
 
-        <label className={styles['c-auth__label']} htmlFor="password">
-          {t('auth.password')}
-        </label>
-        <input
-          id="password"
-          type="password"
-          required
-          minLength={6}
-          className={styles['c-auth__input']}
-          value={password}
-          placeholder={t('auth.passwordPlaceholder')}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
-        />
+      {(step === 'password' ||
+        step === 'register' ||
+        step === 'google-only') && (
+        <p className={styles['c-auth__email-display']}>
+          {email}
+          <button
+            type="button"
+            className={styles['c-auth__back-btn']}
+            onClick={handleChangeEmail}
+          >
+            {t('auth.useDifferentEmail')}
+          </button>
+        </p>
+      )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={styles['c-auth__submit-btn']}
+      {step === 'password' && (
+        <form
+          onSubmit={handlePasswordSubmit}
+          className={styles['c-auth__form']}
         >
-          {isSignUp ? t('auth.signUp') : t('auth.login')}
-        </button>
-      </form>
+          <label className={styles['c-auth__label']} htmlFor="password">
+            {t('auth.password')}
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            minLength={6}
+            autoComplete="current-password"
+            className={styles['c-auth__input']}
+            value={password}
+            placeholder={t('auth.passwordPlaceholder')}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className={styles['c-auth__submit-btn']}
+          >
+            {t('auth.login')}
+          </button>
+        </form>
+      )}
+
+      {step === 'register' && (
+        <form
+          onSubmit={handleRegisterSubmit}
+          className={styles['c-auth__form']}
+        >
+          <label className={styles['c-auth__label']} htmlFor="password">
+            {t('auth.password')}
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            minLength={6}
+            autoComplete="new-password"
+            className={styles['c-auth__input']}
+            value={password}
+            placeholder={t('auth.passwordPlaceholder')}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className={styles['c-auth__submit-btn']}
+          >
+            {t('auth.signUp')}
+          </button>
+        </form>
+      )}
+
+      {step === 'google-only' && (
+        <>
+          <p className={styles['c-auth__info']}>
+            {t('auth.emailExistsWithGoogle')}
+          </p>
+          <button
+            type="button"
+            disabled={loading}
+            className={styles['c-auth__provider-btn']}
+            onClick={handleGoogleSignIn}
+          >
+            {t('auth.signInWithGoogle')}
+          </button>
+        </>
+      )}
 
       {error && (
         <p className={styles['c-auth__error']} role="alert">
           {error}
         </p>
       )}
-
-      <p className={styles['c-auth__toggle']}>
-        {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}{' '}
-        <button
-          type="button"
-          className={styles['c-auth__toggle-btn']}
-          onClick={() => {
-            setIsSignUp(!isSignUp);
-            setError(null);
-          }}
-        >
-          {isSignUp ? t('auth.login') : t('auth.signUp')}
-        </button>
-      </p>
-    </div>
+    </main>
   );
 };
 

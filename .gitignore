@@ -20,3 +20,6 @@ target
 
 .claude
 .gemini
+
+.playwright-mcp
+.mcp.json

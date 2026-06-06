@@ -175,6 +175,9 @@
       font-size: 4rem;
       font-weight: var(--weight-regular);
       pointer-events: none;
+      // Local stacking within the StoreForm map preview — sits
+      // above the Google Maps iframe but doesn't participate in
+      // the global `--z-*` scale.
       z-index: 10;
       text-shadow:
         0 0 0.125rem var(--color-ink-inverse),
@@ -201,6 +204,7 @@
         transparent
       );
       border: var(--border-width-structural) solid var(--color-border-strong);
+      // Local stacking — same as the marker indicator above.
       z-index: 10;
     }
 

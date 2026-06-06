@@ -35,11 +35,16 @@ export function getSeoMeta({
     { content: description, name: 'twitter:description' },
     { content: imageUrl, name: 'twitter:image' },
     { content: locale.replace('-', '_'), property: 'og:locale' },
+    // React Router 7's meta descriptor for arbitrary head tags
+    // expects attributes spread directly on the object alongside
+    // `tagName` — NOT nested under an `attributes` key. Passing
+    // `{ tagName: 'link', attributes: { href, rel } }` rendered as
+    // a literal `<link attributes="[object Object]">` (different
+    // stringification path on server vs client → hydration
+    // mismatch). See React Router docs / utils/seo.ts comment trail.
     {
-      attributes: {
-        href: url,
-        rel: 'canonical',
-      },
+      href: url,
+      rel: 'canonical',
       tagName: 'link',
     },
   ];

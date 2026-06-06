@@ -1,31 +1,53 @@
-// Auth page — restyled against the design tokens in
-// `apps/web/app/styles/tokens.css` (see ADR 0014). First route-level
-// file ported (previous eleven ports were per-component modules).
-// Zero SCSS imports.
+// Auth page — Stage 1 of the Figma reimplementation (see Figma
+// node 77:11414 "sign in / register"). After the 2026-06-06
+// blue-primary token pivot, the auth page moves away from the
+// gov.uk-style centered single-column flow and toward Figma's
+// split layout: form fields on the left ~40%, hero food image
+// on the right ~60%.
 //
-// The React component (see `./_locale.auth.tsx`) renders a vertical
-// stack of:
+// Scope of THIS file (Stage 1, CSS only — no React changes):
+//   1. Split layout via padding-right + absolutely positioned
+//      `::after`. Form content flows naturally in the left zone;
+//      the right side is a coloured block as a placeholder for
+//      the hero image (Stage 3 swaps the bg colour for the photo).
+//   2. Drop the 2px ink border around the form card — Figma fields
+//      float directly on the page surface.
+//   3. Inputs: 1px grey-500 border (Figma `border/input/default`)
+//      instead of structural 2px ink.
+//   4. Submit button: solid blue fill, white label, flat (no border,
+//      no elevation, no press translateY now that `--elevation-1`
+//      resolves to `none`).
+//   5. Google provider button: blue-outlined secondary pattern —
+//      white bg, blue-800 text, 1px blue-800 border, no elevation.
+//   6. Toggle "Sign up" link: `--color-link` blue-800 semibold,
+//      underlined — same treatment as every other text link in
+//      the system (footer privacy, store close).
+//   7. Error: `--color-danger` (red-800, AAA Normal 8.2:1 white-on)
+//      replaces the prior ink+bold workaround. The previously
+//      parked `--color-danger-ink` decision is moot — red-800
+//      hits AAA for text-on-white directly.
 //
-//   · .c-auth__title         → h1 "Sign in" / "Sign up"
-//   · .c-auth__provider-btn  → Google OAuth secondary button
-//   · .c-auth__divider       → horizontal "or" divider
-//   · .c-auth__form          → the email/password form card
-//     · .c-auth__label       → field labels
-//     · .c-auth__input       → email and password inputs
-//     · .c-auth__submit-btn  → yellow primary submit
-//   · .c-auth__error         → error message
-//   · .c-auth__toggle        → "already have an account?" text
-//     · .c-auth__toggle-btn  → the sign-in/sign-up swap link
-//
-// The provider button, divider, and form card are siblings of the
-// `.c-auth` wrapper flex column, so they all share `max-width: 25rem`
-// to keep vertical alignment.
+// What this file deliberately does NOT touch (Stages 2-4):
+//   · _locale.auth.tsx — no JSX/state changes.
+//   · The Google OAuth button remains in the component; Pedro
+//     chose to keep it (Figma just hasn't drawn the OAuth variant
+//     yet — keeping is the safe call).
+//   · Multi-step flow (email → password / register) — Stage 2.
+//   · Real hero image asset — Stage 3.
 //
 // Wrapped in `@layer components` — same architectural reason as
 // every other ported module. See `header/index.module.scss` for
 // the full rationale.
 @layer components {
   .c-auth {
+    // Split layout: form fields flow in the left ~40%, an
+    // absolutely-positioned `::after` paints the right ~60% as
+    // the hero-image placeholder. Using padding-right + abs-pos
+    // (not grid) so that the existing children — direct siblings
+    // of `.c-auth`, no wrapper div — stack naturally with flex
+    // centering. When Stage 2 wraps them in a proper form-side
+    // container, this trick retires.
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,68 +56,124 @@
     // `--header-height` token in the system and inventing one for a
     // single use case isn't worth it.
     min-height: calc(100vh - 4rem);
-    padding: var(--space-5);
+    padding: var(--space-6) var(--space-5);
+    // Reserve 60% of the width on the right for the image side.
+    // Children are align-items: center, so they horizontally
+    // center within the remaining 40% on the left.
+    padding-right: 60%;
     background-color: var(--color-surface-page);
 
-    // Page heading. Matches the StoreForm h1 treatment: uppercase
-    // ink bold with tight tracking and the largest type scale.
-    // Font-weight steps down from the old `font-weight-black` (900)
-    // to `--weight-bold` (700) — same step-down applied in every
-    // ported heading so we don't register a 900 weight against the
-    // Google Fonts Inter request in root.tsx.
-    &__title {
-      font-size: var(--text-3xl);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-tight);
-      line-height: var(--leading-tight);
-      color: var(--color-ink);
-      margin-bottom: var(--space-5);
+    // Right-side image placeholder (Stage 3). The Figma design
+    // calls for a hero food photo here; until we have the asset,
+    // we paint a diagonal blue gradient so the surface reads as
+    // an intentional design choice, not a forgotten background.
+    //
+    // Direction: 135° from top-left to bottom-right.
+    // Stops: blue-100 (Figma `background/accent/blue`, very pale)
+    // → blue-300 (mid-light). Both come from the Figma primitive
+    // scale, so when the real photo lands the surrounding visual
+    // tone won't shift dramatically.
+    //
+    // When the asset arrives, replace the `linear-gradient(...)`
+    // value with `url('/path/to/auth-hero.jpg') center / cover
+    // no-repeat`. The position + sizing of this pseudo-element
+    // doesn't change.
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(
+        135deg,
+        var(--color-blue-100) 0%,
+        var(--color-blue-300) 100%
+      );
     }
 
-    // The email/password form card. Same surface as `.c-form` in
-    // StoreForm.module.scss: white fill, 2px ink border, NO
-    // box-shadow (forms are flat, buttons are elevated). 25rem
-    // (400px) is narrower than the StoreForm's 600px because auth
-    // has fewer fields and the narrower column reads as "compact
-    // sign-in" rather than "data entry".
+    // Mobile: drop the split layout. Image side hides; form flows
+    // full-width as a normal centered column. Breakpoint matches
+    // the rest of the app (~768px).
+    @media (max-width: 47.9375em) {
+      padding-right: var(--space-5);
+
+      &::after {
+        display: none;
+      }
+    }
+
+    // Page heading. Figma uses `header/large`: Inter SemiBold 24px
+    // (line-height 30). Dropped uppercase + tight tracking — Figma
+    // sentence-cases its headings. The narrower vertical rhythm
+    // pairs with the form fields below.
+    &__title {
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-semibold);
+      line-height: var(--leading-snug);
+      color: var(--color-ink);
+      margin-bottom: var(--space-5);
+      align-self: stretch;
+      max-width: 25rem;
+      width: 100%;
+      text-align: left;
+    }
+
+    // The email/password form. NO outer border or card surface
+    // anymore — Figma shows fields directly on the page. The form
+    // is purely a layout container for label/input pairs and the
+    // submit button. 25rem (400px) keeps the form column narrow
+    // enough to read as "compact sign-in" rather than data entry.
     &__form {
       width: 100%;
       max-width: 25rem;
-      background-color: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      padding: var(--space-5);
       display: flex;
       flex-direction: column;
     }
 
-    // Field labels. Same as StoreForm's form labels — xs uppercase
-    // bold ink. The small gap to the input below is handled via
-    // margin on the input, not flex gap, because the form card
-    // doesn't use a flex gap.
+    // Field labels. Figma uses `header/small` (14px semibold) for
+    // form labels — dropped the uppercase + xs treatment in favour
+    // of a quieter, denser pairing with the input below.
     &__label {
-      font-size: var(--text-xs);
-      font-weight: var(--weight-bold);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
       color: var(--color-ink);
       margin-bottom: var(--space-1);
     }
 
-    // Text inputs. Same pattern as StoreForm `&__field input`: 2px
-    // ink border on white, ink text, italic muted placeholder. No
-    // component-level `:focus-visible` override — the universal
-    // ring in @layer utilities handles focus.
+    // Text inputs. Figma's `border/input/default` is grey-500
+    // (#767676) at 1px — much softer than the previous structural
+    // 2px ink border. The 4px radius (`--radius-md`) matches Figma's
+    // `radius/small`. Placeholder italic stays — it signals "filler
+    // example" without the strong dark of body text.
     &__input {
       width: 100%;
       padding: var(--space-2) var(--space-3);
       min-height: var(--target-min);
-      border: var(--border-width-structural) solid var(--color-border-strong);
+      border: var(--border-width-hairline) solid var(--color-border-input);
+      border-radius: var(--radius-md);
       background-color: var(--color-surface-page);
       color: var(--color-ink);
       font-family: inherit;
       font-size: var(--text-base);
       margin-bottom: var(--space-4);
+
+      // Figma `border/input/hover` is grey-700; `press-active` is
+      // grey-900. Same progression as a button press affordance,
+      // applied to the input border.
+      &:hover:not(:disabled) {
+        border-color: var(--color-border-input-hover);
+      }
+
+      &:active:not(:disabled) {
+        border-color: var(--color-border-input-active);
+      }
+
+      &:disabled {
+        background-color: var(--color-surface-sunken);
+        color: var(--color-ink-muted);
+        cursor: not-allowed;
+      }
 
       &::placeholder {
         color: var(--color-ink-muted);
@@ -103,72 +181,69 @@
       }
     }
 
-    // Primary submit button. Yellow + ink border + elevation-1
-    // strip + gov.uk press affordance. Same exact pattern as every
-    // primary button in the system.
+    // Primary submit button. Solid blue fill, white label, flat
+    // (no border, no elevation). After the 2026-06-06 pivot the
+    // gov.uk ink-strip + translateY press affordance is gone —
+    // Figma buttons just darken their fill on hover/press.
     //
-    // Disabled state follows the delete-dialog / locate-me-button
-    // convention: sunken surface, ink-muted text, keep the 2px ink
-    // border (structural, don't grey it out), strip collapsed,
-    // cursor not-allowed.
+    // Font-weight is BOLD (700) not semibold (600) — important for
+    // AAA contrast: WCAG defines "Large text" as 18pt regular OR
+    // 14pt BOLD. Semibold (600) doesn't qualify, so the 7:1 Normal
+    // floor would apply, and white-on-blue-600 (5.43:1) fails.
+    // Bumping to bold makes the label Large text (4.5:1 floor),
+    // which the current contrast clears with headroom. See
+    // [[feedback_accessibility_first]].
+    //
+    // Disabled state follows the system convention: sunken
+    // surface, ink-muted label, cursor not-allowed.
     &__submit-btn {
       background-color: var(--color-primary);
       color: var(--color-primary-ink);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      box-shadow: var(--elevation-1);
+      border: 0;
+      border-radius: var(--radius-md);
       padding: var(--space-2) var(--space-5);
       min-height: var(--target-min);
-      font-size: var(--text-xs);
+      font-size: var(--text-sm);
       font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-tight);
-      text-transform: uppercase;
       margin-top: var(--space-2);
       cursor: pointer;
       transition:
-        transform var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard),
-        background-color var(--duration-fast) var(--ease-standard),
-        color var(--duration-fast) var(--ease-standard);
+        background-color var(--duration-fast) var(--ease-standard);
 
       &:hover:not(:disabled) {
         background-color: var(--color-primary-hover);
       }
 
       &:active:not(:disabled) {
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
+        background-color: var(--color-primary-active);
       }
 
       &:disabled {
         background-color: var(--color-surface-sunken);
         color: var(--color-ink-muted);
-        box-shadow: var(--elevation-0);
         cursor: not-allowed;
       }
     }
 
-    // Google OAuth provider button. Positioned ABOVE the form card
-    // as a "shortcut" to bypass the email/password flow. Styled as
-    // the secondary pattern (white + 2px ink border + elevation-1
-    // strip + press affordance) — quieter than the yellow primary
-    // because the primary action is still "fill out the form".
+    // Google OAuth provider button. Styled as the Figma SECONDARY
+    // button pattern: white fill, blue-800 text, 1px blue-800
+    // border. Same hover/press progression as the primary — but
+    // applied to the border + text instead of a background fill.
     //
-    // If you want the two buttons equally prominent (both yellow,
-    // à la cookie banner), swap `background-color` and `color` to
-    // match the submit-btn variant. Flagged in the summary.
+    // Kept (not deleted) per Pedro's call: Figma's visible auth
+    // variants don't show a Google button, but that's likely a
+    // Figma omission, not a product decision to drop OAuth.
     &__provider-btn {
       width: 100%;
       max-width: 25rem;
       background-color: var(--color-surface-page);
-      color: var(--color-ink);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      box-shadow: var(--elevation-1);
+      color: var(--color-link);
+      border: var(--border-width-hairline) solid var(--color-link);
+      border-radius: var(--radius-md);
       padding: var(--space-2) var(--space-5);
       min-height: var(--target-min);
-      font-size: var(--text-xs);
-      font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-tight);
-      text-transform: uppercase;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
       margin-bottom: var(--space-4);
       display: flex;
       align-items: center;
@@ -176,36 +251,39 @@
       gap: var(--space-2);
       cursor: pointer;
       transition:
-        transform var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard),
         background-color var(--duration-fast) var(--ease-standard);
 
       &:hover:not(:disabled) {
-        background-color: var(--color-surface-hover);
+        color: var(--color-link-hover);
+        border-color: var(--color-link-hover);
+        background-color: var(--color-interactive-hover-bg);
       }
 
       &:active:not(:disabled) {
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
+        background-color: var(--color-interactive-active-bg);
       }
 
       &:disabled {
-        background-color: var(--color-surface-sunken);
         color: var(--color-ink-muted);
-        box-shadow: var(--elevation-0);
+        border-color: var(--color-border);
         cursor: not-allowed;
       }
     }
 
-    // "or" divider with horizontal hairlines on either side of the
-    // text. Hairline (1px) instead of structural (2px) because the
-    // divider is a decorative "here's an alternative" separator,
-    // not a structural content boundary. gov.uk uses hairlines for
-    // this exact pattern.
+    // "or" divider with horizontal hairlines on either side. Kept
+    // because Stage 1 doesn't change the React component — until
+    // Stage 2 collapses the Google button into a multi-step flow,
+    // the OR divider still has a job to do.
     //
-    // `--color-border` is the hairline decorative token; it's a
-    // softer oklch 82% gray, distinct from `--color-border-strong`
-    // (ink) used on form fields and buttons.
+    // Visually softer than before — sentence case, regular weight,
+    // muted ink. Lets the form below dominate.
+    //
+    // Colour is `--color-ink-muted` (grey-700, 10.4:1 on white,
+    // AAA Normal) NOT `--color-ink-subtle` (grey-500, 4.54:1, AA
+    // only). The "or" label is small body text — Normal-text AAA
+    // floor (7:1) applies. See [[feedback_accessibility_first]].
     &__divider {
       width: 100%;
       max-width: 25rem;
@@ -213,10 +291,8 @@
       align-items: center;
       margin: var(--space-4) 0;
       color: var(--color-ink-muted);
-      font-size: var(--text-xs);
-      font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-wide);
-      text-transform: uppercase;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-regular);
 
       &::before,
       &::after {
@@ -227,48 +303,112 @@
       }
 
       span {
-        padding: 0 var(--space-4);
+        padding: 0 var(--space-3);
       }
     }
 
-    // Error message below the form. Using ink + bold weight, NOT
-    // red — same rationale as StoreForm `&__error`. `--color-danger`
-    // on white is AA but not AAA, violating the ADR's mandate. If
-    // you approve adding `--color-danger-ink` to tokens.css, both
-    // this and the StoreForm equivalent retrofit to red in one
-    // pass.
+    // Error message below the form. After the token migration,
+    // `--color-danger` resolves to red-800 (#991b1b), which gives
+    // ~8.2:1 against white — AAA Normal for text. So the prior
+    // workaround (ink + bold, waiting on `--color-danger-ink`) is
+    // unnecessary. Use red directly + semibold for emphasis.
+    //
+    // role="alert" lives in the React component; this rule only
+    // styles the visible text. Live-region semantics are unchanged.
     &__error {
-      color: var(--color-ink);
+      color: var(--color-danger);
       font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
+      font-weight: var(--weight-semibold);
       margin-top: var(--space-4);
+      max-width: 25rem;
+      width: 100%;
+      text-align: left;
     }
 
-    // "Already have an account?" line at the bottom. Muted wrapper
-    // with an ink+bold toggle button inline. The button uses the
-    // same underline-on-hover pattern as every text-link in the
-    // system (c-store__close, c-header__auth-link, c-footer a).
+    // Email display + "use different email" back-link. Shown above
+    // the password / register / google-only step bodies in the
+    // Stage 2 multi-step flow. Visually mirrors `&__toggle` (muted
+    // text + inline link button) but lives at the TOP of the form
+    // column instead of the bottom — it's a breadcrumb-ish summary
+    // of what the user just submitted, not a switch-mode prompt.
+    &__email-display {
+      width: 100%;
+      max-width: 25rem;
+      margin-bottom: var(--space-4);
+      font-size: var(--text-sm);
+      color: var(--color-ink-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    // "Use a different email" link button. Same visual treatment as
+    // `&__toggle-btn` (blue-800 semibold underlined) so every
+    // text-link in the auth flow lands at the same offset and
+    // thickness.
+    &__back-btn {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: var(--color-link);
+      font-size: inherit;
+      font-weight: var(--weight-semibold);
+      text-decoration: underline;
+      text-underline-offset: 0.25rem;
+      text-decoration-thickness: 2px;
+      cursor: pointer;
+      transition: color var(--duration-fast) var(--ease-standard);
+
+      &:hover {
+        color: var(--color-link-hover);
+      }
+    }
+
+    // Informational text used in the google-only step. Plain body
+    // copy at the form's max-width, sits between the email display
+    // and the Google button. Distinct from `&__error` (red) — this
+    // is guidance, not an error.
+    &__info {
+      width: 100%;
+      max-width: 25rem;
+      margin-bottom: var(--space-4);
+      font-size: var(--text-sm);
+      color: var(--color-ink-muted);
+      text-align: left;
+    }
+
+    // "Already have an account?" line at the bottom. Toggle button
+    // is now styled as a proper text link — blue-800 semibold,
+    // underlined — instead of the previous ink-bold-uppercase
+    // pseudo-button. The wrapper text stays muted.
+    //
+    // Stage 2 update: the toggle is removed from the React render
+    // (multi-step flow makes it redundant — users always start at
+    // the email step). The rule stays for now in case Stage 2 adds
+    // an explicit "back to sign-in" link in another step.
     &__toggle {
       margin-top: var(--space-5);
       font-size: var(--text-sm);
       color: var(--color-ink-muted);
+      text-align: center;
 
       &-btn {
         background: transparent;
         border: 0;
         padding: 0;
         margin-left: var(--space-1);
-        color: var(--color-ink);
+        color: var(--color-link);
         font-size: inherit;
-        font-weight: var(--weight-bold);
-        letter-spacing: var(--tracking-tight);
-        text-transform: uppercase;
+        font-weight: var(--weight-semibold);
+        text-decoration: underline;
+        text-underline-offset: 0.25rem;
+        text-decoration-thickness: 2px;
         cursor: pointer;
+        transition: color var(--duration-fast) var(--ease-standard);
 
         &:hover {
-          text-decoration: underline;
-          text-underline-offset: 0.25rem;
-          text-decoration-thickness: 2px;
+          color: var(--color-link-hover);
         }
       }
     }

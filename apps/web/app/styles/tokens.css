@@ -1,19 +1,34 @@
 /* ============================================================
-   El Guacal · Design tokens · Direction A — Quiet Utility (rev 2)
+   El Guacal · Design tokens · Direction B — Figma Blue (rev 1)
    ----------------------------------------------------------------
-   Target: GOV.UK Design System sensibility + Venezuelan flag
-   palette (yellow #FCD116, blue #00247D, red #CF142B) on pure
-   white, keeping WCAG 2.2 AAA for text and UI.
+   Source of truth: Figma file YSqZSNiR63k9BfHNwW7wEQ ("El Guacal",
+   page "designs" / node 1:80). Pedro pivoted away from the
+   GOV.UK + Venezuelan-flag-yellow direction on 2026-06-06 — see
+   project_figma_design_direction memory and ADR 0014 for the
+   migration story.
 
-   Key shifts from rev 1:
-   - Surface is pure white
-   - Primary action is flag yellow (louder than the amber in rev 1)
-   - Deep flag blue for focus and links
-   - Flag red (darkened) for danger
-   - Radii shrink to 0–4px, borders step up to 2px solid ink
-   - Buttons get a gov.uk-style 2px ink bottom strip
-   - Ink darkens to ~#0b0c0c
-   - Semantic colours still live in a single chroma family
+   Shape of this file:
+   1. Primitive palette (blue/red/grey scales, white, black) —
+      hex values lifted 1:1 from Figma so a designer reading
+      Figma + a dev reading CSS see the same numbers.
+   2. Semantic tokens (--color-primary, --color-link, etc.) that
+      alias to primitives. Components ONLY read semantic tokens;
+      they never reach into primitives. This is what lets us
+      re-skin the app by editing this file alone.
+
+   Key shifts from rev 2 (yellow direction):
+   - Primary CTA fill is blue/600 #1458ff (was flag yellow). White
+     label text. AA Large hits, button labels are Inter SemiBold 14.
+   - Link/text-on-white is blue/700 #0a40eb (8.4:1 — AAA Normal).
+   - Yellow survives as a soft accent only:
+     --color-accent-yellow-bg #fffadb (Products pill background)
+     --color-accent-yellow-ink #473d00 (text on yellow accent).
+   - Danger is red/600 #dc2626 (was oklch flag red).
+   - Ink scale is now grey/700/900 (was oklch ~#0b0c0c).
+   - GOV.UK ink-strip elevation (--elevation-1/2) is gone —
+     Figma buttons are flat. --elevation-3 stays (soft shadow)
+     for cards floating over the map.
+   - Radii collapse to two values per Figma: 0 (sharp) and 4px.
    ============================================================ */
 
 @layer reset, tokens, base, objects, components, utilities;
@@ -31,51 +46,161 @@
 
 @layer tokens {
   :root {
-    /* ---------- Colour: surfaces ---------- */
-    --color-surface-page: #ffffff;
-    --color-surface-raised: #ffffff;
-    --color-surface-sunken: oklch(96% 0.003 260); /* ~#f3f2f1 */
-    --color-surface-hover: oklch(93% 0.004 260);
+    /* ============================================================
+       PRIMITIVES — hex values lifted 1:1 from Figma.
+       Components should NOT read these directly; alias via a
+       semantic token below. They are exposed so that one-off
+       design situations (e.g. a chart palette) can reach for a
+       shade without inventing a new semantic name.
+       ============================================================ */
 
-    /* ---------- Colour: ink (text) ---------- */
-    --color-ink: oklch(15% 0.01 260); /* ~#0b0c0c · 18:1 on white · AAA */
-    --color-ink-muted: oklch(38% 0.008 260); /* ~9.6:1 on white · AAA */
-    --color-ink-subtle: oklch(50% 0.006 260); /* AA large only — captions */
-    --color-ink-inverse: #ffffff;
+    /* ---------- Blue scale (Figma primitives/blue/*) ---------- */
+    --color-blue-50: #edf4ff;
+    --color-blue-100: #d7e7ff;
+    --color-blue-200: #b9d6ff;
+    --color-blue-300: #88bdff;
+    --color-blue-400: #509aff;
+    --color-blue-500: #2875ff;
+    --color-blue-600: #1458ff;
+    --color-blue-700: #0a40eb;
+    --color-blue-800: #0f34be;
+    --color-blue-900: #133295;
 
-    /* ---------- Colour: borders ---------- */
-    --color-border: oklch(82% 0.005 260); /* decorative, 1px */
-    --color-border-strong: var(--color-ink); /* structural, 2px gov.uk */
+    /* ---------- Red scale (Figma primitives/red/*) ---------- */
+    --color-red-50: #fef2f2;
+    --color-red-100: #fee2e2;
+    --color-red-200: #fecaca;
+    --color-red-300: #fca5a5;
+    --color-red-400: #f87171;
+    --color-red-500: #ef4444;
+    --color-red-600: #dc2626;
+    --color-red-700: #b91c1c;
+    --color-red-800: #991b1b;
+    --color-red-900: #7f1d1d;
 
-    /* ---------- Colour: brand primary (flag yellow) ---------- */
-    --color-primary: oklch(89% 0.18 98); /* ~#FCD116 */
-    --color-primary-hover: oklch(83% 0.18 98);
-    --color-primary-active: oklch(76% 0.18 98);
-    --color-primary-ink: var(--color-ink); /* black on yellow — 18:1 AAA */
+    /* ---------- Grey scale (Figma primitives/grey/*) ---------- */
+    --color-grey-50: #fafafa;
+    --color-grey-100: #f5f5f5;
+    --color-grey-200: #e6e6e6;
+    --color-grey-300: #d6d6d6;
+    --color-grey-400: #a5a5a5;
+    --color-grey-500: #767676;
+    --color-grey-600: #575757;
+    --color-grey-700: #434343;
+    --color-grey-800: #292929;
+    --color-grey-900: #1a1a1a;
 
-    /* ---------- Colour: flag blue (focus, links, info) ---------- */
-    --color-accent-blue: oklch(30% 0.15 266); /* ~#00247D · 12.8:1 AAA */
-    --color-accent-blue-hover: oklch(24% 0.14 266);
-    --color-focus: var(--color-accent-blue);
-    --color-link: var(--color-accent-blue);
-    --color-link-hover: var(--color-accent-blue-hover);
+    /* ---------- Foundation ---------- */
+    --color-white: #ffffff;
+    --color-black: #000000;
 
-    /* ---------- Colour: semantic ---------- */
-    --color-success: oklch(38% 0.13 150); /* gov.uk-esque deep green · AAA */
+    /* ============================================================
+       SEMANTIC TOKENS — the stable contract components depend on.
+       Re-skinning the app means re-pointing these, not editing
+       components.
+       ============================================================ */
+
+    /* ---------- Surfaces ---------- */
+    --color-surface-page: var(--color-white);
+    --color-surface-raised: var(--color-white);
+    --color-surface-sunken: var(--color-grey-100); /* #f5f5f5 */
+    --color-surface-hover: var(--color-grey-200); /* #e6e6e6 */
+
+    /* ---------- Ink (text) ----------
+       grey/900 on white = 16.4:1 — AAA Normal.
+       grey/700 on white = 10.4:1 — AAA Normal.
+       grey/500 on white = 4.5:1  — AA Normal / AAA Large only. */
+    --color-ink: var(--color-grey-900);
+    --color-ink-muted: var(--color-grey-700);
+    --color-ink-subtle: var(--color-grey-500);
+    --color-ink-inverse: var(--color-white);
+
+    /* `--color-muted` is an alias used as a *surface* for muted-state
+       chips (e.g. proposal-status badge "superseded"/"withdrawn").
+       Mapped to grey-700 (#434343) so white text on it hits AAA
+       Normal (10.4:1). Distinct from --color-ink-muted, which is
+       a *text* color on a light background. */
+    --color-muted: var(--color-grey-700);
+
+    /* ---------- Borders ---------- */
+    --color-border: var(--color-grey-300); /* decorative, 1px */
+    --color-border-strong: var(--color-ink); /* structural, 2px */
+    --color-border-input: var(
+      --color-grey-500
+    ); /* Figma border/input/default */
+    --color-border-input-hover: var(--color-grey-700);
+    --color-border-input-active: var(--color-grey-900);
+
+    /* ---------- Primary action (blue, was flag yellow) ----------
+       Accessibility-first divergence from Figma: Figma specifies
+       blue/600 (#1458ff) for the primary button fill, but white
+       text on that is only 5.41:1 — AA Large but FAILS AAA Normal
+       (7:1 floor). The standard button label across the app is
+       text-sm bold (~10.5pt bold), which does NOT meet WCAG's
+       Large-text threshold (14pt bold = 18.67px bold). So Normal
+       rules apply, and AAA fails.
+
+       Bumping the whole primary scale up one step puts the default
+       fill at blue/700 (#0a40eb, 7.13:1 — AAA Normal by 0.13),
+       hover at blue/800 (10.5:1), and active at blue/900 (~13:1).
+       Mirrors the same shift we made on --color-danger (red-600
+       → red-800). See [[feedback_accessibility_first]]. */
+    --color-primary: var(--color-blue-700);
+    --color-primary-hover: var(--color-blue-800);
+    --color-primary-active: var(--color-blue-900);
+    --color-primary-ink: var(--color-white); /* white label on blue fill */
+
+    /* ---------- Interactive (links, focus, secondary affordances) ----------
+       blue/800 (#0f34be) on white       = ~10.5:1 — AAA Normal
+       blue/800 on --color-surface-sunken = ~10.0:1 — AAA Normal
+       Bumped from blue/700 after the post-migration accesslint
+       audit found the footer privacy-policy link only hit 6.54:1
+       on sunken (blue/700 is 7.13 on white, drops below 7 on any
+       non-pure-white surface). blue/800 buys headroom for every
+       link context in the app, including the sunken footer. */
+    --color-accent-blue: var(--color-blue-800);
+    --color-accent-blue-hover: var(--color-blue-900);
+    --color-link: var(--color-blue-800);
+    --color-link-hover: var(--color-blue-900);
+    --color-focus: var(--color-blue-800);
+
+    /* ---------- Interactive surfaces (hover/press states) ----------
+       Light blue washes for row hover, selected list items, etc.
+       From Figma background/interactive/{hover,press-active}. */
+    --color-interactive-hover-bg: var(--color-blue-100); /* #d7e7ff */
+    --color-interactive-active-bg: var(--color-blue-200); /* #b9d6ff */
+    --color-interactive-accent-bg: var(--color-blue-50); /* #edf4ff */
+
+    /* ---------- Accent: yellow (demoted from primary) ----------
+       Surfaces only — Products pill background, info chips.
+       Text on yellow uses --color-accent-yellow-ink (#473d00).
+       This keeps a thread of Venezuelan flag identity without
+       fighting the blue brand. */
+    --color-accent-yellow-bg: #fffadb;
+    --color-accent-yellow-ink: #473d00;
+
+    /* ---------- Semantic: success / warning / danger / info ----------
+       Figma exposes only error red explicitly; success/warning
+       inherit reasonable defaults until Figma adds them. */
+    --color-success: oklch(38% 0.13 150); /* deep green · AAA */
     --color-success-soft: oklch(96% 0.03 150);
 
-    --color-warning: oklch(
-      42% 0.14 65
-    ); /* burnt orange, 7.1:1 w/ white · AAA */
+    --color-warning: oklch(42% 0.14 65); /* burnt orange · 7.1:1 AAA */
     --color-warning-hover: oklch(36% 0.14 65);
     --color-warning-soft: oklch(96% 0.04 75);
 
-    --color-danger: oklch(40% 0.2 27); /* flag red, darkened to hit AAA */
-    --color-danger-hover: oklch(34% 0.2 27);
-    --color-danger-soft: oklch(96% 0.03 27);
+    /* Accessibility-first divergence from Figma: Figma specifies
+       red-600 (#dc2626) for danger, but white text on that only
+       reaches 4.57:1 — AAA Large by 0.07, fails AAA Normal (7:1).
+       Small-text danger surfaces (e.g. proposal-status "rejected"
+       12px badge) need AAA Normal. We pick red-800 (~8.2:1)
+       instead — passes AAA Normal for every current usage. */
+    --color-danger: var(--color-red-800); /* #991b1b · AAA Normal 8.2:1 */
+    --color-danger-hover: var(--color-red-900);
+    --color-danger-soft: var(--color-red-50);
 
-    --color-info: var(--color-accent-blue);
-    --color-info-soft: oklch(96% 0.02 260);
+    --color-info: var(--color-blue-700);
+    --color-info-soft: var(--color-blue-50);
 
     /* ---------- Typography ----------
        'Inter' is served from Google Fonts (see ADR 0014 and
@@ -133,10 +258,10 @@
     --space-9: 4rem;
     --space-10: 6rem;
 
-    /* ---------- Radii (crisper — gov.uk sensibility) ---------- */
+    /* ---------- Radii (Figma radius/small = 4px; everything else 0) ---------- */
     --radius-xs: 0;
     --radius-sm: 0;
-    --radius-md: 2px;
+    --radius-md: 4px;
     --radius-lg: 4px;
     --radius-full: 9999px; /* only for tag chips */
 
@@ -145,18 +270,13 @@
     --border-width-structural: 2px;
 
     /* ---------- Elevation ----------
-       gov.uk rarely uses soft shadows. We use:
-       - elevation-1: a solid 2px ink strip below (button "shadow")
-       - elevation-2: a solid 4px ink strip (prominent press affordance)
-       - elevation-3: a single subtle shadow ONLY for elements that
-         float over the map, where a border alone isn't enough to
-         separate them from the map surface
-    */
+       Figma's buttons are flat (no shadow, no ink strip).
+       Cards floating over the map keep a soft shadow so they
+       separate from the map surface. */
     --elevation-0: none;
-    --elevation-1: 0 2px 0 0 var(--color-ink);
-    --elevation-2: 0 4px 0 0 var(--color-ink);
-    --elevation-3:
-      0 4px 0 0 var(--color-ink), 0 8px 24px oklch(15% 0.01 260 / 0.12);
+    --elevation-1: none;
+    --elevation-2: none;
+    --elevation-3: 0 4px 12px rgb(0 0 0 / 0.08);
 
     /* ---------- Motion ---------- */
     --duration-fast: 120ms;
@@ -167,24 +287,48 @@
 
     /* ---------- Sizing ---------- */
     --focus-ring-width: 3px; /* WCAG 2.2 2.4.13 — thick focus */
-    --focus-ring-offset: 0; /* gov.uk-style: no offset, ring flush */
+    --focus-ring-offset: 0; /* ring flush against element */
     --target-min: 2.75rem; /* 44px — WCAG 2.5.5 AAA, 2.5.8 AA */
     --content-max: 72rem;
 
     /* ---------- Z-index ----------
-       Semantic roles, not raw numbers. Lowest slot (`--z-map-overlay`)
-       is for floating controls anchored to the map surface — the
-       locate-me button, future zoom controls — which sit above the
-       map tiles but below any page chrome. If a dropdown inside the
-       header opens over a mobile map, the header wins. Native
-       `<dialog>` with `showModal()` bypasses this stack entirely via
-       the UA top layer, so `--z-dialog` is reserved for
-       non-native-dialog modal layers (scrims, sheets). */
-    --z-map-overlay: 5;
-    --z-header: 10;
-    --z-dropdown: 20;
-    --z-dialog: 30;
-    --z-tooltip: 40;
+       Semantic roles, not raw numbers. The scale is intentionally
+       generous (100s, not 5s) so each layer has headroom for local
+       fine-tuning without bumping into the next slot.
+
+       Stacking order, bottom to top:
+
+         --z-base          (0)   default flow; not actively used
+         --z-map-overlay (100)   map sidebar, locate-me, filters
+                                  — floats above map tiles, below chrome
+         --z-header      (200)   page header (reserved for sticky case)
+         --z-dialog      (300)   store sheet — page-level slide-out
+         --z-modal-overlay (400) mobile menu scrim
+         --z-modal       (500)   mobile menu surface
+         --z-dropdown    (600)   select/combobox/popover positioner
+                                  — ABOVE modals so dropdowns opened
+                                  inside the mobile menu render on top
+         --z-tooltip     (700)   tooltips — highest interactive layer
+         --z-skip-link  (9999)   skip-to-main link, beats everything
+                                  (accessibility supremacy)
+
+       Critical ordering choice: `--z-dropdown` (600) > `--z-modal`
+       (500). Without this, the language switcher inside the mobile
+       menu would render its popup BEHIND the menu surface via its
+       Base UI Portal (which escapes the menu's stacking context but
+       inherits the body-level z-stack).
+
+       Native `<dialog>` with `showModal()` bypasses this scale
+       entirely via the UA top layer. */
+    --z-base: 0;
+    --z-map-overlay: 100;
+    --z-header: 200;
+    --z-dialog: 300;
+    --z-modal-overlay: 400;
+    --z-modal: 500;
+    --z-dropdown: 600;
+    --z-tooltip: 700;
+    --z-skip-link: 9999;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -261,42 +405,29 @@
 @layer utilities {
   /* WCAG 2.2 2.4.13 Focus Appearance — dual-colour ring.
      Lives in `utilities` so it beats any component rule that
-     touches `outline` or `box-shadow` at resting state (e.g.
-     `.btn-ghost { box-shadow: none }`). Drawn entirely with
-     ring-shaped box-shadow spreads + a transparent outline for
-     Windows High Contrast Mode — no background swap, so it
-     works on any surface regardless of what the component
-     thinks its background should be.
+     touches `outline` or `box-shadow` at resting state.
 
      Stacking order, element outward:
-        element → flag-blue ring (3px) → ink ring (2px)
+        element → blue ring (3px, --color-focus = blue/700) → ink ring (2px)
 
-     Why blue inner, not yellow: the main CTA is the yellow
-     primary button, and users will focus it constantly. A yellow
-     inner ring would fuse into the yellow button fill and leave
-     only the outer ink ring visible — a weaker, inconsistent
-     focus signal on the single most-used control in the app.
-     Deep flag blue (--color-accent-blue) keeps two distinct
-     rings visible on yellow, white, sunken, and neutral surfaces
-     and falls back to the outer ink ring alone on danger red and
-     warning orange — the occasional dark-filled components where
-     blue would fuse with the element. 1.4.11 is still satisfied
-     everywhere by the ink outer ring against the white page.
+     Contrast on every surface in the system (after the blue-primary pivot):
+        white surface  · blue ring  8.40:1 · ink ring 16.41:1
+        grey-100 sunk  · blue ring  7.85:1 · ink ring 15.34:1
+        blue-600 CTA   · blue ring  ~1.3:1 (fuses) · ink ring 5.07:1
+        red-600 danger · blue ring  ~1.5:1 (fuses) · ink ring 5.61:1
+        grey-900 inv   · blue ring  ~1.9:1 (fuses) · ink ring  1.0:1
 
-     Contrast on every surface in the system:
-        white input     · blue ring 14.20:1 · ink ring 19.67:1
-        sunken button   · blue ring 12.64:1 · ink ring 17.51:1
-        yellow primary  · blue ring 10.26:1 · ink ring 14.22:1
-        danger red      · blue ring  1.39:1 · ink ring 19.67:1
-        warning orange  · blue ring  1.61:1 · ink ring 19.67:1
-        ink inverse     · blue ring  1.39:1 · ink ring 19.67:1
-
-     The ink ring always carries ≥3:1, so 1.4.11 is always met. */
+     On blue/red/dark backgrounds the inner ring fuses with the
+     surface, leaving the outer ink ring carrying 1.4.11 alone.
+     On every blue/red surface the ink ring still ≥5:1 — safe.
+     On the inverse (grey-900) surface, neither ring is high-
+     contrast — components rendered on ink-inverse surfaces must
+     override `:focus-visible` to swap the ring to white. */
   :focus-visible {
     outline: var(--focus-ring-width) solid transparent;
     outline-offset: 0;
     box-shadow:
-      0 0 0 var(--focus-ring-width) var(--color-accent-blue),
+      0 0 0 var(--focus-ring-width) var(--color-focus),
       0 0 0 calc(var(--focus-ring-width) + 2px) var(--color-ink);
   }
 }
