@@ -25,7 +25,12 @@ After adding or changing these, restart the server.
 ## 1. Open the playground
 
 - **Local:** http://localhost:8080/graphql
-- **Production:** https://el-guacal-api-<hash>.run.app/graphql
+- **Production:** https://el-guacal-api-2m7hvbqwdq-nw.a.run.app/graphql
+
+  > Note the `.a.run.app` suffix (not `.run.app`) and the full `2m7hvbqwdq-nw`
+  > segment. Dropping either gives an invalid hostname and Firefox rejects it
+  > with `SSL_ERROR_BAD_CERT_DOMAIN`. This auto-generated URL will be replaced
+  > once a custom domain is mapped.
 
 ## 2. Get your Firebase token
 
