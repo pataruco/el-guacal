@@ -5,6 +5,7 @@ import JsonLd from '@/components/json-ld';
 import Page from '@/components/page';
 import type { ContentLocale } from '@/i18n';
 import i18n from '@/i18n/config';
+import { resolveMetaLocale } from '@/i18n/locale';
 import { markdownToHtml, parseFrontmatter } from '@/utils/markdown';
 import { getSeoMeta } from '@/utils/seo';
 
@@ -23,12 +24,12 @@ function getAboutContent(locale: ContentLocale) {
 }
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.about.description', { lng: locale }),
-    locale,
-    path: `/${locale}/about`,
-    title: i18n.t('seo.about.title', { lng: locale }),
+    description: i18n.t('seo.about.description', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/about`,
+    title: i18n.t('seo.about.title', { lng: i18nLng }),
   });
 };
 

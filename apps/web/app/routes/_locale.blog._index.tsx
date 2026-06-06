@@ -5,16 +5,17 @@ import JsonLd from '@/components/json-ld';
 import Page from '@/components/page';
 import type { ContentLocale } from '@/i18n';
 import i18n from '@/i18n/config';
+import { resolveMetaLocale } from '@/i18n/locale';
 import { getBlogPostList } from '@/utils/blog';
 import { getSeoMeta } from '@/utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.blog.description', { lng: locale }),
-    locale,
-    path: `/${locale}/blog`,
-    title: i18n.t('seo.blog.title', { lng: locale }),
+    description: i18n.t('seo.blog.description', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/blog`,
+    title: i18n.t('seo.blog.title', { lng: i18nLng }),
   });
 };
 

@@ -1,12 +1,12 @@
 ---
 title: Hola Mundo
 date: 2026-04-03
-excerpt: Bienvenidos al blog de El Guacal. Aquí compartimos novedades sobre el proyecto y la comunidad venezolana en el Reino Unido.
+excerpt: Bienvenidos al blog de El Guacal. Aquí compartimos novedades sobre el proyecto y la comunidad venezolana alrededor del mundo.
 ---
 
 ## Bienvenidos a El Guacal
 
-Este es el primer post del blog de El Guacal. Creamos este proyecto para ayudar a la diáspora venezolana en el Reino Unido a encontrar los productos que extrañan de casa.
+Este es el primer post del blog de El Guacal. Creamos este proyecto para ayudar a la diáspora venezolana — donde sea que estés en el mundo — a encontrar los productos que extrañas de casa.
 
 ## Próximos pasos
 

@@ -10,6 +10,7 @@ import SearchBar from '../components/search-bar';
 import SearchResults from '../components/search-results';
 import StoreComponent from '../components/store';
 import i18n from '../i18n/config';
+import { resolveMetaLocale } from '../i18n/locale';
 import { selectMap, setSelectedProductIds } from '../store/features/map/slice';
 import { selectStoreState } from '../store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -17,12 +18,12 @@ import { getSeoMeta } from '../utils/seo';
 import styles from './index.module.scss';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.home.description', { lng: locale }),
-    locale,
-    path: `/${locale}`,
-    title: i18n.t('seo.home.title', { lng: locale }),
+    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}`,
+    title: i18n.t('seo.home.title', { lng: i18nLng }),
   });
 };
 

@@ -131,9 +131,18 @@
           background-color var(--duration-fast) var(--ease-standard),
           color var(--duration-fast) var(--ease-standard);
 
+        // Hover/active use --color-link-hover (blue-900), not
+        // --color-link (blue-800). Verified contrast against
+        // blue-100 hover bg = 8.74:1 (AAA Normal); against blue-200
+        // active bg = 7.37:1 (AAA Normal, threshold). The previous
+        // pattern (--color-link on blue-100) only hit 7.43:1 — passes
+        // AAA on paper but with zero headroom for rendering
+        // variance. Same hover-darkening pattern as .c-header__
+        // auth-link and .c-header__logout-btn — keeps secondary
+        // interactive elements consistent.
         &:hover {
           background-color: var(--color-interactive-hover-bg);
-          color: var(--color-link);
+          color: var(--color-link-hover);
         }
 
         &:active {
@@ -148,7 +157,8 @@
         // (footer privacy, store suggest-edit, auth toggle), so
         // "this is a link" reads consistent across the app.
         // Hover does NOT add a background tint when active —
-        // you're already on this page.
+        // you're already on this page. Link colour stays at
+        // --color-link (blue-800 on white = 9.31:1 AAA Normal).
         &--active {
           color: var(--color-link);
           text-decoration: underline;
@@ -165,10 +175,13 @@
       }
     }
 
-    // Hamburger — minimal blue icon button. No 2px ink border, no
-    // elevation strip. Figma's mobile header just shows the ☰
-    // glyph in primary blue. Padding keeps the tap target ≥ 44px
-    // WCAG 2.5.5.
+    // Hamburger — minimal blue text button. Figma's mobile header
+    // just shows the "Menu" label in primary blue. Padding keeps
+    // the tap target ≥ 44px WCAG 2.5.5. On hover the label shifts
+    // to --color-link-hover (blue-900) so it clears AAA Normal on
+    // the blue-100 hover surface with headroom (8.74:1 vs 7.43:1
+    // if we kept blue-800). The transition now covers both
+    // colour and background-color.
     &__hamburger {
       display: inline-flex;
       align-items: center;
@@ -182,7 +195,9 @@
       font-size: var(--text-lg);
       color: var(--color-link);
       border-radius: var(--radius-md);
-      transition: background-color var(--duration-fast) var(--ease-standard);
+      transition:
+        background-color var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard);
 
       @media (min-width: 768px) {
         display: none;
@@ -190,6 +205,7 @@
 
       &:hover {
         background-color: var(--color-interactive-hover-bg);
+        color: var(--color-link-hover);
       }
     }
 
@@ -250,9 +266,11 @@
         margin-bottom: var(--space-5);
       }
 
-      // Mobile menu close. Same minimal blue-icon treatment as the
+      // Mobile menu close. Same minimal blue-text treatment as the
       // hamburger — they're the open/close pair, should look like
-      // mirrored states of the same control.
+      // mirrored states of the same control. Same AAA hover
+      // colour shift (--color-link → --color-link-hover) as the
+      // hamburger and the desktop nav links.
       &-close {
         background: transparent;
         border: 0;
@@ -264,10 +282,13 @@
         font-weight: var(--weight-semibold);
         color: var(--color-link);
         border-radius: var(--radius-md);
-        transition: background-color var(--duration-fast) var(--ease-standard);
+        transition:
+          background-color var(--duration-fast) var(--ease-standard),
+          color var(--duration-fast) var(--ease-standard);
 
         &:hover {
           background-color: var(--color-interactive-hover-bg);
+          color: var(--color-link-hover);
         }
       }
 
@@ -285,7 +306,11 @@
 
       // Mobile nav links — sentence case, semibold. Matches the
       // desktop nav state pattern (hover → soft blue background +
-      // blue text, active → darker tint).
+      // dark-blue text). Hover/active use --color-link-hover
+      // (blue-900) rather than --color-link (blue-800) so the
+      // text on blue-100/200 surfaces clears AAA Normal with
+      // headroom — see the desktop nav-link comment for the
+      // contrast math.
       &-link {
         font-size: var(--text-base);
         font-weight: var(--weight-semibold);
@@ -304,7 +329,7 @@
 
         &:hover {
           background-color: var(--color-interactive-hover-bg);
-          color: var(--color-link);
+          color: var(--color-link-hover);
         }
 
         &:active {
@@ -356,6 +381,14 @@
     // later).
     &__add-location {
       display: none;
+      // Inner focus ring becomes white so it has 7.13:1 contrast
+      // against the blue-700 button fill (default blue-on-blue
+      // fuses at 1.31:1, failing WCAG 2.4.13). Outer ink ring
+      // keeps carrying the page-side contrast against white
+      // (17.40:1). See tokens.css `:focus-visible` for the
+      // audit numbers + which other primary-fill buttons need
+      // the same override.
+      --focus-ring-color: var(--color-surface-page);
 
       @media (min-width: 768px) {
         display: inline-flex;

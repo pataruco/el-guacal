@@ -28,6 +28,11 @@
       align-items: center;
     }
 
+    ul {
+      display: flex;
+      column-gap: var(--space-4);
+    }
+
     a {
       color: var(--color-link);
       font-weight: var(--weight-semibold);

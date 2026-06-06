@@ -1,105 +1,131 @@
-// Cookie banner — restyled to Figma direction. Slim banner that
-// sits above the page chrome with two equally-weighted consent
-// buttons. The "equal prominence" rule for cookie consent
-// (ICO guidance + EDPB 03/2022 dark-patterns guidelines) is
-// preserved: Accept and Reject use the same visual treatment.
-// Under the new Figma direction both are styled as Figma's
-// "secondary" outlined button (was solid primary for both under
-// the gov.uk direction) — the lower visual weight on a banner
-// that the user is being asked to dismiss reads as "we're not
-// pushing you toward Accept" without sacrificing the
-// equal-prominence requirement.
+// Cookie banner — Figma-direction restyle (2026-06-06 pivot).
+// Source of truth: Figma `Button` component at node 107:2106
+// (file YSqZSNiR63k9BfHNwW7wEQ). Button shape uses
+// --radius-md (4px) per Figma's `radius/small`. Primary = solid
+// blue fill + white label. Secondary = white fill + blue border
+// + blue label. Tertiary = bare blue text. Padding 8px/12px.
+//
+// Button hierarchy: Pedro chose "Hierarchy — Accept primary" on
+// 2026-06-06 (resolves parked decision #4). Accept = system
+// primary CTA (mirrors `.c-header__add-location`). Reject =
+// system secondary outlined (mirrors `.c-header__auth-link`).
+// Reject sits before Accept in DOM + visual order — the small
+// remaining concession to ICO/EDPB equal-prominence guidance
+// now that the buttons differ in weight.
 //
 // Wrapped in `@layer components` so the universal :focus-visible
-// rule in @layer utilities beats any box-shadow declarations.
+// rule in `@layer utilities` (tokens.css) wins on focus.
 @layer components {
   .c-cookie-banner {
     width: 100%;
-    padding: 0 var(--space-5);
+    padding: var(--space-4) var(--space-5);
     background-color: var(--color-surface-page);
-    // Hairline bottom border + soft shadow (was 2px ink border
-    // + --elevation-2 ink strip). Banner reads as "lifted off the
-    // page" without the heavy ink boundary.
     border-bottom: var(--border-width-hairline) solid var(--color-border);
+    // Soft elevation gives the banner its lifted-from-page
+    // demarcation without a heavy ink border or a tinted surface
+    // (the prior blue-50 tint failed WCAG 1.4.11 against soft-blue
+    // button fills).
     box-shadow: var(--elevation-3);
 
     &__container {
-      width: 100%;
-      padding: var(--space-4) 0;
+      max-width: 70ch;
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
-
-      @media (min-width: 768px) {
-        padding: var(--space-4) 0;
-        flex-direction: row;
-        align-items: center;
-        gap: var(--space-5);
-      }
     }
 
-    &__content {
-      max-width: 60ch;
-      flex: 1;
-
-      & h2 {
-        margin-block-end: var(--space-1);
-      }
-    }
-
+    // Title — Figma `header/large` style: Inter SemiBold 24/30.
+    // Matches the system's blog/about h2 (--text-2xl + SemiBold)
+    // and the header wordmark's tonal anchor (blue-900). SemiBold
+    // not Bold so the banner heading shares the typographic
+    // vocabulary used by every other heading in the app.
     &__title {
-      font-size: var(--text-base);
+      font-family: var(--font-sans);
+      font-size: var(--text-2xl);
       font-weight: var(--weight-semibold);
-      color: var(--color-ink);
+      color: var(--color-blue-900);
       line-height: var(--leading-snug);
+      margin: 0;
     }
 
+    // Body — Figma `link/medium` size (14/20) for compact banner
+    // copy. Regular weight keeps long-form sentences readable;
+    // SemiBold here would compete with the title for hierarchy.
     &__body {
+      font-family: var(--font-sans);
       font-size: var(--text-sm);
-      color: var(--color-ink-muted);
+      font-weight: var(--weight-regular);
+      color: var(--color-ink);
       line-height: var(--leading-normal);
+      margin: 0;
     }
 
+    // Inline privacy-policy link — matches the system-wide link
+    // pattern shared by the footer link, blog/about inline prose
+    // links, and the header active-nav indicator: blue-link
+    // colour, SemiBold, 2px-thick underline at 0.25rem offset.
+    // The footer Privacy policy link still renders elsewhere on
+    // the page; this is an additional contextual link inside the
+    // consent copy.
+    &__link {
+      color: var(--color-link);
+      font-weight: var(--weight-semibold);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.25rem;
+      transition: color var(--duration-fast) var(--ease-standard);
+
+      &:hover {
+        color: var(--color-link-hover);
+      }
+    }
+
+    // Actions stack below the paragraph (reference layout) and
+    // left-align. Reject sits before Accept in DOM + visual order.
     &__actions {
       display: flex;
       flex-direction: row;
       gap: var(--space-3);
       padding: 0;
-      margin: 0;
+      margin: var(--space-2) 0 0 0;
       list-style: none;
-      flex-shrink: 0;
 
-      @media (max-width: 767px) {
-        width: 100%;
+      & li {
+        list-style: none;
       }
     }
 
-    // Shared button base — blue-outlined secondary button pattern.
-    // Both Accept and Reject use this treatment to keep the
-    // equal-prominence requirement intact. Matches the auth page's
-    // Google provider button and the header's "Sign in / Register"
-    // — visual coherence across the system's secondary actions.
+    // Shared button base — Figma `Button` component spec.
+    // 4px radius (radius/small), Inter SemiBold 14/20, 8px/12px
+    // padding. Per-variant fills/borders below. font-family is
+    // explicit (not just inherit-through-reset) so the banner
+    // never falls back to system-ui on slow-loading Inter.
     &__btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: var(--space-2) var(--space-4);
+      padding: var(--space-2) var(--space-3);
       min-height: var(--target-min);
+      border: 0;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      line-height: var(--leading-snug);
+      cursor: pointer;
+      transition:
+        background-color var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
+    }
+
+    // Reject — Figma secondary button. White fill, blue border +
+    // blue label. Mirrors `.c-header__auth-link` so the secondary
+    // pattern stays consistent system-wide.
+    &__btn--reject {
       background-color: var(--color-surface-page);
       color: var(--color-link);
       border: var(--border-width-hairline) solid var(--color-link);
-      border-radius: var(--radius-md);
-      font-size: var(--text-sm);
-      font-weight: var(--weight-semibold);
-      cursor: pointer;
-      transition:
-        color var(--duration-fast) var(--ease-standard),
-        border-color var(--duration-fast) var(--ease-standard),
-        background-color var(--duration-fast) var(--ease-standard);
-
-      @media (max-width: 767px) {
-        flex: 1;
-      }
 
       &:hover {
         color: var(--color-link-hover);
@@ -112,16 +138,21 @@
       }
     }
 
-    // Accept and Reject share the visual base above. Kept as
-    // separate selectors for semantic clarity in the markup and
-    // to leave room for future differentiation if the consent
-    // requirements change. Order swap (`order: 1`) on Accept
-    // intentionally preserved — DOM order stays Accept-first for
-    // screen readers, but visual order can be reversed via this
-    // single property if regulation ever requires Reject to be
-    // shown first.
+    // Accept — Figma primary button. Solid blue fill, white label,
+    // bold so the 14px label qualifies as WCAG Large for the AAA
+    // Large floor. Mirrors `.c-header__add-location`.
     &__btn--accept {
-      order: 1;
+      background-color: var(--color-primary);
+      color: var(--color-primary-ink);
+      font-weight: var(--weight-bold);
+
+      &:hover {
+        background-color: var(--color-primary-hover);
+      }
+
+      &:active {
+        background-color: var(--color-primary-active);
+      }
     }
   }
 }

@@ -108,14 +108,14 @@ query PendingProposals {
 
 ### What to look for
 
-| Field | Purpose |
-|---|---|
-| `kind` | `CREATE` = new store, `UPDATE` = edit, `DELETE` = removal |
-| `proposedName` / `proposedAddress` | What the contributor submitted |
-| `diffAgainstCurrent` | For updates: shows what changed vs. the current store |
-| `possibleDuplicates` | For creates: stores within 100m that might be the same |
-| `reason` | For deletions: why the contributor wants it removed |
-| `proposer.trustScore` | Higher = more previously approved proposals |
+| Field                              | Purpose                                                   |
+| ---------------------------------- | --------------------------------------------------------- |
+| `kind`                             | `CREATE` = new store, `UPDATE` = edit, `DELETE` = removal |
+| `proposedName` / `proposedAddress` | What the contributor submitted                            |
+| `diffAgainstCurrent`               | For updates: shows what changed vs. the current store     |
+| `possibleDuplicates`               | For creates: stores within 100m that might be the same    |
+| `reason`                           | For deletions: why the contributor wants it removed       |
+| `proposer.trustScore`              | Higher = more previously approved proposals               |
 
 ## 5. Approve a proposal
 
@@ -123,11 +123,13 @@ Copy the `proposalId` from the query above and run:
 
 ```graphql
 mutation ApproveProposal {
-  reviewStoreProposal(input: {
-    proposalId: "<paste-proposal-id-here>"
-    decision: APPROVE
-    note: "Verified, looks correct"
-  }) {
+  reviewStoreProposal(
+    input: {
+      proposalId: "<paste-proposal-id-here>"
+      decision: APPROVE
+      note: "Verified, looks correct"
+    }
+  ) {
     status
     targetStoreId
     reviewedAt
@@ -136,6 +138,7 @@ mutation ApproveProposal {
 ```
 
 What happens on approve:
+
 - **CREATE**: a new store is inserted and appears on the map.
 - **UPDATE**: the existing store is updated, its `version` is bumped.
 - **DELETE**: the store is removed from the database.
@@ -145,11 +148,13 @@ What happens on approve:
 
 ```graphql
 mutation RejectProposal {
-  reviewStoreProposal(input: {
-    proposalId: "<paste-proposal-id-here>"
-    decision: REJECT
-    note: "This store already exists as Bodega La Esquina"
-  }) {
+  reviewStoreProposal(
+    input: {
+      proposalId: "<paste-proposal-id-here>"
+      decision: REJECT
+      note: "This store already exists as Bodega La Esquina"
+    }
+  ) {
     status
     reviewedAt
   }
@@ -157,6 +162,7 @@ mutation RejectProposal {
 ```
 
 What happens on reject:
+
 - The proposal is marked `REJECTED`.
 - The contributor's `trustScore` decreases by 3.
 - The `note` is visible to the contributor on their "My store proposals" page.
@@ -224,11 +230,13 @@ To promote a user to moderator (admin-only):
 
 ```graphql
 mutation PromoteToModerator {
-  setUserRole(input: {
-    firebaseUid: "<firebase-uid>"
-    role: "moderator"
-    region: "caracas"
-  }) {
+  setUserRole(
+    input: {
+      firebaseUid: "<firebase-uid>"
+      role: "moderator"
+      region: "caracas"
+    }
+  ) {
     displayName
     role
     region
@@ -243,6 +251,7 @@ Valid roles: `contributor`, `moderator`, `admin`.
 ### "Unauthorized"
 
 The server couldn't verify your token. Check:
+
 1. `GCP_PROJECT_ID=` is in `apps/server/.env` and the server was restarted.
 2. Your token hasn't expired (tokens last 1 hour — grab a fresh one from the web app console).
 3. You used **Copy string contents** when copying the token, not a regular select-all which may truncate with `...`.
@@ -250,6 +259,7 @@ The server couldn't verify your token. Check:
 ### "Forbidden: moderator or admin required"
 
 Your token is valid but your account doesn't have the right role. Check:
+
 1. `SEED_ADMIN_FIREBASE_UID` in `apps/server/.env` matches your Firebase UID.
 2. The server was restarted after adding it (the seed runs once on startup).
 3. You logged into the web app at least once after the server restarted (the upsert runs on each authenticated request).

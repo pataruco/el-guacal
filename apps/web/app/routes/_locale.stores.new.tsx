@@ -5,17 +5,18 @@ import Page from '@/components/page';
 import StoreForm from '@/components/store/StoreForm';
 import { useSubmitCreateStoreProposalMutation } from '@/graphql/mutations/submit-create-proposal/index.generated';
 import i18n from '@/i18n/config';
+import { resolveMetaLocale } from '@/i18n/locale';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { getSeoMeta } from '@/utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.home.description', { lng: locale }),
-    locale,
-    path: `/${locale}/stores/new`,
-    title: i18n.t('seo.stores.new.title', { lng: locale }),
+    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/stores/new`,
+    title: i18n.t('seo.stores.new.title', { lng: i18nLng }),
   });
 };
 

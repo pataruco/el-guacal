@@ -41,3 +41,22 @@ export function detectLocale(): ContentLocale {
 export function getOtherLocale(current: ContentLocale): ContentLocale {
   return current === 'en' ? 'es' : 'en';
 }
+
+// Resolve a route's `params.locale` (URL value: 'en' | 'es') into
+// both the URL-form locale (for paths) and the i18n key (for
+// `i18n.t(..., { lng })` lookups and `og:locale`). Falls back to
+// 'en' for unknown / missing values. Centralised so the SEO
+// meta functions don't each have to re-derive the mapping —
+// the previous pattern (`lng: params.locale`) passed 'en' to
+// i18next which has no 'en' bundle, only 'en-GB', so titles
+// and descriptions silently fell back to the English defaults
+// on every locale (including Spanish routes).
+export function resolveMetaLocale(paramLocale: string | undefined): {
+  contentLocale: ContentLocale;
+  i18nLng: Language;
+} {
+  const contentLocale: ContentLocale = isValidLocale(paramLocale ?? '')
+    ? (paramLocale as ContentLocale)
+    : 'en';
+  return { contentLocale, i18nLng: toI18nLocale(contentLocale) };
+}

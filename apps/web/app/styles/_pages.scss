@@ -180,22 +180,37 @@
     }
 
     // Primary button (used in the CTA card and any other inline
-    // CTA on a static page). Solid blue, white bold label, flat.
-    // Matches the system primary-button pattern (auth submit,
-    // header Add location).
+    // CTA on a static page). Solid blue, white SemiBold label,
+    // flat. Spec lifted directly from Figma `Button` component
+    // (node 107:2106 + iconTrailing variant 108:1347):
+    //
+    //   · radius/small (4px)
+    //   · spacing/2 (8px) vertical, spacing/3 (12px) horizontal
+    //   · 8px gap between label and trailing icon
+    //   · Inter SemiBold 14/20
+    //   · background/button/default (--color-primary), white label
+    //
+    // See [[reference_figma_button_component]] memo for the full
+    // token mapping. The header's `--add-location` and `--auth-link`
+    // still use the older 8px/16px Bold treatment; they predate
+    // this Figma alignment and should be migrated when next
+    // touched, not preemptively.
     &__btn {
       align-self: flex-start;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: var(--space-2);
       min-height: var(--target-min);
       background-color: var(--color-primary);
       color: var(--color-primary-ink);
       border: 0;
       border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-4);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-sans);
       font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
+      font-weight: var(--weight-semibold);
+      line-height: var(--leading-snug);
       text-decoration: none;
       cursor: pointer;
       transition: background-color var(--duration-fast) var(--ease-standard);
@@ -207,6 +222,15 @@
       &:active {
         background-color: var(--color-primary-active);
       }
+    }
+
+    // Trailing icon slot inside `&__btn`. Sized to Figma's 20px
+    // (size-[20px]) icon frame so the gap + alignment match the
+    // component without extra wrappers.
+    &__btn-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
     }
   }
 }
