@@ -63,11 +63,21 @@
     padding-right: 60%;
     background-color: var(--color-surface-page);
 
-    // Right-side image placeholder. Sits below the children in the
-    // stacking order (z-index 0 is the auto context; pseudo-element
-    // is painted as part of `.c-auth` itself). Background colour
-    // hints at the photo's blue palette; Stage 3 swaps to a real
-    // `background-image: url(...)` and removes the colour.
+    // Right-side image placeholder (Stage 3). The Figma design
+    // calls for a hero food photo here; until we have the asset,
+    // we paint a diagonal blue gradient so the surface reads as
+    // an intentional design choice, not a forgotten background.
+    //
+    // Direction: 135° from top-left to bottom-right.
+    // Stops: blue-100 (Figma `background/accent/blue`, very pale)
+    // → blue-300 (mid-light). Both come from the Figma primitive
+    // scale, so when the real photo lands the surrounding visual
+    // tone won't shift dramatically.
+    //
+    // When the asset arrives, replace the `linear-gradient(...)`
+    // value with `url('/path/to/auth-hero.jpg') center / cover
+    // no-repeat`. The position + sizing of this pseudo-element
+    // doesn't change.
     &::after {
       content: '';
       position: absolute;
@@ -75,7 +85,11 @@
       right: 0;
       width: 60%;
       height: 100%;
-      background-color: var(--color-blue-100);
+      background: linear-gradient(
+        135deg,
+        var(--color-blue-100) 0%,
+        var(--color-blue-300) 100%
+      );
     }
 
     // Mobile: drop the split layout. Image side hides; form flows

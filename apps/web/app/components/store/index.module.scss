@@ -17,11 +17,11 @@
   bottom: 0;
   left: 0;
   right: 0;
-  // FIXME-migration: waiting on map/marker/locate-me to move to the
-  // `--z-*` token scale before this becomes `var(--z-dialog)`. Until
-  // then, the raw literal keeps the store sheet above the
-  // locate-me-button (100) and the map layers.
-  z-index: 300;
+  // Store sheet sits in the `--z-dialog` slot (300) — a page-level
+  // slide-out, above map overlays (sidebar, locate-me at z-100) but
+  // below the mobile menu (z-500) and any dropdowns opened inside
+  // it (z-600). See tokens.css `--z-*` comment.
+  z-index: var(--z-dialog);
   width: 100%;
 }
 

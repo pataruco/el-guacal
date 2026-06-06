@@ -125,7 +125,9 @@
     /* ---------- Borders ---------- */
     --color-border: var(--color-grey-300); /* decorative, 1px */
     --color-border-strong: var(--color-ink); /* structural, 2px */
-    --color-border-input: var(--color-grey-500); /* Figma border/input/default */
+    --color-border-input: var(
+      --color-grey-500
+    ); /* Figma border/input/default */
     --color-border-input-hover: var(--color-grey-700);
     --color-border-input-active: var(--color-grey-900);
 
@@ -290,19 +292,43 @@
     --content-max: 72rem;
 
     /* ---------- Z-index ----------
-       Semantic roles, not raw numbers. Lowest slot (`--z-map-overlay`)
-       is for floating controls anchored to the map surface — the
-       locate-me button, future zoom controls — which sit above the
-       map tiles but below any page chrome. If a dropdown inside the
-       header opens over a mobile map, the header wins. Native
-       `<dialog>` with `showModal()` bypasses this stack entirely via
-       the UA top layer, so `--z-dialog` is reserved for
-       non-native-dialog modal layers (scrims, sheets). */
-    --z-map-overlay: 5;
-    --z-header: 10;
-    --z-dropdown: 20;
-    --z-dialog: 30;
-    --z-tooltip: 40;
+       Semantic roles, not raw numbers. The scale is intentionally
+       generous (100s, not 5s) so each layer has headroom for local
+       fine-tuning without bumping into the next slot.
+
+       Stacking order, bottom to top:
+
+         --z-base          (0)   default flow; not actively used
+         --z-map-overlay (100)   map sidebar, locate-me, filters
+                                  — floats above map tiles, below chrome
+         --z-header      (200)   page header (reserved for sticky case)
+         --z-dialog      (300)   store sheet — page-level slide-out
+         --z-modal-overlay (400) mobile menu scrim
+         --z-modal       (500)   mobile menu surface
+         --z-dropdown    (600)   select/combobox/popover positioner
+                                  — ABOVE modals so dropdowns opened
+                                  inside the mobile menu render on top
+         --z-tooltip     (700)   tooltips — highest interactive layer
+         --z-skip-link  (9999)   skip-to-main link, beats everything
+                                  (accessibility supremacy)
+
+       Critical ordering choice: `--z-dropdown` (600) > `--z-modal`
+       (500). Without this, the language switcher inside the mobile
+       menu would render its popup BEHIND the menu surface via its
+       Base UI Portal (which escapes the menu's stacking context but
+       inherits the body-level z-stack).
+
+       Native `<dialog>` with `showModal()` bypasses this scale
+       entirely via the UA top layer. */
+    --z-base: 0;
+    --z-map-overlay: 100;
+    --z-header: 200;
+    --z-dialog: 300;
+    --z-modal-overlay: 400;
+    --z-modal: 500;
+    --z-dropdown: 600;
+    --z-tooltip: 700;
+    --z-skip-link: 9999;
   }
 
   @media (prefers-reduced-motion: reduce) {

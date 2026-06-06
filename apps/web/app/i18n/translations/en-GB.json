@@ -91,7 +91,7 @@
   "search": {
     "filterByProducts": "Filter by products",
     "loading": "Loading search results",
-    "placeholder": "Search for a location",
+    "placeholder": "Search for a product or location",
     "productsSelected": "{{count}} products selected",
     "productsSelected_one": "1 product selected"
   },

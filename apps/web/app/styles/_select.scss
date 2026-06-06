@@ -264,12 +264,14 @@
     }
 
     // ---------------------------------------------------------------
-    // Positioner (z-index layer for Base UI Portal). Raw literal kept
-    // for now — see prior comment about the cross-component z-index
-    // sweep being a separate task.
+    // Positioner (z-index layer for Base UI Portal). `--z-dropdown`
+    // intentionally sits ABOVE `--z-modal` in the scale so that
+    // dropdowns opened from inside the mobile menu (e.g. the
+    // language switcher) render on top of the menu surface, not
+    // behind it. See tokens.css `--z-*` comment block.
     // ---------------------------------------------------------------
     &__positioner {
-      z-index: 400;
+      z-index: var(--z-dropdown);
     }
   }
 }

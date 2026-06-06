@@ -47,10 +47,10 @@
     &__sidebar {
       position: absolute;
       left: var(--space-4);
-      // Raw literal for now — same reason as store card and
-      // locate-me-button z-indices. A cross-component scale
-      // migration is a separate sweep.
-      z-index: 150;
+      // Sidebar floats above the map but below all page chrome,
+      // dialogs and modals. Tokenised as part of the z-scale sweep
+      // (see tokens.css `--z-*` comment).
+      z-index: var(--z-map-overlay);
       pointer-events: none;
       display: flex;
       flex-direction: column;
@@ -102,9 +102,12 @@
       position: relative;
       height: 100%;
       width: 100%;
-      // Raw literal — this `z-index: 1` sits below the sidebar
-      // (150) and locate-me-button (`--z-map-overlay: 5`). Part of
-      // the deferred z-scale sweep.
+      // Intentional LOCAL stacking within `.p-home`. The sidebar
+      // sibling uses `--z-map-overlay` (100); the map needs to sit
+      // below it but still create its own stacking context so the
+      // Google Maps iframe and overlays inside don't escape. `1`
+      // is the minimal value that does that — not part of the
+      // global `--z-*` scale.
       z-index: 1;
     }
   }
