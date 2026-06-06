@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.14.0](https://github.com/pataruco/el-guacal/compare/web-v1.13.0...web-v1.14.0) (2026-06-06)
+
+
+### Features
+
+* header with new style ([86a3da3](https://github.com/pataruco/el-guacal/commit/86a3da3a6e4abe7536ca6572b23ac68aa0c39290))
+* new style ([0ab5ecb](https://github.com/pataruco/el-guacal/commit/0ab5ecb2435baa5c8d40ae9b968eb45bbee040bd))
+* new style ([#149](https://github.com/pataruco/el-guacal/issues/149)) ([3856be0](https://github.com/pataruco/el-guacal/commit/3856be02c2b67e84d02f8b0ff4a0809a5aec3d6e))
+* new style ([#151](https://github.com/pataruco/el-guacal/issues/151)) ([b7b2e1f](https://github.com/pataruco/el-guacal/commit/b7b2e1f97d379e0b7588c24d04c72004a72a34b0))
+* revamp style ([fa8620f](https://github.com/pataruco/el-guacal/commit/fa8620f834cf598b7f0b679c394ef4fb3e63c389))
+
 ## [1.13.0](https://github.com/pataruco/el-guacal/compare/web-v1.12.0...web-v1.13.0) (2026-04-14)
 
 
