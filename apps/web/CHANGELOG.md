@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.15.0](https://github.com/pataruco/el-guacal/compare/web-v1.14.0...web-v1.15.0) (2026-06-06)
+
+
+### Features
+
+* launch ([21c10d6](https://github.com/pataruco/el-guacal/commit/21c10d68ba74c8409f2ed140cb6a7c1301faaf96))
+* launch ready ([#152](https://github.com/pataruco/el-guacal/issues/152)) ([978b589](https://github.com/pataruco/el-guacal/commit/978b5892752895878818e145009b80f4b7d9e952))
+* pre launch check ([5766677](https://github.com/pataruco/el-guacal/commit/5766677e6a0c722180d33dd075cb54bed26d2e93))
+
 ## [1.14.0](https://github.com/pataruco/el-guacal/compare/web-v1.13.0...web-v1.14.0) (2026-06-06)
 
 
