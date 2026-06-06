@@ -5,15 +5,6 @@
   aria-label="El Guacal"
 >
   <title>El Guacal</title>
-  <!--
-    Stacked-saucer logo lifted from Figma node 3:145 ("logo
-    placeholder") in file YSqZSNiR63k9BfHNwW7wEQ. Four paths in
-    blue-700 (#0a40eb, the resolved value of the primary token).
-    Mirrors the in-app header logo at
-    apps/web/app/components/header/index.tsx. Keep in sync.
-    Custom properties can't reach favicons rendered in browser
-    chrome, so the fill is hard-coded.
-  -->
   <path
     d="M38.5165 10.0101L16.8085 20.1923L7.25441 15.6471L38.5165 0.61869C40.2369 -0.206229 42.3489 -0.206229 44.0693 0.61869L74.2545 16.0509L64.2227 21L44.0693 10.0101C42.3489 9.18516 40.2369 9.18516 38.5165 10.0101Z"
     fill="#0a40eb"

@@ -22,7 +22,7 @@ import { auth } from './utils/firebase';
 // downstream SCSS module sees the tokens. See ADR 0014.
 import './styles/tokens.css';
 import './styles/index.scss';
-import { GoogleTag } from './components/google-tag-manager';
+import { GoogleTagBody, GoogleTagHead } from './components/google-tag-manager';
 
 export const meta: MetaFunction = () => {
   return [
@@ -57,7 +57,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang={i18n.language || ENGLISH}>
       <head>
-        <GoogleTag />
+        <GoogleTagHead />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -65,6 +65,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <GoogleTagBody />
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>

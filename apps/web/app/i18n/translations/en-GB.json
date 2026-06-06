@@ -21,14 +21,6 @@
     "signUp": "Sign up",
     "useDifferentEmail": "Use a different email"
   },
-  "cookieBanner": {
-    "accept": "Accept",
-    "ariaLabel": "Cookie consent",
-    "body": "We use essential cookies to improve your browsing experience on our website, analyse site traffic, and understand where our audience is coming from. To learn more, please read our",
-    "privacyLink": "privacy policy",
-    "reject": "Reject",
-    "title": "Cookies on El Guacal"
-  },
   "browse": {
     "findStoreTitle": "Find a store",
     "noResults": "Nothing here yet. Try zooming out or changing your product filter.",
@@ -36,8 +28,17 @@
     "resultsCount_other": "{{count}} results for \"{{query}}\""
   },
   "common": {
+    "backHome": "Back to El Guacal",
     "loading": "Loading...",
     "notFound": "Page not found"
+  },
+  "cookieBanner": {
+    "accept": "Accept",
+    "ariaLabel": "Cookie consent",
+    "body": "We use essential cookies to improve your browsing experience on our website, analyse site traffic, and understand where our audience is coming from. To learn more, please read our",
+    "privacyLink": "privacy policy",
+    "reject": "Reject",
+    "title": "Cookies on El Guacal"
   },
   "deleteDialog": {
     "cancel": "Cancel",
@@ -49,7 +50,7 @@
     "warning": "A moderator reviews every suggestion before the store is removed."
   },
   "footer": {
-    "email": "Email",
+    "email": "Email us",
     "privacyPolicy": "Privacy policy"
   },
   "map": {
@@ -142,15 +143,22 @@
       "description": "Find Venezuelan products near you, wherever you are in the world. A community-driven map of bodegas and stores that carry tastes of home.",
       "title": "El Guacal — Find Venezuelan products near you"
     },
+    "imageAlt": "El Guacal — find Venezuelan products near you",
     "mySubmissions": {
       "description": "Track your store suggestions and see when they're approved or rejected.",
       "title": "My store proposals — El Guacal"
     },
+    "privacyPolicy": {
+      "description": "How El Guacal collects, uses, and protects your data — and how to exercise your rights.",
+      "title": "Privacy policy — El Guacal"
+    },
     "stores": {
       "edit": {
+        "description": "Suggest changes to a store's name, address, or products.",
         "title": "Suggest an edit — El Guacal"
       },
       "new": {
+        "description": "Add a store stocking Venezuelan products to the community map.",
         "title": "Add a store — El Guacal"
       }
     }

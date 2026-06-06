@@ -1,48 +1,10 @@
-// Header — Stage A of the Figma reimplementation (see Figma
-// node 70:6705 "nav bar"). Stage A is CSS-only — no markup
-// changes. Typography, borders, button styles update to match
-// Figma; structural changes (integrated search bar, Add location
-// CTA, logo icon) land in Stages B-E.
-//
-// Style shifts vs the prior gov.uk-era Direction A header:
-//   1. Flat: drop --elevation-1 ink strip + 2px ink border-bottom.
-//      Use a 1px grey-300 hairline border. Figma headers don't
-//      hang off any edge — they float in document flow.
-//   2. Typography: drop UPPERCASE + tight tracking on logo, nav
-//      links, hamburger, and auth buttons. Sentence case
-//      everywhere. Logo is bold non-italic.
-//   3. Auth link + Logout: restyle as Figma "secondary button"
-//      pattern — white fill, blue-link border + text, 4px radius,
-//      no ink-strip elevation.
-//   4. Hamburger: minimal — blue icon button without the 2px ink
-//      border and elevation strip. Tap area preserved by padding.
-//   5. Mobile menu close + nav links: same flat treatment.
-//   6. Active-page indicator stays (border-bottom-color shift on
-//      `&--active`). Figma doesn't show an active variant, but
-//      losing the indicator removes a real usability cue —
-//      keeping it as a deliberate divergence.
-//
-// Wrapped in `@layer components` so the universal `:focus-visible`
-// rule in `@layer utilities` (tokens.css) can correctly beat any
-// `box-shadow` declaration inside this file on focus. Unlayered
-// rules otherwise win against every named layer, which silently
-// disables the dual-ring focus indicator.
 @layer components {
   .c-header {
     width: 100%;
     padding: var(--space-3) var(--space-5);
     background-color: var(--color-surface-page);
-    // Flat hairline bottom border (Figma `border/default` grey-300).
-    // Was 2px ink + box-shadow elevation strip in the prior
-    // gov.uk direction.
     border-bottom: var(--border-width-hairline) solid var(--color-border);
 
-    // Header content fills the viewport edge-to-edge per Figma
-    // (nav bar instances are full 1440px wide with no inner
-    // max-width cap). The page-gutter padding lives on the outer
-    // `.c-header` element (`var(--space-5)` left/right), so the
-    // logo sits flush-left and the action group flush-right at
-    // any viewport width.
     &__container {
       width: 100%;
       display: flex;
@@ -63,11 +25,6 @@
       align-items: center;
       gap: var(--space-2);
 
-      // Figma `header/large` style: Inter SemiBold 24/30, no
-      // italic, no uppercase, no tracking. The wordmark colour
-      // shifts from --color-ink to --color-blue-900 (Stage D) so
-      // the wordmark visually pairs with the icon's deepest layer
-      // — they read as one unit instead of an icon + black text.
       h1 {
         font-size: var(--text-2xl);
         font-weight: var(--weight-bold);
@@ -76,9 +33,6 @@
       }
     }
 
-    // Logo icon — exact Figma SVG (node 3:145). Square aspect
-    // ratio (viewBox 82×77 → nearly 1:1). Sized to pair with
-    // header/large 24px wordmark next to it.
     &__logo-icon {
       width: 28px;
       height: 26px;
@@ -103,17 +57,6 @@
         display: inline-block;
       }
 
-      // Inter SemiBold 14 sentence case (Figma `link/medium`).
-      // Three interactive states beyond the resting baseline:
-      //   · :hover         → soft blue tint (interactive-hover-bg)
-      //   · :active        → darker blue tint (interactive-active-bg)
-      //   · :focus-visible → universal dual-ring (utility layer in
-      //                       tokens.css)
-      //   · --active variant → current-page underline (blue,
-      //                          drawn via text-decoration so it
-      //                          sits directly under the text
-      //                          glyph rather than at the bottom
-      //                          of the 44px tap area)
       &-link {
         font-size: var(--text-sm);
         font-weight: var(--weight-semibold);
@@ -131,15 +74,6 @@
           background-color var(--duration-fast) var(--ease-standard),
           color var(--duration-fast) var(--ease-standard);
 
-        // Hover/active use --color-link-hover (blue-900), not
-        // --color-link (blue-800). Verified contrast against
-        // blue-100 hover bg = 8.74:1 (AAA Normal); against blue-200
-        // active bg = 7.37:1 (AAA Normal, threshold). The previous
-        // pattern (--color-link on blue-100) only hit 7.43:1 — passes
-        // AAA on paper but with zero headroom for rendering
-        // variance. Same hover-darkening pattern as .c-header__
-        // auth-link and .c-header__logout-btn — keeps secondary
-        // interactive elements consistent.
         &:hover {
           background-color: var(--color-interactive-hover-bg);
           color: var(--color-link-hover);
@@ -150,15 +84,6 @@
           color: var(--color-link-hover);
         }
 
-        // Current-page indicator. Underline drawn under the text
-        // glyph (text-decoration), not at the bottom of the
-        // 44px tap area (border-bottom would visibly detach).
-        // Same offset + thickness as every other system text link
-        // (footer privacy, store suggest-edit, auth toggle), so
-        // "this is a link" reads consistent across the app.
-        // Hover does NOT add a background tint when active —
-        // you're already on this page. Link colour stays at
-        // --color-link (blue-800 on white = 9.31:1 AAA Normal).
         &--active {
           color: var(--color-link);
           text-decoration: underline;
@@ -175,13 +100,6 @@
       }
     }
 
-    // Hamburger — minimal blue text button. Figma's mobile header
-    // just shows the "Menu" label in primary blue. Padding keeps
-    // the tap target ≥ 44px WCAG 2.5.5. On hover the label shifts
-    // to --color-link-hover (blue-900) so it clears AAA Normal on
-    // the blue-100 hover surface with headroom (8.74:1 vs 7.43:1
-    // if we kept blue-800). The transition now covers both
-    // colour and background-color.
     &__hamburger {
       display: inline-flex;
       align-items: center;
@@ -215,13 +133,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      // Scrim sits behind the mobile menu. Using the ink token at 50%
-      // keeps it aligned with the rest of the palette rather than
-      // reintroducing the old navy RGB literal.
       background: color-mix(in oklch, var(--color-ink) 50%, transparent);
-      // Scrim sits between page content (--z-map-overlay = 100) and
-      // the menu surface (--z-modal = 500). Tokenised in the z-scale
-      // sweep — see tokens.css `--z-*` comment.
       z-index: var(--z-modal-overlay);
       display: none;
       border: 0;
@@ -241,17 +153,10 @@
       max-width: 300px;
       height: 100vh;
       background: var(--color-surface-page);
-      // Menu surface sits above its own scrim (--z-modal-overlay)
-      // and above page-level dialogs (--z-dialog) like the store
-      // sheet, but BELOW dropdowns opened from inside it
-      // (--z-dropdown = 600). See tokens.css `--z-*` comment.
       z-index: var(--z-modal);
       display: flex;
       flex-direction: column;
       padding: var(--space-5);
-      // Soft elevation instead of the prior 2px ink border + 4px
-      // ink shadow combo. `--elevation-3` is the only non-none
-      // shadow we kept after the token migration.
       box-shadow: var(--elevation-3);
       transform: translateX(100%);
       transition: transform var(--duration-slow) var(--ease-emphasised);
@@ -266,11 +171,6 @@
         margin-bottom: var(--space-5);
       }
 
-      // Mobile menu close. Same minimal blue-text treatment as the
-      // hamburger — they're the open/close pair, should look like
-      // mirrored states of the same control. Same AAA hover
-      // colour shift (--color-link → --color-link-hover) as the
-      // hamburger and the desktop nav links.
       &-close {
         background: transparent;
         border: 0;
@@ -304,13 +204,6 @@
       flex-direction: column;
       gap: var(--space-4);
 
-      // Mobile nav links — sentence case, semibold. Matches the
-      // desktop nav state pattern (hover → soft blue background +
-      // dark-blue text). Hover/active use --color-link-hover
-      // (blue-900) rather than --color-link (blue-800) so the
-      // text on blue-100/200 surfaces clears AAA Normal with
-      // headroom — see the desktop nav-link comment for the
-      // contrast math.
       &-link {
         font-size: var(--text-base);
         font-weight: var(--weight-semibold);
@@ -345,13 +238,6 @@
       gap: var(--space-2);
     }
 
-    // Language selector — uses the shared `o-select` trigger styling
-    // (1px grey border, 4px radius, sentence case). The base o-select
-    // trigger renders with regular weight (designed for input
-    // contexts like search and filter), but in the HEADER context
-    // it's an action control sitting next to the Sign in/Register
-    // and Add location buttons — so we bump it to semibold to match
-    // the surrounding actions' visual weight.
     &__lang-selector {
       display: none;
 
@@ -368,26 +254,8 @@
       margin-top: var(--space-4);
     }
 
-    // "Add location" primary CTA (Stage C). Always visible on
-    // desktop in both authed and unauthed states (Figma). Links
-    // to /stores/new, which already redirects unauthed users to
-    // /auth — no extra gating logic needed in the header.
-    //
-    // Mirror of `.c-auth__submit-btn` styling — primary blue fill,
-    // white bold label, flat. Bold (not semibold) so the 14px
-    // label qualifies as WCAG Large for the AAA Large floor
-    // (white-on-blue-700 hits 7.13:1 anyway, but bold also
-    // gives us a safety margin if the token slides lighter
-    // later).
     &__add-location {
       display: none;
-      // Inner focus ring becomes white so it has 7.13:1 contrast
-      // against the blue-700 button fill (default blue-on-blue
-      // fuses at 1.31:1, failing WCAG 2.4.13). Outer ink ring
-      // keeps carrying the page-side contrast against white
-      // (17.40:1). See tokens.css `:focus-visible` for the
-      // audit numbers + which other primary-fill buttons need
-      // the same override.
       --focus-ring-color: var(--color-surface-page);
 
       @media (min-width: 768px) {
@@ -417,11 +285,6 @@
       }
     }
 
-    // Auth link (Sign in/Register) — Figma "secondary button"
-    // pattern: white fill, blue-link border + text, 4px radius.
-    // Same treatment as `.c-auth__provider-btn` for consistency
-    // across the system. Was a plain underlined link in the
-    // gov.uk direction.
     &__auth-link {
       display: none;
 
@@ -455,9 +318,6 @@
       }
     }
 
-    // Logout button — same secondary-button treatment as the
-    // auth link, so the authed and unauthed states look like
-    // siblings in the header.
     &__logout-btn {
       display: none;
 

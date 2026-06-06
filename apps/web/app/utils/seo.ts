@@ -5,6 +5,7 @@ export const BASE_URL = 'https://elguacal.com';
 export interface SeoMetaProps {
   description: string;
   image?: string;
+  imageAlt?: string;
   locale: string;
   path: string;
   title: string;
@@ -13,7 +14,8 @@ export interface SeoMetaProps {
 
 export function getSeoMeta({
   description,
-  image = '/og-image.png', // Placeholder as requested
+  image = '/og-image.png',
+  imageAlt = 'El Guacal — find Venezuelan products near you',
   locale,
   path,
   title,
@@ -29,19 +31,16 @@ export function getSeoMeta({
     { content: title, property: 'og:title' },
     { content: description, property: 'og:description' },
     { content: imageUrl, property: 'og:image' },
+    { content: '1200', property: 'og:image:width' },
+    { content: '630', property: 'og:image:height' },
+    { content: imageAlt, property: 'og:image:alt' },
     { content: type, property: 'og:type' },
     { content: 'summary_large_image', name: 'twitter:card' },
     { content: title, name: 'twitter:title' },
     { content: description, name: 'twitter:description' },
     { content: imageUrl, name: 'twitter:image' },
+    { content: imageAlt, name: 'twitter:image:alt' },
     { content: locale.replace('-', '_'), property: 'og:locale' },
-    // React Router 7's meta descriptor for arbitrary head tags
-    // expects attributes spread directly on the object alongside
-    // `tagName` — NOT nested under an `attributes` key. Passing
-    // `{ tagName: 'link', attributes: { href, rel } }` rendered as
-    // a literal `<link attributes="[object Object]">` (different
-    // stringification path on server vs client → hydration
-    // mismatch). See React Router docs / utils/seo.ts comment trail.
     {
       href: url,
       rel: 'canonical',

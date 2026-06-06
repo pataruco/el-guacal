@@ -13,7 +13,7 @@ export default {
       : [];
 
     const locales = ['en', 'es'];
-    const pages = ['', '/about', '/dataset', '/blog'];
+    const pages = ['', '/about', '/dataset', '/blog', '/privacy-policy'];
     const blogPages = slugs.map((s) => `/blog/${s}`);
 
     return [

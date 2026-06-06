@@ -21,6 +21,7 @@ export const meta: MetaFunction = ({ params }) => {
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
     description: i18n.t('seo.home.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}`,
     title: i18n.t('seo.home.title', { lng: i18nLng }),
@@ -67,21 +68,14 @@ export default function Home() {
     }
   }, [selectedProductIds, searchParams, setSearchParams]);
 
+  const { contentLocale, i18nLng } = resolveMetaLocale(locale);
   const jsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    description: t('seo.home.description'),
-    inLanguage: locale,
+    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    inLanguage: i18nLng,
     name: 'El Guacal',
-    potentialAction: {
-      '@type': 'SearchAction',
-      'query-input': 'required name=search_term_string',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `https://elguacal.com/${locale}?q={search_term_string}`,
-      },
-    },
-    url: 'https://elguacal.com',
+    url: `https://elguacal.com/${contentLocale}`,
   };
 
   return (

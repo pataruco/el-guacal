@@ -15,7 +15,8 @@ export const meta: MetaFunction = ({ params }) => {
   const { id } = params;
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    description: i18n.t('seo.stores.edit.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}/stores/${id}/edit`,
     title: i18n.t('seo.stores.edit.title', { lng: i18nLng }),

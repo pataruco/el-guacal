@@ -15,6 +15,7 @@ export const meta: MetaFunction = ({ params }) => {
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
     description: i18n.t('seo.mySubmissions.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}/my-store-proposals`,
     title: i18n.t('seo.mySubmissions.title', { lng: i18nLng }),

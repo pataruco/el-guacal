@@ -179,22 +179,6 @@
       }
     }
 
-    // Primary button (used in the CTA card and any other inline
-    // CTA on a static page). Solid blue, white SemiBold label,
-    // flat. Spec lifted directly from Figma `Button` component
-    // (node 107:2106 + iconTrailing variant 108:1347):
-    //
-    //   · radius/small (4px)
-    //   · spacing/2 (8px) vertical, spacing/3 (12px) horizontal
-    //   · 8px gap between label and trailing icon
-    //   · Inter SemiBold 14/20
-    //   · background/button/default (--color-primary), white label
-    //
-    // See [[reference_figma_button_component]] memo for the full
-    // token mapping. The header's `--add-location` and `--auth-link`
-    // still use the older 8px/16px Bold treatment; they predate
-    // this Figma alignment and should be migrated when next
-    // touched, not preemptively.
     &__btn {
       align-self: flex-start;
       display: inline-flex;
@@ -224,9 +208,6 @@
       }
     }
 
-    // Trailing icon slot inside `&__btn`. Sized to Figma's 20px
-    // (size-[20px]) icon frame so the gap + alignment match the
-    // component without extra wrappers.
     &__btn-icon {
       width: 20px;
       height: 20px;

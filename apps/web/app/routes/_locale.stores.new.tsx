@@ -13,7 +13,8 @@ import { getSeoMeta } from '@/utils/seo';
 export const meta: MetaFunction = ({ params }) => {
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    description: i18n.t('seo.stores.new.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}/stores/new`,
     title: i18n.t('seo.stores.new.title', { lng: i18nLng }),

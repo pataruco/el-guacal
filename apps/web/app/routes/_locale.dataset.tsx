@@ -10,6 +10,7 @@ export const meta: MetaFunction = ({ params }) => {
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
     description: i18n.t('seo.dataset.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}/dataset`,
     title: i18n.t('seo.dataset.title', { lng: i18nLng }),
@@ -18,13 +19,14 @@ export const meta: MetaFunction = ({ params }) => {
 
 export default function DatasetPage() {
   const { locale } = useParams<{ locale: string }>();
+  const { contentLocale, i18nLng } = resolveMetaLocale(locale);
   const today = new Date().toISOString().split('T')[0];
   const downloadUrl = `https://github.com/pataruco/el-guacal/releases/download/${encodeURI(`data-export@${today}`)}/el-guacal-db-${today}.zip`;
 
   const jsonLd: WithContext<Dataset> = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    description: i18n.t('pages.dataset.description'),
+    description: i18n.t('pages.dataset.description', { lng: i18nLng }),
     distribution: [
       {
         '@type': 'DataDownload',
@@ -32,9 +34,9 @@ export default function DatasetPage() {
         encodingFormat: 'application/zip',
       },
     ],
-    inLanguage: locale,
-    name: i18n.t('pages.dataset.title'),
-    url: `https://elguacal.com/${locale}/dataset`,
+    inLanguage: i18nLng,
+    name: i18n.t('pages.dataset.title', { lng: i18nLng }),
+    url: `https://elguacal.com/${contentLocale}/dataset`,
   };
 
   return (

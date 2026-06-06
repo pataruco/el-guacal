@@ -48,6 +48,7 @@ export const meta: MetaFunction = ({ params }) => {
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
     description: i18n.t('seo.auth.login.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}/auth`,
     title: i18n.t('seo.auth.login.title', { lng: i18nLng }),

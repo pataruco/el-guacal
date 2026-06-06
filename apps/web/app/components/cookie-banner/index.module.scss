@@ -1,30 +1,9 @@
-// Cookie banner — Figma-direction restyle (2026-06-06 pivot).
-// Source of truth: Figma `Button` component at node 107:2106
-// (file YSqZSNiR63k9BfHNwW7wEQ). Button shape uses
-// --radius-md (4px) per Figma's `radius/small`. Primary = solid
-// blue fill + white label. Secondary = white fill + blue border
-// + blue label. Tertiary = bare blue text. Padding 8px/12px.
-//
-// Button hierarchy: Pedro chose "Hierarchy — Accept primary" on
-// 2026-06-06 (resolves parked decision #4). Accept = system
-// primary CTA (mirrors `.c-header__add-location`). Reject =
-// system secondary outlined (mirrors `.c-header__auth-link`).
-// Reject sits before Accept in DOM + visual order — the small
-// remaining concession to ICO/EDPB equal-prominence guidance
-// now that the buttons differ in weight.
-//
-// Wrapped in `@layer components` so the universal :focus-visible
-// rule in `@layer utilities` (tokens.css) wins on focus.
 @layer components {
   .c-cookie-banner {
     width: 100%;
     padding: var(--space-4) var(--space-5);
     background-color: var(--color-surface-page);
     border-bottom: var(--border-width-hairline) solid var(--color-border);
-    // Soft elevation gives the banner its lifted-from-page
-    // demarcation without a heavy ink border or a tinted surface
-    // (the prior blue-50 tint failed WCAG 1.4.11 against soft-blue
-    // button fills).
     box-shadow: var(--elevation-3);
 
     &__container {
@@ -34,11 +13,6 @@
       gap: var(--space-3);
     }
 
-    // Title — Figma `header/large` style: Inter SemiBold 24/30.
-    // Matches the system's blog/about h2 (--text-2xl + SemiBold)
-    // and the header wordmark's tonal anchor (blue-900). SemiBold
-    // not Bold so the banner heading shares the typographic
-    // vocabulary used by every other heading in the app.
     &__title {
       font-family: var(--font-sans);
       font-size: var(--text-2xl);
@@ -48,9 +22,6 @@
       margin: 0;
     }
 
-    // Body — Figma `link/medium` size (14/20) for compact banner
-    // copy. Regular weight keeps long-form sentences readable;
-    // SemiBold here would compete with the title for hierarchy.
     &__body {
       font-family: var(--font-sans);
       font-size: var(--text-sm);
@@ -60,13 +31,6 @@
       margin: 0;
     }
 
-    // Inline privacy-policy link — matches the system-wide link
-    // pattern shared by the footer link, blog/about inline prose
-    // links, and the header active-nav indicator: blue-link
-    // colour, SemiBold, 2px-thick underline at 0.25rem offset.
-    // The footer Privacy policy link still renders elsewhere on
-    // the page; this is an additional contextual link inside the
-    // consent copy.
     &__link {
       color: var(--color-link);
       font-weight: var(--weight-semibold);
@@ -80,8 +44,6 @@
       }
     }
 
-    // Actions stack below the paragraph (reference layout) and
-    // left-align. Reject sits before Accept in DOM + visual order.
     &__actions {
       display: flex;
       flex-direction: row;
@@ -95,11 +57,6 @@
       }
     }
 
-    // Shared button base — Figma `Button` component spec.
-    // 4px radius (radius/small), Inter SemiBold 14/20, 8px/12px
-    // padding. Per-variant fills/borders below. font-family is
-    // explicit (not just inherit-through-reset) so the banner
-    // never falls back to system-ui on slow-loading Inter.
     &__btn {
       display: inline-flex;
       align-items: center;
@@ -119,9 +76,6 @@
         border-color var(--duration-fast) var(--ease-standard);
     }
 
-    // Reject — Figma secondary button. White fill, blue border +
-    // blue label. Mirrors `.c-header__auth-link` so the secondary
-    // pattern stays consistent system-wide.
     &__btn--reject {
       background-color: var(--color-surface-page);
       color: var(--color-link);
@@ -138,9 +92,6 @@
       }
     }
 
-    // Accept — Figma primary button. Solid blue fill, white label,
-    // bold so the 14px label qualifies as WCAG Large for the AAA
-    // Large floor. Mirrors `.c-header__add-location`.
     &__btn--accept {
       background-color: var(--color-primary);
       color: var(--color-primary-ink);

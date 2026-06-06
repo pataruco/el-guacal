@@ -27,6 +27,7 @@ export const meta: MetaFunction = ({ params }) => {
   const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
     description: i18n.t('seo.about.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
     locale: i18nLng,
     path: `/${contentLocale}/about`,
     title: i18n.t('seo.about.title', { lng: i18nLng }),
@@ -36,23 +37,24 @@ export const meta: MetaFunction = ({ params }) => {
 export default function About() {
   const { locale } = useParams<{ locale: string }>();
   const { t } = useTranslation();
-  const about = getAboutContent((locale as ContentLocale) ?? 'en');
-  const currentLocale = locale || 'en';
+  const { contentLocale, i18nLng } = resolveMetaLocale(locale);
+  const about = getAboutContent(contentLocale);
 
   if (!about) return null;
 
   const jsonLd: WithContext<AboutPage> = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
-    description: i18n.t('seo.about.description'),
-    inLanguage: locale,
+    description: i18n.t('seo.about.description', { lng: i18nLng }),
+    inLanguage: i18nLng,
     mainEntity: {
       '@type': 'Organization',
+      logo: 'https://elguacal.com/og-image.png',
       name: 'El Guacal',
       url: 'https://elguacal.com',
     },
     name: about.title,
-    url: `https://elguacal.com/${locale}/about`,
+    url: `https://elguacal.com/${contentLocale}/about`,
   };
 
   return (
@@ -64,16 +66,11 @@ export default function About() {
         dangerouslySetInnerHTML={{ __html: about.html }}
       />
 
-      {/* "Contribute to our dataset" CTA card (Figma section
-          77:11488). Bottom of the about page, prompts readers to
-          register and add locations. Hero panel uses the brand
-          logo on a solid blue surface — same pattern as the auth
-          page hero. */}
       <aside className="c-page__cta">
         <div className="c-page__cta-body">
           <h2>{t('about.ctaTitle')}</h2>
           <p>{t('about.ctaBody')}</p>
-          <Link to={`/${currentLocale}/stores/new`} className="c-page__btn">
+          <Link to={`/${contentLocale}/stores/new`} className="c-page__btn">
             {t('nav.addLocation')}
           </Link>
         </div>

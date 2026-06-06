@@ -21,14 +21,6 @@
     "signUp": "Registrarse",
     "useDifferentEmail": "Usar otro correo"
   },
-  "cookieBanner": {
-    "accept": "Aceptar",
-    "ariaLabel": "Consentimiento de cookies",
-    "body": "Usamos cookies esenciales para mejorar tu experiencia de navegación, analizar el tráfico del sitio y entender de dónde viene nuestra audiencia. Para saber más, lee nuestra",
-    "privacyLink": "política de privacidad",
-    "reject": "Rechazar",
-    "title": "Cookies en El Guacal"
-  },
   "browse": {
     "findStoreTitle": "Encuentra una tienda",
     "noResults": "Nada por aquí todavía. Aleja el mapa o cambia el filtro de productos.",
@@ -36,8 +28,17 @@
     "resultsCount_other": "{{count}} resultados para \"{{query}}\""
   },
   "common": {
+    "backHome": "Volver a El Guacal",
     "loading": "Cargando...",
     "notFound": "Página no encontrada"
+  },
+  "cookieBanner": {
+    "accept": "Aceptar",
+    "ariaLabel": "Consentimiento de cookies",
+    "body": "Usamos cookies esenciales para mejorar tu experiencia de navegación, analizar el tráfico del sitio y entender de dónde viene nuestra audiencia. Para saber más, lee nuestra",
+    "privacyLink": "política de privacidad",
+    "reject": "Rechazar",
+    "title": "Cookies en El Guacal"
   },
   "deleteDialog": {
     "cancel": "Cancelar",
@@ -49,7 +50,7 @@
     "warning": "Un moderador revisa cada sugerencia antes de eliminar la tienda."
   },
   "footer": {
-    "email": "Correo",
+    "email": "Escríbenos",
     "privacyPolicy": "Política de privacidad"
   },
   "map": {
@@ -142,15 +143,22 @@
       "description": "Encuentra productos venezolanos cerca de ti, donde sea que estés en el mundo. Mapa comunitario de bodegas y tiendas con sabor a casa.",
       "title": "El Guacal — Encuentra productos venezolanos cerca de ti"
     },
+    "imageAlt": "El Guacal — encuentra productos venezolanos cerca de ti",
     "mySubmissions": {
       "description": "Sigue tus propuestas de tienda y revisa cuándo se aprueban o se rechazan.",
       "title": "Mis propuestas de tienda — El Guacal"
     },
+    "privacyPolicy": {
+      "description": "Cómo El Guacal recopila, usa y protege tus datos, y cómo ejercer tus derechos.",
+      "title": "Política de privacidad — El Guacal"
+    },
     "stores": {
       "edit": {
+        "description": "Sugiere cambios al nombre, dirección o productos de una tienda.",
         "title": "Sugerir una edición — El Guacal"
       },
       "new": {
+        "description": "Agrega una tienda que vende productos venezolanos al mapa de la comunidad.",
         "title": "Agregar una tienda — El Guacal"
       }
     }

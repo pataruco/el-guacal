@@ -286,15 +286,8 @@
     --ease-emphasised: cubic-bezier(0.3, 0, 0, 1);
 
     /* ---------- Sizing ---------- */
-    --focus-ring-width: 3px; /* WCAG 2.2 2.4.13 — thick focus */
-    --focus-ring-offset: 0; /* ring flush against element */
-    /* Inner-ring colour, overridable per component. Default is the
-       blue focus token (high contrast on white/grey-100 surfaces).
-       Components rendered on dark fills (--color-primary,
-       --color-danger, --color-blue-900) override this to
-       --color-surface-page so the inner ring carries the 3:1
-       button-side contrast that WCAG 2.4.13 requires. The outer
-       ink ring keeps carrying the page-side contrast. */
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 0;
     --focus-ring-color: var(--color-focus);
     --target-min: 2.75rem; /* 44px — WCAG 2.5.5 AAA, 2.5.8 AA */
     --content-max: 72rem;
@@ -411,39 +404,6 @@
 }
 
 @layer utilities {
-  /* WCAG 2.2 2.4.13 Focus Appearance — dual-colour ring.
-     Lives in `utilities` so it beats any component rule that
-     touches `outline` or `box-shadow` at resting state.
-
-     Stacking order, element outward:
-        element → inner ring (3px, --focus-ring-color) → ink ring (2px)
-
-     Inner-ring colour is a custom property (--focus-ring-color)
-     so components rendered on dark fills can override it without
-     fighting layer order. Default is the blue focus token.
-
-     Contrast on every surface in the system (audited 2026-06-06,
-     post blue-primary pivot):
-        white surface (#ffffff)   · blue ring 9.31:1 · ink ring 17.40:1 ✓
-        grey-100 sunken (#f5f5f5) · blue ring 8.54:1 · ink ring 15.96:1 ✓
-        blue-100 hover (#d7e7ff)  · blue ring 7.43:1 · ink ring 13.89:1 ✓
-        blue-200 active (#b9d6ff) · blue ring 6.26:1 · ink ring 11.71:1 ✓
-        blue-700 primary (#0a40eb)· blue ring 1.31:1 · ink ring  2.44:1 ✗✗
-
-     ON BLUE-700 PRIMARY FILLS BOTH RINGS FAIL 3:1. Every component
-     that uses --color-primary as its background MUST set
-     `--focus-ring-color: var(--color-surface-page);` so the inner
-     ring becomes white-on-blue (7.13:1 ✓) and provides the
-     button-side WCAG 2.4.13 contrast. The outer ink ring still
-     carries the page-side. See:
-       · .c-header__add-location
-       · .c-page__btn (about CTA, blog back link, dataset download)
-       · .c-auth__submit-btn
-       · .c-cookie-banner__btn--accept (on blue-900, similar problem)
-     The previous comment cited 5.07:1 on the CTA — that was for
-     the pre-pivot blue-600 fill; --color-primary moved to blue-700
-     for AAA text contrast and nobody re-audited the focus ring.
-     Stale until 2026-06-06. */
   :focus-visible {
     outline: var(--focus-ring-width) solid transparent;
     outline-offset: 0;
