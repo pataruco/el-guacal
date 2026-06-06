@@ -175,7 +175,10 @@
       // keeps it aligned with the rest of the palette rather than
       // reintroducing the old navy RGB literal.
       background: color-mix(in oklch, var(--color-ink) 50%, transparent);
-      z-index: var(--z-dialog);
+      // Same raw-literal bump as `__mobile-menu` above — must sit
+      // above page content (sidebar 150) but below the menu surface
+      // (1000). See comment on `__mobile-menu`.
+      z-index: 999;
       display: none;
       border: 0;
       padding: 0;
@@ -194,7 +197,14 @@
       max-width: 300px;
       height: 100vh;
       background: var(--color-surface-page);
-      z-index: calc(var(--z-dialog) + 1);
+      // Raw literal 1000 — `calc(var(--z-dialog) + 1)` = 31 puts
+      // the menu BELOW `.p-home__sidebar` (z-index 150 raw literal,
+      // routes/index.module.scss), so the ProductFilter punches
+      // through the mobile menu surface. Both should be tokenised
+      // in the future cross-component z-scale sweep; for now,
+      // 1000 guarantees the menu wins against any raw literal in
+      // play (sidebar 150, store sheet 300, select positioner 400).
+      z-index: 1000;
       display: flex;
       flex-direction: column;
       padding: var(--space-5);

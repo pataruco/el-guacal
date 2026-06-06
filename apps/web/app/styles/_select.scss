@@ -1,44 +1,46 @@
 // Shared object: Select / Combobox / Popover dropdown surface.
-// Restyled against the design tokens in `apps/web/app/styles/tokens.css`
-// (see ADR 0014). This file deliberately no longer imports
-// `settings.colors`, `settings.globals`, `settings.typography` or
-// `tools.mixins`: every design decision now comes from CSS custom
-// properties so the token layer can evolve without touching the object.
-//
-// Consumers (apply these classes alongside component-specific BEM):
+// Restyled against the Figma direction (file YSqZSNiR63k9BfHNwW7wEQ,
+// 2026-06-06 blue-primary pivot — see project_figma_design_direction
+// memory). Single source of truth for trigger / popup / item styling
+// across:
 //   - header LanguageSelector     →  __trigger, __icon, __positioner,
 //                                     __popup, __item
+//   - header SearchBar            →  __trigger (on <Combobox.Input>!),
+//                                     __positioner, __popup, __item
 //   - product-filter              →  __trigger, __icon, __positioner,
 //                                     __popup, __item, __checkbox
-//   - search-bar                  →  __trigger (on <Combobox.Input>!),
-//                                     __positioner, __popup, __item
 //   - store form multi-select     →  __control, __input,
 //                                     __control-trigger, __positioner,
 //                                     __popup, __item
 //
-// Wrapped in `@layer objects`, which sits below `@layer components` and
-// above `@layer base` in the cascade layer order declared in tokens.css
-// (`@layer reset, tokens, base, objects, components, utilities`). That
-// ordering means per-component overrides (e.g.
-// `c-product-filter__trigger`) win against the object's base rules,
-// which is the standard ITCSS object/component flow. The universal
-// `:focus-visible` ring in `@layer utilities` still beats everything in
-// this file, which is why there are no component-level focus overrides
-// here — unlike the old file, which had three of them fighting the
-// old $color-focus outline.
+// Shifts from the prior gov.uk-era version:
+//   1. Drop UPPERCASE + tight-tracking + bold on triggers and items.
+//      Figma is sentence-case across all selects.
+//   2. Borders: 1px grey-500 on triggers/control (Figma
+//      `border/input/default`); 1px grey-300 on popup (Figma
+//      `border/default`). Was 2px ink everywhere.
+//   3. Elevation: triggers go flat (no `--elevation-1` strip, no
+//      press translateY). Popup uses `--elevation-3` soft shadow
+//      so it lifts off the page like Figma's dropdowns.
+//   4. Radii: 4px (`--radius-md`) on every chamferable edge.
+//   5. Highlighted-item fill uses `--color-link` (blue-800) so the
+//      AAA Normal contrast for white text passes (10.5:1). The old
+//      `--color-accent-blue` value happened to be the same blue-800
+//      after the pivot, but referencing `--color-link` makes the
+//      intent explicit: "this is the same blue as link text".
+//
+// Wrapped in `@layer objects`, which sits below `@layer components`
+// and above `@layer base` in the cascade layer order declared in
+// tokens.css. Per-component overrides still win against this
+// object's base rules. The universal `:focus-visible` ring in
+// `@layer utilities` still beats everything in this file.
 
 @layer objects {
   .o-select {
     // ---------------------------------------------------------------
-    // Trigger button. Same surface as `c-header__hamburger` and the
-    // store card's secondary button: white fill, 2px ink border,
-    // elevation-1 downward strip, gov.uk press affordance on :active.
-    //
-    // Note: search-bar uses this class on a <Combobox.Input> (an
-    // <input>, not a <button>). The rules below work on both — every
-    // property applies equally to button and input elements, and
-    // `display: flex` lets the input flex-layout its own children if
-    // it ever has any.
+    // Trigger. Used as a <button> by Select/Popover and as an <input>
+    // by Combobox (search-bar) — every property below applies equally.
+    // Flat surface, 1px grey border, 4px radius, sentence case.
     // ---------------------------------------------------------------
     &__trigger {
       display: flex;
@@ -49,40 +51,31 @@
       min-height: var(--target-min);
       font-family: var(--font-sans);
       font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-tight);
-      text-transform: uppercase;
+      font-weight: var(--weight-regular);
       color: var(--color-ink);
       background-color: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      box-shadow: var(--elevation-1);
+      border: var(--border-width-hairline) solid var(--color-border-input);
+      border-radius: var(--radius-md);
       cursor: pointer;
       transition:
-        transform var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard),
         background-color var(--duration-fast) var(--ease-standard);
 
+      // Figma `border/input/hover` = grey-700. Same progression as the
+      // auth page inputs — gives a clear "you can interact with this"
+      // cue without changing surface.
       &:hover {
-        background-color: var(--color-surface-hover);
+        border-color: var(--color-border-input-hover);
       }
 
       // Base UI exposes both `[data-expanded]` (Select) and
-      // `[data-state='open']` (Popover). Treat them identically —
-      // when the popup is open, the trigger reads as a pressed
-      // button: strip collapses, surface dims to sunken.
+      // `[data-state='open']` (Popover). When the popup is open, the
+      // border darkens further to read as "active" — matching the
+      // input `:active` press state from auth.module.scss.
       &[data-expanded],
       &[data-state='open'] {
-        background-color: var(--color-surface-sunken);
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
-      }
-
-      // Press affordance. Same collapse pattern as every other
-      // button in the system. `prefers-reduced-motion` collapses the
-      // duration token upstream in tokens.css.
-      &:active {
-        transform: translateY(2px);
-        box-shadow: var(--elevation-0);
+        border-color: var(--color-border-input-active);
+        background-color: var(--color-surface-page);
       }
     }
 
@@ -91,6 +84,7 @@
     &__icon {
       font-size: var(--text-xs);
       line-height: 1;
+      color: var(--color-ink-muted);
       transition: transform var(--duration-base) var(--ease-standard);
 
       [data-expanded] &,
@@ -100,16 +94,15 @@
     }
 
     // ---------------------------------------------------------------
-    // Popup panel (the dropdown itself). Same surface language as the
-    // trigger — white fill, 2px ink border, elevation-1 strip. Width
-    // is locked to the Base UI `--anchor-width` custom property that
-    // the positioner injects at runtime so the popup always matches
-    // its anchor.
+    // Popup panel (the dropdown itself). Floating off the page — soft
+    // shadow, 1px grey-300 border, 4px radius. Width locks to the
+    // Base UI `--anchor-width` custom property the positioner injects.
     // ---------------------------------------------------------------
     &__popup {
       background-color: var(--color-surface-page);
-      border: var(--border-width-structural) solid var(--color-border-strong);
-      box-shadow: var(--elevation-1);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-3);
       max-height: 20rem;
       overflow-y: auto;
       padding: var(--space-1) 0;
@@ -117,25 +110,18 @@
     }
 
     // ---------------------------------------------------------------
-    // Individual item inside the popup. Three distinct visual states:
-    //   · base       → ink text on white, no left indicator
-    //   · hover      → surface-hover fill + ink left indicator
-    //   · [data-highlighted]  → flag-blue fill + white text
-    //   · [data-selected]     → surface-hover fill + ink left indicator (sticky)
-    //   · [data-selected][data-highlighted] → blue fill + white text
+    // Individual item inside the popup. Sentence case, regular weight.
+    // Visual states:
+    //   · base                              → ink text on white
+    //   · hover                             → surface-hover fill
+    //   · [data-highlighted]                → link-blue fill + white
+    //                                          text (keyboard focus)
+    //   · [data-selected]                   → surface-hover fill +
+    //                                          ink left indicator
+    //   · [data-selected][data-highlighted] → link-blue + white text
     //
     // The `border-left` is reserved as transparent on the base state
-    // so switching to ink on hover/selected doesn't shift the item's
-    // horizontal alignment. Same reserve-space trick as the header's
-    // active-nav underline.
-    //
-    // Highlight fill is flag blue, NOT flag yellow. Under the new
-    // tokens, white-on-yellow clocks ~1.8:1 and fails 1.4.11; white
-    // on deep flag blue clocks ~12.8:1 (AAA). This also aligns the
-    // dropdown highlight with the universal focus ring, the header's
-    // current-page underline and the footer link — everything "blue"
-    // in the system means the same thing: keyboard focus / current
-    // interactive state. See ADR 0014.
+    // so switching to ink on selected doesn't shift item alignment.
     // ---------------------------------------------------------------
     &__item {
       display: flex;
@@ -144,9 +130,7 @@
       padding: var(--space-2) var(--space-3);
       min-height: var(--target-min);
       font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      letter-spacing: var(--tracking-tight);
-      text-transform: uppercase;
+      font-weight: var(--weight-regular);
       color: var(--color-ink);
       cursor: pointer;
       border-left: var(--focus-ring-width) solid transparent;
@@ -160,28 +144,25 @@
         border-left-color: var(--color-ink);
       }
 
-      // Keyboard-navigation highlight. Base UI sets [data-highlighted]
-      // on the currently-virtually-focused item.
+      // Keyboard-navigation highlight. White text on link-blue —
+      // blue-800 gives ~10.5:1 contrast (AAA Normal).
       &[data-highlighted] {
-        background-color: var(--color-accent-blue);
+        background-color: var(--color-link);
         color: var(--color-ink-inverse);
         border-left-color: var(--color-ink-inverse);
       }
 
-      // Sticky "this is selected" state. Applies to Select, Combobox
-      // single-select, and multi-select via the `:has(> input:checked)`
-      // fallback for native <label><input type="checkbox">.
+      // Sticky "this is selected" state.
       &[data-selected],
       &:has(> input:checked) {
         background-color: var(--color-surface-hover);
         border-left-color: var(--color-ink);
+        font-weight: var(--weight-semibold);
 
-        // Selected AND keyboard-focused → blue fill wins. Same
-        // visual as a non-selected highlight so "the keyboard is
-        // here" reads as one identity regardless of selection.
+        // Selected AND keyboard-focused → blue fill wins.
         &[data-highlighted],
         &:hover {
-          background-color: var(--color-accent-blue);
+          background-color: var(--color-link);
           color: var(--color-ink-inverse);
           border-left-color: var(--color-ink-inverse);
         }
@@ -192,16 +173,15 @@
     // Multi-select checkbox. Used only by product-filter, on a native
     // <input type="checkbox"> inside a <label className="o-select__item">.
     //
-    // Base state: white fill, 2px ink border.
-    // Checked: ink fill, white tick (SVG background-image because
-    //          <input> can't carry ::before/::after reliably).
-    // Inside [data-highlighted] row: inverts — white fill, ink tick —
-    //          so the checkbox stays visible against the blue row.
+    // Base state: white fill, 1px grey-500 border, 2px radius.
+    // Checked: link-blue fill, white tick.
+    // Inside [data-highlighted] row: inverts — white fill, blue tick.
     // ---------------------------------------------------------------
     &__checkbox {
       width: 1rem;
       height: 1rem;
-      border: var(--border-width-structural) solid var(--color-border-strong);
+      border: var(--border-width-hairline) solid var(--color-border-input);
+      border-radius: 2px;
       background-color: var(--color-surface-page);
       display: flex;
       align-items: center;
@@ -212,54 +192,46 @@
       margin: 0;
       padding: 0;
 
-      // Native input checked state. The SVG data URI fills the tick
-      // with white to sit on the ink-filled box below.
+      // Native input checked state. Link-blue fill (blue-800) so the
+      // tick sits on a high-contrast surface (10.5:1 white on blue-800).
       &:checked {
-        background-color: var(--color-ink);
+        background-color: var(--color-link);
+        border-color: var(--color-link);
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
         background-size: 0.75rem;
         background-position: center;
         background-repeat: no-repeat;
       }
 
-      // Inside a [data-highlighted] row, the row fills with
-      // --color-accent-blue and text goes white. The checkbox has to
-      // stay visible against that blue fill — invert to white fill
-      // with an ink tick. Both the unchecked and checked versions
-      // need the inversion: unchecked border goes to ink-inverse so
-      // it doesn't disappear into the blue background.
+      // Inside a [data-highlighted] row, the row fills with link-blue
+      // and text goes white. The checkbox has to stay visible — invert
+      // to white fill with a blue tick.
       [data-highlighted] & {
         border-color: var(--color-ink-inverse);
       }
       [data-highlighted] &:checked {
         background-color: var(--color-ink-inverse);
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230b0c0c'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+        border-color: var(--color-ink-inverse);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230f34be'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
       }
     }
 
     // ---------------------------------------------------------------
-    // Combobox control wrapper. Used only by the store form's
-    // multi-select combobox (apps/web/app/components/store/StoreForm.tsx).
-    // This is a form field, NOT a button — flat surface, no elevation
-    // strip, 2px ink border that reads as "input field" rather than
-    // "pressable control".
+    // Combobox control wrapper. Used by the store form's multi-select
+    // combobox. Same input-field treatment as auth/storeform inputs —
+    // 1px grey-500 border, 4px radius, flat.
     // ---------------------------------------------------------------
     &__control {
       display: flex;
       align-items: stretch;
-      border: var(--border-width-structural) solid var(--color-border-strong);
+      border: var(--border-width-hairline) solid var(--color-border-input);
+      border-radius: var(--radius-md);
       background-color: var(--color-surface-page);
       min-height: var(--target-min);
-      // No box-shadow. Form fields in the new system are flat. The
-      // universal focus ring in @layer utilities will draw around the
-      // entire control when any descendant grabs keyboard focus via
-      // :focus-visible — no need for a custom :focus-within handler.
     }
 
     // Combobox-specific: the text input that lives inside __control.
-    // Borderless, transparent background, inherits the control's
-    // surface. No component-level :focus-visible override — the
-    // universal ring in @layer utilities handles it.
+    // Borderless, transparent, inherits control surface.
     &__input {
       flex: 1;
       padding: var(--space-2) var(--space-3);
@@ -268,39 +240,33 @@
       background: transparent;
       font-family: inherit;
       font-size: var(--text-sm);
-      font-weight: var(--weight-medium);
+      font-weight: var(--weight-regular);
       color: var(--color-ink);
 
       &::placeholder {
         color: var(--color-ink-muted);
-        font-style: italic;
       }
     }
 
-    // Combobox-specific: the ▼ trigger button sitting on the right
-    // edge of __control, separated from the input by a 2px ink
-    // vertical divider (same thickness as the outer control border,
-    // so the divider reads as a continuation of the field's ink
-    // language).
+    // Combobox-specific: the ▼ trigger button on the right edge of
+    // __control, separated from the input by a 1px grey divider that
+    // matches the outer control border.
     &__control-trigger {
       background: transparent;
       border: 0;
-      border-left: var(--border-width-structural) solid
-        var(--color-border-strong);
+      border-left: var(--border-width-hairline) solid
+        var(--color-border-input);
       padding: var(--space-2) var(--space-3);
       min-width: var(--target-min);
       cursor: pointer;
-      color: var(--color-ink);
+      color: var(--color-ink-muted);
       font-size: var(--text-sm);
     }
 
     // ---------------------------------------------------------------
-    // Positioner (z-index layer for Base UI Portal). Raw literal for
-    // now — same reason as the store card and locate-me-button's
-    // z-index: migrating to `var(--z-dropdown)` (20) in isolation
-    // would drop the popup below the store sheet (300) on
-    // simultaneous-open scenarios. The full `--z-*` scale migration
-    // is a cross-component sweep once map/marker are ported.
+    // Positioner (z-index layer for Base UI Portal). Raw literal kept
+    // for now — see prior comment about the cross-component z-index
+    // sweep being a separate task.
     // ---------------------------------------------------------------
     &__positioner {
       z-index: 400;
