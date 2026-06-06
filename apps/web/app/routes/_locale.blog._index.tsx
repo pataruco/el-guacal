@@ -3,25 +3,27 @@ import { Link, type MetaFunction, useParams } from 'react-router';
 import type { Blog, WithContext } from 'schema-dts';
 import JsonLd from '@/components/json-ld';
 import Page from '@/components/page';
-import type { ContentLocale } from '@/i18n';
 import i18n from '@/i18n/config';
+import { resolveMetaLocale } from '@/i18n/locale';
 import { getBlogPostList } from '@/utils/blog';
 import { getSeoMeta } from '@/utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.blog.description', { lng: locale }),
-    locale,
-    path: `/${locale}/blog`,
-    title: i18n.t('seo.blog.title', { lng: locale }),
+    description: i18n.t('seo.blog.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/blog`,
+    title: i18n.t('seo.blog.title', { lng: i18nLng }),
   });
 };
 
 export default function BlogIndex() {
   const { locale } = useParams<{ locale: string }>();
   const { t, i18n: i18nInstance } = useTranslation();
-  const posts = getBlogPostList((locale as ContentLocale) ?? 'en');
+  const { contentLocale, i18nLng } = resolveMetaLocale(locale);
+  const posts = getBlogPostList(contentLocale);
 
   const jsonLd: WithContext<Blog> = {
     '@context': 'https://schema.org',
@@ -31,12 +33,12 @@ export default function BlogIndex() {
       datePublished: post.date,
       description: post.excerpt,
       headline: post.title,
-      url: `https://elguacal.com/${locale}/blog/${post.slug}`,
+      url: `https://elguacal.com/${contentLocale}/blog/${post.slug}`,
     })),
-    description: t('seo.blog.description'),
-    inLanguage: locale,
-    name: t('pages.blog.title'),
-    url: `https://elguacal.com/${locale}/blog`,
+    description: i18n.t('seo.blog.description', { lng: i18nLng }),
+    inLanguage: i18nLng,
+    name: i18n.t('pages.blog.title', { lng: i18nLng }),
+    url: `https://elguacal.com/${contentLocale}/blog`,
   };
 
   return (

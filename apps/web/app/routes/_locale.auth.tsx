@@ -37,6 +37,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type MetaFunction, useNavigate, useParams } from 'react-router';
 import i18n from '@/i18n/config';
+import { resolveMetaLocale } from '@/i18n/locale';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
@@ -44,12 +45,13 @@ import { getSeoMeta } from '@/utils/seo';
 import styles from './auth.module.scss';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.auth.login.description', { lng: locale }),
-    locale,
-    path: `/${locale}/auth`,
-    title: i18n.t('seo.auth.login.title', { lng: locale }),
+    description: i18n.t('seo.auth.login.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/auth`,
+    title: i18n.t('seo.auth.login.title', { lng: i18nLng }),
   });
 };
 

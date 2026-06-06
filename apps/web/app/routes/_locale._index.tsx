@@ -10,6 +10,7 @@ import SearchBar from '../components/search-bar';
 import SearchResults from '../components/search-results';
 import StoreComponent from '../components/store';
 import i18n from '../i18n/config';
+import { resolveMetaLocale } from '../i18n/locale';
 import { selectMap, setSelectedProductIds } from '../store/features/map/slice';
 import { selectStoreState } from '../store/features/stores/slice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -17,12 +18,13 @@ import { getSeoMeta } from '../utils/seo';
 import styles from './index.module.scss';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.home.description', { lng: locale }),
-    locale,
-    path: `/${locale}`,
-    title: i18n.t('seo.home.title', { lng: locale }),
+    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}`,
+    title: i18n.t('seo.home.title', { lng: i18nLng }),
   });
 };
 
@@ -66,21 +68,14 @@ export default function Home() {
     }
   }, [selectedProductIds, searchParams, setSearchParams]);
 
+  const { contentLocale, i18nLng } = resolveMetaLocale(locale);
   const jsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    description: t('seo.home.description'),
-    inLanguage: locale,
+    description: i18n.t('seo.home.description', { lng: i18nLng }),
+    inLanguage: i18nLng,
     name: 'El Guacal',
-    potentialAction: {
-      '@type': 'SearchAction',
-      'query-input': 'required name=search_term_string',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `https://elguacal.com/${locale}?q={search_term_string}`,
-      },
-    },
-    url: 'https://elguacal.com',
+    url: `https://elguacal.com/${contentLocale}`,
   };
 
   return (

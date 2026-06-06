@@ -3,27 +3,30 @@ import type { Dataset, WithContext } from 'schema-dts';
 import JsonLd from '../components/json-ld';
 import Page from '../components/page';
 import i18n from '../i18n/config';
+import { resolveMetaLocale } from '../i18n/locale';
 import { getSeoMeta } from '../utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.dataset.description', { lng: locale }),
-    locale,
-    path: `/${locale}/dataset`,
-    title: i18n.t('seo.dataset.title', { lng: locale }),
+    description: i18n.t('seo.dataset.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/dataset`,
+    title: i18n.t('seo.dataset.title', { lng: i18nLng }),
   });
 };
 
 export default function DatasetPage() {
   const { locale } = useParams<{ locale: string }>();
+  const { contentLocale, i18nLng } = resolveMetaLocale(locale);
   const today = new Date().toISOString().split('T')[0];
   const downloadUrl = `https://github.com/pataruco/el-guacal/releases/download/${encodeURI(`data-export@${today}`)}/el-guacal-db-${today}.zip`;
 
   const jsonLd: WithContext<Dataset> = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    description: i18n.t('pages.dataset.description'),
+    description: i18n.t('pages.dataset.description', { lng: i18nLng }),
     distribution: [
       {
         '@type': 'DataDownload',
@@ -31,9 +34,9 @@ export default function DatasetPage() {
         encodingFormat: 'application/zip',
       },
     ],
-    inLanguage: locale,
-    name: i18n.t('pages.dataset.title'),
-    url: `https://elguacal.com/${locale}/dataset`,
+    inLanguage: i18nLng,
+    name: i18n.t('pages.dataset.title', { lng: i18nLng }),
+    url: `https://elguacal.com/${contentLocale}/dataset`,
   };
 
   return (
@@ -44,8 +47,22 @@ export default function DatasetPage() {
 
       <section className="c-page__section">
         <a className="c-page__btn" href={downloadUrl} download>
-          <span aria-hidden="true">↓ </span>
           {i18n.t('pages.dataset.download')} ({today}) — ZIP
+          <svg
+            className="c-page__btn-icon"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M10 3v10" />
+            <path d="m5 9 5 5 5-5" />
+            <path d="M3.5 17h13" />
+          </svg>
         </a>
       </section>
 

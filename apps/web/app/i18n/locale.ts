@@ -41,3 +41,13 @@ export function detectLocale(): ContentLocale {
 export function getOtherLocale(current: ContentLocale): ContentLocale {
   return current === 'en' ? 'es' : 'en';
 }
+
+export function resolveMetaLocale(paramLocale: string | undefined): {
+  contentLocale: ContentLocale;
+  i18nLng: Language;
+} {
+  const contentLocale: ContentLocale = isValidLocale(paramLocale ?? '')
+    ? (paramLocale as ContentLocale)
+    : 'en';
+  return { contentLocale, i18nLng: toI18nLocale(contentLocale) };
+}

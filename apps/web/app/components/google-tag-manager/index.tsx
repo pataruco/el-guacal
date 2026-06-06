@@ -1,6 +1,6 @@
 import { GTM_ID } from '@/utils/analytics';
 
-export const GoogleTag = () => {
+export const GoogleTagHead = () => {
   return (
     <script
       id="google-tag-manager"
@@ -24,5 +24,19 @@ export const GoogleTag = () => {
         `,
       }}
     />
+  );
+};
+
+export const GoogleTagBody = () => {
+  return (
+    <noscript>
+      <iframe
+        title="Google Tag Manager"
+        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0"
+        width="0"
+        style={{ display: 'none', visibility: 'hidden' }}
+      />
+    </noscript>
   );
 };

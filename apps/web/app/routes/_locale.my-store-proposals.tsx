@@ -5,18 +5,20 @@ import Page from '@/components/page';
 import ProposalStatusBadge from '@/components/proposal-status';
 import { useMyStoreProposalsQuery } from '@/graphql/queries/my-proposals/index.generated';
 import i18n from '@/i18n/config';
+import { resolveMetaLocale } from '@/i18n/locale';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { getSeoMeta } from '@/utils/seo';
 import styles from './my-store-proposals.module.scss';
 
 export const meta: MetaFunction = ({ params }) => {
-  const locale = params.locale || 'en-GB';
+  const { contentLocale, i18nLng } = resolveMetaLocale(params.locale);
   return getSeoMeta({
-    description: i18n.t('seo.mySubmissions.description', { lng: locale }),
-    locale,
-    path: `/${locale}/my-store-proposals`,
-    title: i18n.t('seo.mySubmissions.title', { lng: locale }),
+    description: i18n.t('seo.mySubmissions.description', { lng: i18nLng }),
+    imageAlt: i18n.t('seo.imageAlt', { lng: i18nLng }),
+    locale: i18nLng,
+    path: `/${contentLocale}/my-store-proposals`,
+    title: i18n.t('seo.mySubmissions.title', { lng: i18nLng }),
   });
 };
 

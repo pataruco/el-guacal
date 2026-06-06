@@ -1,7 +1,7 @@
 {
   "about": {
-    "ctaBody": "Regístrate para añadir ubicaciones a El Guacal.",
-    "ctaTitle": "Contribuye a nuestro dataset"
+    "ctaBody": "¿Conoces una tienda que vende productos venezolanos? Agrégala al mapa y ayuda a la comunidad.",
+    "ctaTitle": "Agrega una tienda que conozcas"
   },
   "auth": {
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
@@ -9,44 +9,56 @@
     "createAccountTitle": "Crea tu cuenta",
     "dontHaveAccount": "¿No tienes una cuenta?",
     "email": "Correo",
-    "emailExistsWithGoogle": "Este correo ya está registrado con Google. Por favor usa el botón de Google abajo.",
+    "emailExistsWithGoogle": "Este correo ya está registrado con Google. Usa el botón de Google de abajo para ingresar.",
     "emailPlaceholder": "nombre@ejemplo.com",
     "enterPasswordTitle": "Ingresa tu contraseña",
     "login": "Ingresar",
     "or": "o",
     "password": "Contraseña",
     "passwordPlaceholder": "Tu contraseña",
-    "signInOrCreateTitle": "Crea tu cuenta o ingresa",
+    "signInOrCreateTitle": "Ingresa o crea una cuenta",
     "signInWithGoogle": "Ingresar con Google",
     "signUp": "Registrarse",
     "useDifferentEmail": "Usar otro correo"
   },
   "browse": {
     "findStoreTitle": "Encuentra una tienda",
-    "noResults": "Sin resultados — prueba a alejar el mapa o cambiar de productos.",
+    "noResults": "Nada por aquí todavía. Aleja el mapa o cambia el filtro de productos.",
     "resultsCount_one": "{{count}} resultado para \"{{query}}\"",
     "resultsCount_other": "{{count}} resultados para \"{{query}}\""
   },
   "common": {
+    "backHome": "Volver a El Guacal",
     "loading": "Cargando...",
     "notFound": "Página no encontrada"
+  },
+  "cookieBanner": {
+    "accept": "Aceptar",
+    "ariaLabel": "Consentimiento de cookies",
+    "body": "Usamos cookies esenciales para mejorar tu experiencia de navegación, analizar el tráfico del sitio y entender de dónde viene nuestra audiencia. Para saber más, lee nuestra",
+    "privacyLink": "política de privacidad",
+    "reject": "Rechazar",
+    "title": "Cookies en El Guacal"
   },
   "deleteDialog": {
     "cancel": "Cancelar",
     "confirm": "Enviar sugerencia",
-    "inputLabel": "Razón para sugerir la eliminación de {{name}}",
+    "inputLabel": "Por qué se debería eliminar {{name}}",
     "inputPlaceholder": "ej. cerrado, mudado, duplicado",
     "reasonPrompt": "¿Por qué se debería eliminar {{name}}?",
     "title": "Sugerir eliminación",
-    "warning": "Tu sugerencia será revisada por un moderador antes de que la ubicación se elimine."
+    "warning": "Un moderador revisa cada sugerencia antes de eliminar la tienda."
   },
-  "footer": {},
+  "footer": {
+    "email": "Escríbenos",
+    "privacyPolicy": "Política de privacidad"
+  },
   "map": {
     "locateMe": "Buscar mi ubicación"
   },
   "mySubmissions": {
     "deletion": "Solicitud de eliminación",
-    "empty": "Aún no ha enviado ninguna sugerencia de tienda.",
+    "empty": "Aún no hay sugerencias. Agrega una tienda desde el mapa para empezar.",
     "moderatorNote": "Nota del moderador",
     "title": "Mis propuestas de tienda"
   },
@@ -65,17 +77,17 @@
   "pages": {
     "blog": {
       "backToList": "Volver al blog",
-      "noPosts": "Aún no hay publicaciones.",
+      "noPosts": "Aún no hay publicaciones. Vuelve pronto.",
       "title": "Blog"
     },
     "dataset": {
-      "dataJson": "Una exportación JSON completa de todas las tiendas y productos.",
-      "description": "Todos los datos de El Guacal son abiertos y gratuitos. Se actualizan diariamente con cada tienda, producto y ubicación.",
+      "dataJson": "Todas las tiendas y productos en un único archivo JSON.",
+      "description": "Cada tienda, producto y ubicación, exportados a diario. Gratis para descargar y usar bajo los términos de datos abiertos del proyecto.",
       "download": "Descargar datos",
-      "productsCsv": "Una lista de todos los productos con sus nombres y marcas.",
-      "storesCsv": "Una lista de todas las tiendas con sus nombres, direcciones, coordenadas e identificadores de productos asociados.",
+      "productsCsv": "Todos los productos, con nombres y marcas.",
+      "storesCsv": "Todas las tiendas, con nombres, direcciones, coordenadas y los productos que vende cada una.",
       "title": "Datos abiertos",
-      "whatsIncluded": "¿Qué incluye?"
+      "whatsIncluded": "¿Qué incluye la descarga?"
     }
   },
   "proposal": {
@@ -93,7 +105,7 @@
     },
     "submitted": {
       "backToMap": "Volver al mapa",
-      "message": "¡Gracias! Su sugerencia ha sido enviada y está en espera de revisión. Esto suele tomar hasta 72 horas.",
+      "message": "Gracias. Un moderador revisará tu sugerencia en las próximas 72 horas. Puedes seguirla en Mis propuestas de tienda.",
       "title": "Sugerencia enviada"
     }
   },
@@ -106,41 +118,48 @@
   },
   "seo": {
     "about": {
-      "description": "Conoce más sobre El Guacal y nuestra misión de mapear tiendas y productos locales.",
-      "title": "Nosotros - El Guacal"
+      "description": "Por qué existe El Guacal, cómo se revisan las propuestas y cómo la comunidad mantiene el mapa al día.",
+      "title": "Nosotros — El Guacal"
     },
     "auth": {
       "login": {
-        "description": "Ingresa o regístrate en El Guacal para contribuir a nuestro mapa de tiendas impulsado por la comunidad.",
-        "title": "Ingresar o registrarse - El Guacal"
+        "description": "Ingresa o crea una cuenta para agregar tiendas al mapa.",
+        "title": "Ingresar o registrarse — El Guacal"
       },
       "signup": {
-        "description": "Únete a El Guacal para comenzar a agregar y actualizar tiendas y productos locales.",
-        "title": "Registrarse - El Guacal"
+        "description": "Crea una cuenta para agregar y actualizar tiendas en el mapa de El Guacal.",
+        "title": "Registrarse — El Guacal"
       }
     },
     "blog": {
-      "description": "Lee las últimas actualizaciones, historias y noticias del equipo de El Guacal.",
-      "title": "Blog - El Guacal"
+      "description": "Novedades del proyecto El Guacal e historias de la diáspora venezolana.",
+      "title": "Blog — El Guacal"
     },
     "dataset": {
-      "description": "Explora y descarga el conjunto de datos abierto de El Guacal de tiendas y productos locales.",
-      "title": "Datos Abiertos - El Guacal"
+      "description": "Descarga cada tienda, producto y ubicación en CSV o JSON. Se actualiza a diario y es gratis.",
+      "title": "Datos abiertos — El Guacal"
     },
     "home": {
-      "description": "Encuentra tiendas y productos locales en Venezuela. Mapa de bodegas, supermercados y más.",
-      "title": "El Guacal - Buscador de Tiendas Locales"
+      "description": "Encuentra productos venezolanos cerca de ti, donde sea que estés en el mundo. Mapa comunitario de bodegas y tiendas con sabor a casa.",
+      "title": "El Guacal — Encuentra productos venezolanos cerca de ti"
     },
+    "imageAlt": "El Guacal — encuentra productos venezolanos cerca de ti",
     "mySubmissions": {
-      "description": "Vea sus sugerencias de tiendas y el estado de revisión.",
+      "description": "Sigue tus propuestas de tienda y revisa cuándo se aprueban o se rechazan.",
       "title": "Mis propuestas de tienda — El Guacal"
+    },
+    "privacyPolicy": {
+      "description": "Cómo El Guacal recopila, usa y protege tus datos, y cómo ejercer tus derechos.",
+      "title": "Política de privacidad — El Guacal"
     },
     "stores": {
       "edit": {
-        "title": "Editar Tienda - El Guacal"
+        "description": "Sugiere cambios al nombre, dirección o productos de una tienda.",
+        "title": "Sugerir una edición — El Guacal"
       },
       "new": {
-        "title": "Agregar Nueva Tienda - El Guacal"
+        "description": "Agrega una tienda que vende productos venezolanos al mapa de la comunidad.",
+        "title": "Agregar una tienda — El Guacal"
       }
     }
   },
@@ -158,16 +177,16 @@
   },
   "storeForm": {
     "address": "Dirección",
-    "addressPlaceholder": "ej., Av. Libertador, Caracas",
-    "addTitle": "Agregar una ubicación",
-    "banner": "Su sugerencia será revisada por la comunidad de El Guacal antes de aparecer en el mapa.",
+    "addressPlaceholder": "Calle, número y ciudad",
+    "addTitle": "Agregar una tienda",
+    "banner": "Un moderador revisa cada sugerencia antes de que aparezca en el mapa. Suele tomar hasta 72 horas.",
     "cancel": "Cancelar",
     "editTitle": "Sugerir una edición",
-    "licenseConfirmation": "Al enviar, confirmo que la información es correcta y otorgo a El Guacal una licencia para publicarla bajo los términos de datos abiertos del proyecto.",
+    "licenseConfirmation": "Confirmo que los datos son correctos y otorgo a El Guacal una licencia para publicarlos bajo los términos de datos abiertos del proyecto.",
     "locateMe": "Buscar mi ubicación",
     "location": "Ubicación",
-    "mapHintAddress": "La dirección se completa automáticamente. También puedes editarla.",
-    "mapHintLocation": "Arrastra el mapa para posicionar la cruz sobre la tienda.",
+    "mapHintAddress": "La dirección se completa automáticamente. Edítala si algo no cuadra.",
+    "mapHintLocation": "Arrastra el mapa hasta que la cruz quede sobre la tienda.",
     "noProductsFound": "No se encontraron productos",
     "products": "Productos",
     "removeProduct": "Eliminar producto",
@@ -175,11 +194,11 @@
     "searchProducts": "Buscar productos...",
     "storeName": "Nombre",
     "storeNamePlaceholder": "ej., Bodega La Esquina",
-    "subtitle": "Ayúdanos a mapear este producto o ubicación añadiendo los detalles abajo.",
+    "subtitle": "Agrega el nombre de la tienda, la dirección y los productos venezolanos que vende.",
     "validation": {
-      "addressRequired": "La dirección es obligatoria",
-      "nameRequired": "El nombre es obligatorio",
-      "productRequired": "Selecciona al menos un producto"
+      "addressRequired": "Agrega una dirección",
+      "nameRequired": "Agrega el nombre de la tienda",
+      "productRequired": "Elige al menos un producto"
     }
   }
 }

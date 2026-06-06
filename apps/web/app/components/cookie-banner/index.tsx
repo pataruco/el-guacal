@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import type { ContentLocale } from '@/i18n';
 import {
   LOCAL_STORAGE_KEY_TRACKING_KEY,
   TRACKING_CONSENT,
@@ -10,6 +13,9 @@ import styles from './index.module.scss';
 const CookieBanner = () => {
   const [isHydrated, setIsHydrated] = useState(false);
   const [consent, setConsent] = useLocalStorage(LOCAL_STORAGE_KEY_TRACKING_KEY);
+  const { locale } = useParams<{ locale: string }>();
+  const { t } = useTranslation();
+  const currentLocale = (locale as ContentLocale) || 'en';
 
   const handleConsent = (value: TRACKING_CONSENT) => {
     setConsent(value);
@@ -29,34 +35,44 @@ const CookieBanner = () => {
   }
 
   return (
-    <section className={styles['c-cookie-banner']} aria-label="Cookie consent">
+    <section
+      className={styles['c-cookie-banner']}
+      aria-label={t('cookieBanner.ariaLabel')}
+    >
       <div className={styles['c-cookie-banner__container']}>
-        <div className={styles['c-cookie-banner__content']}>
-          <h2 className={styles['c-cookie-banner__title']}>
-            Cookies on El Guacal
-          </h2>
-          <p className={styles['c-cookie-banner__body']}>
-            We use essential cookies to improve your browsing experience on our
-            website, analyse site traffic, and understand where our audience is
-            coming from. To learn more, please read our privacy policy.
-          </p>
-        </div>
+        <h2 className={styles['c-cookie-banner__title']}>
+          {t('cookieBanner.title')}
+        </h2>
+        <p className={styles['c-cookie-banner__body']}>
+          {t('cookieBanner.body')}{' '}
+          <Link
+            to={`/${currentLocale}/privacy-policy`}
+            className={styles['c-cookie-banner__link']}
+          >
+            {t('cookieBanner.privacyLink')}
+          </Link>
+          .
+        </p>
 
         <menu className={styles['c-cookie-banner__actions']}>
-          <button
-            type="button"
-            className={`${styles['c-cookie-banner__btn']} ${styles['c-cookie-banner__btn--accept']}`}
-            onClick={() => handleConsent(TRACKING_CONSENT.GRANTED)}
-          >
-            Accept
-          </button>
-          <button
-            type="button"
-            className={`${styles['c-cookie-banner__btn']} ${styles['c-cookie-banner__btn--reject']}`}
-            onClick={() => handleConsent(TRACKING_CONSENT.DENIED)}
-          >
-            Reject
-          </button>
+          <li>
+            <button
+              type="button"
+              className={`${styles['c-cookie-banner__btn']} ${styles['c-cookie-banner__btn--reject']}`}
+              onClick={() => handleConsent(TRACKING_CONSENT.DENIED)}
+            >
+              {t('cookieBanner.reject')}
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              className={`${styles['c-cookie-banner__btn']} ${styles['c-cookie-banner__btn--accept']}`}
+              onClick={() => handleConsent(TRACKING_CONSENT.GRANTED)}
+            >
+              {t('cookieBanner.accept')}
+            </button>
+          </li>
         </menu>
       </div>
     </section>

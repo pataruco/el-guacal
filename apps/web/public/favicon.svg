@@ -1,38 +1,24 @@
 <svg
-  viewBox="0 0 32 32"
+  viewBox="0 0 82 77"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
   aria-label="El Guacal"
 >
   <title>El Guacal</title>
-  <!--
-    Map pin filled with Venezuelan flag stripes (yellow, blue, red
-    top to bottom) via a linear gradient with hard colour stops.
-    The pin says "locator"; the flag says "Venezuelan." Together
-    they read as "find Venezuelan things here." 2px ink outline
-    matches the structural border width token. Flag colours use
-    the same values as the palette tokens in ADR 0014. See ADR
-    0015 for the full decision record.
-    Keep in sync with apps/web/app/components/logo/index.tsx.
-  -->
-  <defs>
-    <linearGradient id="flag" gradientUnits="userSpaceOnUse"
-      x1="16" y1="1" x2="16" y2="31">
-      <stop offset="0" stop-color="#FCD116" />
-      <stop offset="0.3333" stop-color="#FCD116" />
-      <stop offset="0.3333" stop-color="#00247D" />
-      <stop offset="0.6667" stop-color="#00247D" />
-      <stop offset="0.6667" stop-color="#CF142B" />
-      <stop offset="1" stop-color="#CF142B" />
-    </linearGradient>
-  </defs>
   <path
-    d="M16 1C9.4 1 4 6.1 4 12.4c0 3 1.4 6.2 3.6 9.4
-       C10 25.2 13.2 28.4 16 31c2.8-2.6 6-5.8 8.4-9.2
-       C26.6 18.6 28 15.4 28 12.4 28 6.1 22.6 1 16 1z"
-    fill="url(#flag)"
-    stroke="#0b0c0c"
-    stroke-width="2"
-    stroke-linejoin="round"
+    d="M38.5165 10.0101L16.8085 20.1923L7.25441 15.6471L38.5165 0.61869C40.2369 -0.206229 42.3489 -0.206229 44.0693 0.61869L74.2545 16.0509L64.2227 21L44.0693 10.0101C42.3489 9.18516 40.2369 9.18516 38.5165 10.0101Z"
+    fill="#0a40eb"
+  />
+  <path
+    d="M38.0942 36.4292L0 18V27.9175L38.0942 46.3467C39.8948 47.2178 42.1054 47.2178 43.9061 46.3467L82 27.9175V18L43.9061 36.4292C42.1054 37.3003 39.8948 37.3003 38.0942 36.4292Z"
+    fill="#0a40eb"
+  />
+  <path
+    d="M38.0942 51.4292L0 33V42.9175L38.0942 61.3467C39.8948 62.2178 42.1054 62.2178 43.9061 61.3467L82 42.9175V33L43.9061 51.4292C42.1054 52.3003 39.8948 52.3003 38.0942 51.4292Z"
+    fill="#0a40eb"
+  />
+  <path
+    d="M38.0942 66.4292L0 48V57.9175L38.0942 76.3467C39.8948 77.2178 42.1054 77.2178 43.9061 76.3467L82 57.9175V48L43.9061 66.4292C42.1054 67.3003 39.8948 67.3003 38.0942 66.4292Z"
+    fill="#0a40eb"
   />
 </svg>
