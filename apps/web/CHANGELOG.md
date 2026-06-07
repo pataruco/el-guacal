@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.1](https://github.com/pataruco/el-guacal/compare/web-v1.15.0...web-v1.15.1) (2026-06-07)
+
+
+### Bug Fixes
+
+* analytics ([0aca6fd](https://github.com/pataruco/el-guacal/commit/0aca6fdbbf7dedb66f9c03df58219a896cbede0f))
+* analytics ([#155](https://github.com/pataruco/el-guacal/issues/155)) ([e1867e1](https://github.com/pataruco/el-guacal/commit/e1867e14d61022ea4390f2629ce6d0817cb25f03))
+
 ## [1.15.0](https://github.com/pataruco/el-guacal/compare/web-v1.14.0...web-v1.15.0) (2026-06-06)
 
 
