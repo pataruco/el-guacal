@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.16.0](https://github.com/pataruco/el-guacal/compare/web-v1.15.1...web-v1.16.0) (2026-06-07)
+
+
+### Features
+
+* add location to mobile menu ([f5e51ab](https://github.com/pataruco/el-guacal/commit/f5e51abfdbf48869ab1535560c062779b5700068))
+* inline language selector ([2bf49c2](https://github.com/pataruco/el-guacal/commit/2bf49c2344119881d8fdb82dad409c61db9aa20f))
+* language selector ([#157](https://github.com/pataruco/el-guacal/issues/157)) ([ef4c0c2](https://github.com/pataruco/el-guacal/commit/ef4c0c2d06d16adf4538bfc826f0bbf3760a75da))
+
+
+### Bug Fixes
+
+* double GTM signals ([01a24b2](https://github.com/pataruco/el-guacal/commit/01a24b28d10a6629664380a39c004f535530dc90))
+
 ## [1.15.1](https://github.com/pataruco/el-guacal/compare/web-v1.15.0...web-v1.15.1) (2026-06-07)
 
 
