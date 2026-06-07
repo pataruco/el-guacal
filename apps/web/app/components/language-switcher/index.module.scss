@@ -1,0 +1,71 @@
+.c-language-switcher {
+  margin-top: var(--space-4);
+
+  &__label {
+    margin: 0 0 var(--space-2);
+    padding: 0 var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink-muted);
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+
+    // Desktop header: a compact horizontal toggle (English · Español).
+    &--inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    min-height: var(--target-min);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+    color: var(--color-link);
+    transition:
+      background-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+
+    &:hover {
+      background-color: var(--color-interactive-hover-bg);
+      color: var(--color-link-hover);
+    }
+
+    &:active {
+      background-color: var(--color-interactive-active-bg);
+      color: var(--color-link-hover);
+    }
+
+    // Current locale rendered as a non-link marker (GOV.UK pattern):
+    // bold + ink, not the link colour, and not interactive.
+    &--current {
+      color: var(--color-ink);
+      font-weight: var(--weight-bold);
+      cursor: default;
+    }
+  }
+
+  // Decorative middot between options in the inline (desktop) variant.
+  &__list--inline &__item:not(:first-child)::before {
+    content: '·';
+    color: var(--color-ink-muted);
+  }
+}

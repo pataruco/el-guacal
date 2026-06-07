@@ -1,60 +1,13 @@
-import { Select } from '@base-ui/react/select';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
+import LanguageSwitcher from '@/components/language-switcher';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
-import { type ContentLocale, SUPPORTED_LOCALES } from '@/i18n';
+import type { ContentLocale } from '@/i18n';
 import { selectAuth } from '@/store/features/auth/slice';
 import { useAppSelector } from '@/store/hooks';
 import { auth } from '@/utils/firebase';
 import styles from './index.module.scss';
-
-const languageLabels: Record<ContentLocale, string> = {
-  en: 'English',
-  es: 'Español',
-};
-
-const LanguageSelector = () => {
-  const { t } = useTranslation();
-  const { locale } = useParams<{ locale: string }>();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const currentLocale = (locale as ContentLocale) || 'en';
-
-  const handleLanguageChange = (newLocale: ContentLocale | null) => {
-    if (!newLocale) return;
-    const newPath = location.pathname.replace(/^\/(en|es)/, `/${newLocale}`);
-    navigate(newPath);
-  };
-
-  // aria-label includes the visible language name so the
-  // accessible name contains "English" / "Español". WCAG 2.5.3
-  // ("Label in Name") requires this — a voice-control user
-  // saying "click English" needs the trigger to be addressable
-  // by its visible text.
-  return (
-    <Select.Root value={currentLocale} onValueChange={handleLanguageChange}>
-      <Select.Trigger
-        className="o-select__trigger"
-        aria-label={`${t('nav.languageSelector')}: ${languageLabels[currentLocale]}`}
-      >
-        <Select.Value>{languageLabels[currentLocale]}</Select.Value>
-        <Select.Icon className="o-select__icon">▼</Select.Icon>
-      </Select.Trigger>
-      <Select.Portal>
-        <Select.Positioner sideOffset={8} className="o-select__positioner">
-          <Select.Popup className="o-select__popup">
-            {SUPPORTED_LOCALES.map((loc) => (
-              <Select.Item key={loc} value={loc} className="o-select__item">
-                {languageLabels[loc]}
-              </Select.Item>
-            ))}
-          </Select.Popup>
-        </Select.Positioner>
-      </Select.Portal>
-    </Select.Root>
-  );
-};
 
 const Header = () => {
   const { t } = useTranslation();
@@ -209,6 +162,13 @@ const Header = () => {
             </button>
           </div>
           <nav className={styles['c-header__mobile-nav']}>
+            <Link
+              to={`/${currentLocale}/stores/new`}
+              onClick={toggleMenu}
+              className={styles['c-header__mobile-add-location']}
+            >
+              {t('nav.addLocation')}
+            </Link>
             {isAuthenticated && (
               <Link
                 to={`/${currentLocale}/my-store-proposals`}
@@ -258,9 +218,10 @@ const Header = () => {
               </Link>
             )}
             <hr className={styles['c-header__mobile-menu-divider']} />
-            <div className={styles['c-header__mobile-lang-selector']}>
-              <LanguageSelector />
-            </div>
+            {/* Shared switcher (menu variant): an inline list, not the
+                dropdown — its popup would portal outside this focus-trapped
+                dialog and is unreliable on touch. */}
+            <LanguageSwitcher variant="menu" onNavigate={toggleMenu} />
           </nav>
         </div>
 
@@ -280,7 +241,7 @@ const Header = () => {
             {t('nav.addLocation')}
           </Link>
           <div className={styles['c-header__lang-selector']}>
-            <LanguageSelector />
+            <LanguageSwitcher variant="inline" />
           </div>
 
           {isAuthenticated ? (

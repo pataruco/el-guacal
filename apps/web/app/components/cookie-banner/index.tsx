@@ -18,13 +18,25 @@ const CookieBanner = () => {
   const currentLocale = (locale as ContentLocale) || 'en';
 
   const handleConsent = (value: TRACKING_CONSENT) => {
+    // The effect below applies the choice to Consent Mode when `consent` changes.
     setConsent(value);
-    updateConsent(value);
   };
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // Re-apply the stored consent choice on every page load. Consent Mode resets
+  // to the bootstrap default (denied) on each load, so without this a returning
+  // visitor who already accepted would keep being tracked as denied.
+  useEffect(() => {
+    if (
+      consent === TRACKING_CONSENT.GRANTED ||
+      consent === TRACKING_CONSENT.DENIED
+    ) {
+      updateConsent(consent);
+    }
+  }, [consent]);
 
   if (
     consent === TRACKING_CONSENT.GRANTED ||
