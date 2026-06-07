@@ -271,20 +271,14 @@
       gap: var(--space-2);
     }
 
+    // Desktop-only wrapper for the inline LanguageSwitcher. Mobile uses the
+    // switcher inside the slide-out menu instead.
     &__lang-selector {
       display: none;
 
       @media (min-width: 768px) {
         display: block;
       }
-
-      :global(.o-select__trigger) {
-        font-weight: var(--weight-semibold);
-      }
-    }
-
-    &__mobile-lang-selector {
-      margin-top: var(--space-4);
     }
 
     &__add-location {
