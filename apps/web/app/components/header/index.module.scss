@@ -232,6 +232,39 @@
       }
     }
 
+    // Primary CTA at the top of the mobile menu. The desktop
+    // `__add-location` button is display:none below 768px, so this is
+    // the only way to reach `/stores/new` on a phone. Mirrors the
+    // desktop primary-fill button; sits on `--color-surface-page`, so
+    // it needs the same white inner focus ring override as the other
+    // primary-fill buttons (see tokens.css).
+    &__mobile-add-location {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      --focus-ring-color: var(--color-surface-page);
+      background-color: var(--color-primary);
+      color: var(--color-primary-ink);
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      min-height: var(--target-min);
+      font-size: var(--text-base);
+      font-weight: var(--weight-bold);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color var(--duration-fast)
+        var(--ease-standard);
+
+      &:hover {
+        background-color: var(--color-primary-hover);
+      }
+
+      &:active {
+        background-color: var(--color-primary-active);
+      }
+    }
+
     &__actions {
       display: flex;
       align-items: center;

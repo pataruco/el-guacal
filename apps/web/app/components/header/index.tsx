@@ -209,6 +209,13 @@ const Header = () => {
             </button>
           </div>
           <nav className={styles['c-header__mobile-nav']}>
+            <Link
+              to={`/${currentLocale}/stores/new`}
+              onClick={toggleMenu}
+              className={styles['c-header__mobile-add-location']}
+            >
+              {t('nav.addLocation')}
+            </Link>
             {isAuthenticated && (
               <Link
                 to={`/${currentLocale}/my-store-proposals`}
