@@ -11,17 +11,20 @@ export type TRACKING_CONSENT =
 
 type DataLayerWindow = Window & {
   dataLayer?: Array<Record<string, unknown> | IArguments>;
+  gtag?: (...args: unknown[]) => void;
 };
 
 export const updateConsent = (consent: TRACKING_CONSENT) => {
   if (typeof window === 'undefined') return;
   const w = window as DataLayerWindow;
   w.dataLayer = w.dataLayer || [];
-  w.dataLayer.push({
+  // Must go through the Consent Mode API (gtag defined by the GTM bootstrap in
+  // GoogleTagHead). A plain dataLayer push is ignored by Google's consent state
+  // machine, so the grant would never reach GA4.
+  w.gtag?.('consent', 'update', {
     ad_personalization: consent,
     ad_storage: consent,
     ad_user_data: consent,
     analytics_storage: consent,
-    event: 'consent_update',
   });
 };
