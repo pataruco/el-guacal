@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.0](https://github.com/pataruco/el-guacal/compare/web-v1.16.0...web-v1.17.0) (2026-06-09)
+
+
+### Features
+
+* add tracking events ([c5c9d50](https://github.com/pataruco/el-guacal/commit/c5c9d50ae417cc976e965a1aa21bd6f14e751b6a))
+* add tracking events ([#159](https://github.com/pataruco/el-guacal/issues/159)) ([fb90d7e](https://github.com/pataruco/el-guacal/commit/fb90d7e4b4f8f57641b281db2a1bbcece128d2cf))
+
 ## [1.16.0](https://github.com/pataruco/el-guacal/compare/web-v1.15.1...web-v1.16.0) (2026-06-07)
 
 
