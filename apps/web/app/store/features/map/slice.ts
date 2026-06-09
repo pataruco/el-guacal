@@ -1,4 +1,5 @@
 import { createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import { track } from '../../../utils/analytics';
 import { createAppSlice } from '../../createAppSlice';
 
 const LONDON = { lat: 51.51044, lng: -0.11564 };
@@ -27,23 +28,35 @@ const initialState: MapSliceState = {
 export const getUserLocation = createAsyncThunk(
   'map/getUserLocation',
   async () => {
-    const position = await new Promise<GeolocationPosition>(
-      (resolve, reject) => {
-        if (!navigator.geolocation) {
-          reject(new Error('Geolocation is not supported by this browser'));
-          return;
-        }
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-        });
-      },
-    );
+    try {
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error('Geolocation is not supported by this browser'));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+          });
+        },
+      );
 
-    return {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude,
-    };
+      track('locate_me_result', { outcome: 'granted' });
+      return {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+    } catch (error) {
+      // Map GeolocationPositionError codes (1=denied, 2=unavailable, 3=timeout)
+      // to a single dimension so reports can split "users blocked us" from
+      // "device couldn't fix a location" without parsing error strings.
+      const code = (error as GeolocationPositionError | undefined)?.code;
+      const outcome =
+        code === 1 ? 'denied' : code === 3 ? 'timeout' : 'unavailable';
+      track('locate_me_result', { outcome });
+      throw error;
+    }
   },
 );
 

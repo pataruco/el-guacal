@@ -15,6 +15,7 @@ import {
   setShowStore,
   setStoreId,
 } from '@/store/features/stores/slice';
+import { searchResultOpened } from '@/store/features/tracking/thunks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import styles from './index.module.scss';
 
@@ -32,6 +33,7 @@ const Marker: React.FC<MarkerProps> = ({ id, name, position }) => {
   const handleOnClick = (_event: google.maps.MapMouseEvent) => {
     dispatch(setStoreId(id));
     dispatch(setShowStore(true));
+    dispatch(searchResultOpened({ storeId: id, surface: 'map' }));
   };
 
   return (

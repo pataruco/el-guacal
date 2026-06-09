@@ -8,7 +8,12 @@ import { useGetStoreByIdQuery } from '@/graphql/queries/get-store-by-id/index.ge
 import i18n from '@/i18n/config';
 import { resolveMetaLocale } from '@/i18n/locale';
 import { selectAuth } from '@/store/features/auth/slice';
-import { useAppSelector } from '@/store/hooks';
+import {
+  editFailed,
+  editStarted,
+  editSubmitted,
+} from '@/store/features/tracking/thunks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getSeoMeta } from '@/utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
@@ -27,6 +32,7 @@ const EditStorePage = () => {
   const { id, locale } = useParams<{ id: string; locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const clientNonce = useMemo(() => crypto.randomUUID(), []);
 
@@ -41,6 +47,14 @@ const EditStorePage = () => {
       navigate(`/${locale}/auth`);
     }
   }, [isAuthenticated, navigate, locale]);
+
+  // Fire once when an authenticated user lands on a real store's edit form.
+  // Gating on storeId means we don't double-count during the loading state.
+  useEffect(() => {
+    if (isAuthenticated && data?.getStoreById?.storeId) {
+      dispatch(editStarted(data.getStoreById.storeId));
+    }
+  }, [dispatch, isAuthenticated, data?.getStoreById?.storeId]);
 
   if (isLoading)
     return (
@@ -86,8 +100,27 @@ const EditStorePage = () => {
           targetStoreId: id as string,
         },
       }).unwrap();
+      // Diff against the original so we can answer "are edits typically
+      // metadata corrections or product-list updates?" — same product set is
+      // the closest signal we have today to "still stocking these" until a
+      // dedicated confirm flow lands.
+      const originalProductIds = new Set(initialValues.productIds);
+      const submittedProductIds = new Set(values.productIds);
+      const productsChanged =
+        originalProductIds.size !== submittedProductIds.size ||
+        [...originalProductIds].some((pid) => !submittedProductIds.has(pid));
+      dispatch(
+        editSubmitted({
+          addressChanged: values.address !== initialValues.address,
+          nameChanged: values.name !== initialValues.name,
+          productCount: values.productIds.length,
+          productsChanged,
+          storeId: id as string,
+        }),
+      );
       setSubmissionStatus('submitted');
     } catch (error) {
+      dispatch(editFailed({ error, storeId: id as string }));
       console.error('Failed to submit proposal:', error);
     }
   };

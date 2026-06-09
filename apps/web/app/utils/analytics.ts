@@ -28,3 +28,13 @@ export const updateConsent = (consent: TRACKING_CONSENT) => {
     analytics_storage: consent,
   });
 };
+
+// Fires a GA4 event via the dataLayer. GTM picks up `event` and the params
+// become dataLayer variables. Consent Mode is honoured automatically by GTM:
+// tags wired to these events only fire when analytics_storage is granted.
+export const track = (event: string, params?: Record<string, unknown>) => {
+  if (typeof window === 'undefined') return;
+  const w = window as DataLayerWindow;
+  w.dataLayer = w.dataLayer || [];
+  w.dataLayer.push({ event, ...params });
+};

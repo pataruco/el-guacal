@@ -4,6 +4,8 @@ import JsonLd from '../components/json-ld';
 import Page from '../components/page';
 import i18n from '../i18n/config';
 import { resolveMetaLocale } from '../i18n/locale';
+import { datasetDownloadClicked } from '../store/features/tracking/thunks';
+import { useAppDispatch } from '../store/hooks';
 import { getSeoMeta } from '../utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
@@ -19,6 +21,7 @@ export const meta: MetaFunction = ({ params }) => {
 
 export default function DatasetPage() {
   const { locale } = useParams<{ locale: string }>();
+  const dispatch = useAppDispatch();
   const { contentLocale, i18nLng } = resolveMetaLocale(locale);
   const today = new Date().toISOString().split('T')[0];
   const downloadUrl = `https://github.com/pataruco/el-guacal/releases/download/${encodeURI(`data-export@${today}`)}/el-guacal-db-${today}.zip`;
@@ -46,7 +49,12 @@ export default function DatasetPage() {
       <p className="c-page__text">{i18n.t('pages.dataset.description')}</p>
 
       <section className="c-page__section">
-        <a className="c-page__btn" href={downloadUrl} download>
+        <a
+          className="c-page__btn"
+          href={downloadUrl}
+          download
+          onClick={() => dispatch(datasetDownloadClicked(today))}
+        >
           {i18n.t('pages.dataset.download')} ({today}) — ZIP
           <svg
             className="c-page__btn-icon"

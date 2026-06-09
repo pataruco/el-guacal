@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { getUserLocation, selectMap } from '@/store/features/map/slice';
+import { locateMeClicked } from '@/store/features/tracking/thunks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import styles from './index.module.scss';
 
@@ -9,6 +10,7 @@ const LocateMeButton = () => {
   const { userLocationStatus } = useAppSelector(selectMap);
 
   const handleLocateMe = () => {
+    dispatch(locateMeClicked());
     dispatch(getUserLocation());
   };
 
