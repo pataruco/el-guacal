@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TRACKING_CONSENT, updateConsent } from '../analytics';
+import { TRACKING_CONSENT, track, updateConsent } from '../analytics';
 
 type GtagWindow = Window & {
   dataLayer?: unknown[];
@@ -47,5 +47,46 @@ describe('updateConsent', () => {
     (window as GtagWindow).gtag = undefined;
 
     expect(() => updateConsent(TRACKING_CONSENT.GRANTED)).not.toThrow();
+  });
+});
+
+describe('track', () => {
+  beforeEach(() => {
+    (window as GtagWindow).dataLayer = [];
+  });
+
+  it('pushes the event name to the dataLayer', () => {
+    track('locate_me_clicked');
+
+    expect((window as GtagWindow).dataLayer).toEqual([
+      { event: 'locate_me_clicked' },
+    ]);
+  });
+
+  it('merges parameters into the dataLayer entry', () => {
+    track('search_result_opened', {
+      has_active_search: true,
+      product_count: 2,
+      store_id: 'abc-123',
+    });
+
+    expect((window as GtagWindow).dataLayer).toEqual([
+      {
+        event: 'search_result_opened',
+        has_active_search: true,
+        product_count: 2,
+        store_id: 'abc-123',
+      },
+    ]);
+  });
+
+  it('initialises dataLayer when missing', () => {
+    (window as GtagWindow).dataLayer = undefined;
+
+    track('contribute_started');
+
+    expect((window as GtagWindow).dataLayer).toEqual([
+      { event: 'contribute_started' },
+    ]);
   });
 });

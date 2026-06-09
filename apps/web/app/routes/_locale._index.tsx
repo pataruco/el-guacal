@@ -13,6 +13,7 @@ import i18n from '../i18n/config';
 import { resolveMetaLocale } from '../i18n/locale';
 import { selectMap, setSelectedProductIds } from '../store/features/map/slice';
 import { selectStoreState } from '../store/features/stores/slice';
+import { productFilterApplied } from '../store/features/tracking/thunks';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { getSeoMeta } from '../utils/seo';
 import styles from './index.module.scss';
@@ -65,8 +66,12 @@ export default function Home() {
     }
     if (next.toString() !== searchParams.toString()) {
       setSearchParams(next, { replace: true });
+      // Fires when the filter stabilises (URL sync runs once per change),
+      // not on every checkbox tick — so "I want harina AND queso" is one
+      // event, not two. Empty-list case is handled inside the thunk.
+      dispatch(productFilterApplied(selectedProductIds));
     }
-  }, [selectedProductIds, searchParams, setSearchParams]);
+  }, [dispatch, selectedProductIds, searchParams, setSearchParams]);
 
   const { contentLocale, i18nLng } = resolveMetaLocale(locale);
   const jsonLd: WithContext<WebSite> = {

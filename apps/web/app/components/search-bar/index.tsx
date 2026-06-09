@@ -6,6 +6,7 @@ import {
   useLazyGetGeocodeQuery,
 } from '@/store/features/google-maps/api';
 import { setCenter, setZoom } from '@/store/features/map/slice';
+import { searchLocationSelected } from '@/store/features/tracking/thunks';
 import { useAppDispatch } from '@/store/hooks';
 import styles from './index.module.scss';
 
@@ -45,6 +46,7 @@ const SearchBar = () => {
     if (location) {
       dispatch(setCenter(location));
       dispatch(setZoom(15));
+      dispatch(searchLocationSelected(placeId));
     }
   };
 

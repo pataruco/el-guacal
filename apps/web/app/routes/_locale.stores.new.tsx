@@ -7,7 +7,12 @@ import { useSubmitCreateStoreProposalMutation } from '@/graphql/mutations/submit
 import i18n from '@/i18n/config';
 import { resolveMetaLocale } from '@/i18n/locale';
 import { selectAuth } from '@/store/features/auth/slice';
-import { useAppSelector } from '@/store/hooks';
+import {
+  contributeFailed,
+  contributeStarted,
+  contributeSubmitted,
+} from '@/store/features/tracking/thunks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getSeoMeta } from '@/utils/seo';
 
 export const meta: MetaFunction = ({ params }) => {
@@ -25,6 +30,7 @@ const NewStorePage = () => {
   const { locale } = useParams<{ locale: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector(selectAuth);
   const [submitProposal] = useSubmitCreateStoreProposalMutation();
   const [submissionStatus, setSubmissionStatus] = useState<
@@ -36,6 +42,14 @@ const NewStorePage = () => {
       navigate(`/${locale}/auth`);
     }
   }, [isAuthenticated, navigate, locale]);
+
+  // Fire once when an authenticated user actually sees the form, not on every
+  // re-render or the brief unauthenticated frame before the redirect kicks in.
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(contributeStarted());
+    }
+  }, [dispatch, isAuthenticated]);
 
   const handleSubmit = async (values: {
     address: string;
@@ -56,8 +70,10 @@ const NewStorePage = () => {
           productIds: values.productIds,
         },
       }).unwrap();
+      dispatch(contributeSubmitted(values.productIds.length));
       setSubmissionStatus('submitted');
     } catch (error) {
+      dispatch(contributeFailed(error));
       console.error('Failed to submit proposal:', error);
     }
   };

@@ -7,6 +7,10 @@ import type { Language } from '@/i18n/config';
 import { formatDate } from '@/i18n/date';
 import { selectAuth } from '@/store/features/auth/slice';
 import { selectStoreState, setShowStore } from '@/store/features/stores/slice';
+import {
+  deleteProposed,
+  directionsClicked,
+} from '@/store/features/tracking/thunks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import DeleteConfirmationDialog from '../delete-store-dialogue';
 import styles from './index.module.scss';
@@ -75,6 +79,7 @@ const Store: React.FC = () => {
           targetStoreId: id,
         },
       }).unwrap();
+      dispatch(deleteProposed({ reasonLength: reason.length, storeId: id }));
       setIsDeleteDialogOpen(false);
       handleOnClose();
     } catch (error) {
@@ -110,6 +115,7 @@ const Store: React.FC = () => {
           rel="noopener noreferrer"
           className={styles['c-store__directions']}
           aria-label={`${t('store.directions')} (${t('store.opensInNewTab')})`}
+          onClick={() => dispatch(directionsClicked(id))}
         >
           {t('store.directions')}
           <span aria-hidden="true"> ↗</span>
