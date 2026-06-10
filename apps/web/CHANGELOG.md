@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.1](https://github.com/pataruco/el-guacal/compare/web-v1.17.0...web-v1.17.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* auth page ([1ad6f12](https://github.com/pataruco/el-guacal/commit/1ad6f12e61780a4e96ba59b36992feb694fc0be0))
+* auth page ([#161](https://github.com/pataruco/el-guacal/issues/161)) ([b7c39f1](https://github.com/pataruco/el-guacal/commit/b7c39f17f8654310e3a27e69bca32bd6a9da3634))
+
 ## [1.17.0](https://github.com/pataruco/el-guacal/compare/web-v1.16.0...web-v1.17.0) (2026-06-09)
 
 
