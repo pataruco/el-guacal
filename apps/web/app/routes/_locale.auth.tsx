@@ -14,11 +14,12 @@
 //      returns [] for every email; we default to register and let
 //      `auth/email-already-in-use` from createUser route us back to
 //      the password step as a graceful fallback.
-//   2. `<main id="main-content">` wraps the page so the root-level
-//      skip link in `root.tsx` resolves to a real target. This
-//      fixes three pre-existing AAA audit findings at once:
-//      bypass-repeated-content, landmark-main, and the region
-//      check on the content div.
+//   2. Wrapped in <Page>, which provides `<main id="main-content">`
+//      (skip-link target + landmark-main + region for the three AAA
+//      audit findings) PLUS the shared Header and Footer. Auth used
+//      to render its own bare <main> and skip the chrome — that left
+//      mobile users stranded when sign-in failed because there was
+//      no nav back out. Now header/footer are present on every step.
 //   3. Email is shown as small "you entered: …  use different email"
 //      text above the password/register steps, with a back-link to
 //      reset to the email step.
@@ -36,6 +37,7 @@ import {
 import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type MetaFunction, useNavigate, useParams } from 'react-router';
+import Page from '@/components/page';
 import i18n from '@/i18n/config';
 import { resolveMetaLocale } from '@/i18n/locale';
 import { selectAuth } from '@/store/features/auth/slice';
@@ -164,60 +166,120 @@ const AuthPage = () => {
   })();
 
   return (
-    <main id="main-content" className={styles['c-auth']}>
-      {/* Right-side brand hero — logo + "El Guacal" wordmark on
+    <Page>
+      <div className={styles['c-auth']}>
+        {/* Right-side brand hero — logo + "El Guacal" wordmark on
           a blue surface. Replaces the prior gradient placeholder.
           Sits visually beside the form on desktop; hidden on
           mobile (same breakpoint as the existing pseudo-element
           behaviour). */}
-      <aside className={styles['c-auth__hero']} aria-hidden="true">
-        <svg
-          className={styles['c-auth__hero-icon']}
-          viewBox="0 0 82 77"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <title>{t('auth.createAccountTitle')}</title>
-          <path
-            d="M38.5165 10.0101L16.8085 20.1923L7.25441 15.6471L38.5165 0.61869C40.2369 -0.206229 42.3489 -0.206229 44.0693 0.61869L74.2545 16.0509L64.2227 21L44.0693 10.0101C42.3489 9.18516 40.2369 9.18516 38.5165 10.0101Z"
-            fill="currentColor"
-          />
-          <path
-            d="M38.0942 36.4292L0 18V27.9175L38.0942 46.3467C39.8948 47.2178 42.1054 47.2178 43.9061 46.3467L82 27.9175V18L43.9061 36.4292C42.1054 37.3003 39.8948 37.3003 38.0942 36.4292Z"
-            fill="currentColor"
-          />
-          <path
-            d="M38.0942 51.4292L0 33V42.9175L38.0942 61.3467C39.8948 62.2178 42.1054 62.2178 43.9061 61.3467L82 42.9175V33L43.9061 51.4292C42.1054 52.3003 39.8948 52.3003 38.0942 51.4292Z"
-            fill="currentColor"
-          />
-          <path
-            d="M38.0942 66.4292L0 48V57.9175L38.0942 76.3467C39.8948 77.2178 42.1054 77.2178 43.9061 76.3467L82 57.9175V48L43.9061 66.4292C42.1054 67.3003 39.8948 67.3003 38.0942 66.4292Z"
-            fill="currentColor"
-          />
-        </svg>
-        <p className={styles['c-auth__hero-title']}>El Guacal</p>
-      </aside>
+        <aside className={styles['c-auth__hero']} aria-hidden="true">
+          <svg
+            className={styles['c-auth__hero-icon']}
+            viewBox="0 0 82 77"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <title>{t('auth.createAccountTitle')}</title>
+            <path
+              d="M38.5165 10.0101L16.8085 20.1923L7.25441 15.6471L38.5165 0.61869C40.2369 -0.206229 42.3489 -0.206229 44.0693 0.61869L74.2545 16.0509L64.2227 21L44.0693 10.0101C42.3489 9.18516 40.2369 9.18516 38.5165 10.0101Z"
+              fill="currentColor"
+            />
+            <path
+              d="M38.0942 36.4292L0 18V27.9175L38.0942 46.3467C39.8948 47.2178 42.1054 47.2178 43.9061 46.3467L82 27.9175V18L43.9061 36.4292C42.1054 37.3003 39.8948 37.3003 38.0942 36.4292Z"
+              fill="currentColor"
+            />
+            <path
+              d="M38.0942 51.4292L0 33V42.9175L38.0942 61.3467C39.8948 62.2178 42.1054 62.2178 43.9061 61.3467L82 42.9175V33L43.9061 51.4292C42.1054 52.3003 39.8948 52.3003 38.0942 51.4292Z"
+              fill="currentColor"
+            />
+            <path
+              d="M38.0942 66.4292L0 48V57.9175L38.0942 76.3467C39.8948 77.2178 42.1054 77.2178 43.9061 76.3467L82 57.9175V48L43.9061 66.4292C42.1054 67.3003 39.8948 67.3003 38.0942 66.4292Z"
+              fill="currentColor"
+            />
+          </svg>
+          <p className={styles['c-auth__hero-title']}>El Guacal</p>
+        </aside>
 
-      <h1 className={styles['c-auth__title']}>{title}</h1>
+        <h1 className={styles['c-auth__title']}>{title}</h1>
 
-      {step === 'email' && (
-        <>
+        {step === 'email' && (
+          <>
+            <form
+              onSubmit={handleEmailContinue}
+              className={styles['c-auth__form']}
+            >
+              <label className={styles['c-auth__label']} htmlFor="email">
+                {t('auth.email')}
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                autoComplete="email"
+                className={styles['c-auth__input']}
+                value={email}
+                placeholder={t('auth.emailPlaceholder')}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className={styles['c-auth__submit-btn']}
+              >
+                {t('auth.continue')}
+              </button>
+            </form>
+
+            <div className={styles['c-auth__divider']}>
+              <span>{t('auth.or')}</span>
+            </div>
+
+            <button
+              type="button"
+              disabled={loading}
+              className={styles['c-auth__provider-btn']}
+              onClick={handleGoogleSignIn}
+            >
+              {t('auth.signInWithGoogle')}
+            </button>
+          </>
+        )}
+
+        {(step === 'password' ||
+          step === 'register' ||
+          step === 'google-only') && (
+          <p className={styles['c-auth__email-display']}>
+            {email}
+            <button
+              type="button"
+              className={styles['c-auth__back-btn']}
+              onClick={handleChangeEmail}
+            >
+              {t('auth.useDifferentEmail')}
+            </button>
+          </p>
+        )}
+
+        {step === 'password' && (
           <form
-            onSubmit={handleEmailContinue}
+            onSubmit={handlePasswordSubmit}
             className={styles['c-auth__form']}
           >
-            <label className={styles['c-auth__label']} htmlFor="email">
-              {t('auth.email')}
+            <label className={styles['c-auth__label']} htmlFor="password">
+              {t('auth.password')}
             </label>
             <input
-              id="email"
-              type="email"
+              id="password"
+              type="password"
               required
-              autoComplete="email"
+              minLength={6}
+              autoComplete="current-password"
               className={styles['c-auth__input']}
-              value={email}
-              placeholder={t('auth.emailPlaceholder')}
-              onChange={(e) => setEmail(e.target.value)}
+              value={password}
+              placeholder={t('auth.passwordPlaceholder')}
+              onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
             />
             <button
@@ -225,122 +287,64 @@ const AuthPage = () => {
               disabled={loading}
               className={styles['c-auth__submit-btn']}
             >
-              {t('auth.continue')}
+              {t('auth.login')}
             </button>
           </form>
+        )}
 
-          <div className={styles['c-auth__divider']}>
-            <span>{t('auth.or')}</span>
-          </div>
-
-          <button
-            type="button"
-            disabled={loading}
-            className={styles['c-auth__provider-btn']}
-            onClick={handleGoogleSignIn}
+        {step === 'register' && (
+          <form
+            onSubmit={handleRegisterSubmit}
+            className={styles['c-auth__form']}
           >
-            {t('auth.signInWithGoogle')}
-          </button>
-        </>
-      )}
+            <label className={styles['c-auth__label']} htmlFor="password">
+              {t('auth.password')}
+            </label>
+            <input
+              id="password"
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              className={styles['c-auth__input']}
+              value={password}
+              placeholder={t('auth.passwordPlaceholder')}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className={styles['c-auth__submit-btn']}
+            >
+              {t('auth.signUp')}
+            </button>
+          </form>
+        )}
 
-      {(step === 'password' ||
-        step === 'register' ||
-        step === 'google-only') && (
-        <p className={styles['c-auth__email-display']}>
-          {email}
-          <button
-            type="button"
-            className={styles['c-auth__back-btn']}
-            onClick={handleChangeEmail}
-          >
-            {t('auth.useDifferentEmail')}
-          </button>
-        </p>
-      )}
+        {step === 'google-only' && (
+          <>
+            <p className={styles['c-auth__info']}>
+              {t('auth.emailExistsWithGoogle')}
+            </p>
+            <button
+              type="button"
+              disabled={loading}
+              className={styles['c-auth__provider-btn']}
+              onClick={handleGoogleSignIn}
+            >
+              {t('auth.signInWithGoogle')}
+            </button>
+          </>
+        )}
 
-      {step === 'password' && (
-        <form
-          onSubmit={handlePasswordSubmit}
-          className={styles['c-auth__form']}
-        >
-          <label className={styles['c-auth__label']} htmlFor="password">
-            {t('auth.password')}
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="current-password"
-            className={styles['c-auth__input']}
-            value={password}
-            placeholder={t('auth.passwordPlaceholder')}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className={styles['c-auth__submit-btn']}
-          >
-            {t('auth.login')}
-          </button>
-        </form>
-      )}
-
-      {step === 'register' && (
-        <form
-          onSubmit={handleRegisterSubmit}
-          className={styles['c-auth__form']}
-        >
-          <label className={styles['c-auth__label']} htmlFor="password">
-            {t('auth.password')}
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            className={styles['c-auth__input']}
-            value={password}
-            placeholder={t('auth.passwordPlaceholder')}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className={styles['c-auth__submit-btn']}
-          >
-            {t('auth.signUp')}
-          </button>
-        </form>
-      )}
-
-      {step === 'google-only' && (
-        <>
-          <p className={styles['c-auth__info']}>
-            {t('auth.emailExistsWithGoogle')}
+        {error && (
+          <p className={styles['c-auth__error']} role="alert">
+            {error}
           </p>
-          <button
-            type="button"
-            disabled={loading}
-            className={styles['c-auth__provider-btn']}
-            onClick={handleGoogleSignIn}
-          >
-            {t('auth.signInWithGoogle')}
-          </button>
-        </>
-      )}
-
-      {error && (
-        <p className={styles['c-auth__error']} role="alert">
-          {error}
-        </p>
-      )}
-    </main>
+        )}
+      </div>
+    </Page>
   );
 };
 

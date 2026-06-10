@@ -80,7 +80,11 @@
       justify-content: center;
       gap: var(--space-4);
 
-      @media (max-width: 47.9375em) {
+      // Hide the hero whenever the split layout is off. Breakpoint
+      // matches the parent's switch to single-column below — see the
+      // comment on `.c-auth`'s `@media (max-width: 79.9375em)` block
+      // for why 80em and not 48em.
+      @media (max-width: 79.9375em) {
         display: none;
       }
     }
@@ -97,15 +101,16 @@
       line-height: var(--leading-tight);
     }
 
-    // Mobile: drop the split layout. Image side hides; form flows
-    // full-width as a normal centered column. Breakpoint matches
-    // the rest of the app (~768px).
-    @media (max-width: 47.9375em) {
+    // Drop the split layout below 80em (1280px). Image side hides;
+    // form flows full-width as a centered single column. Originally
+    // 48em (~768px), but at 1024–1280px viewports the 40% form
+    // column squeezes the 25rem (400px) form right up against the
+    // hero panel with 0–28px of breathing room. Bumping to 80em
+    // means the split only activates when the form column has
+    // comfortable margin on both sides; everything narrower than
+    // that falls back to the same single-column layout mobile uses.
+    @media (max-width: 79.9375em) {
       padding-right: var(--space-5);
-
-      &::after {
-        display: none;
-      }
     }
 
     // Page heading. Figma uses `header/large`: Inter SemiBold 24px
