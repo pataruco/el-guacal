@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.18.0](https://github.com/pataruco/el-guacal/compare/web-v1.17.1...web-v1.18.0) (2026-06-11)
+
+
+### Features
+
+* pins in smaller zooms ([2ae8aa5](https://github.com/pataruco/el-guacal/commit/2ae8aa5211abd4d59612a25f582e77b41fec436c))
+* pins in smaller zooms ([#163](https://github.com/pataruco/el-guacal/issues/163)) ([ea803b3](https://github.com/pataruco/el-guacal/commit/ea803b3a4c569eb872ead9fcae1ded63362c44e6))
+
 ## [1.17.1](https://github.com/pataruco/el-guacal/compare/web-v1.17.0...web-v1.17.1) (2026-06-10)
 
 
