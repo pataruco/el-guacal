@@ -67,6 +67,16 @@ type Query {
 }
 
 enum Radius {
+	ZOOM_1
+	ZOOM_2
+	ZOOM_3
+	ZOOM_4
+	ZOOM_5
+	ZOOM_6
+	ZOOM_7
+	ZOOM_8
+	ZOOM_9
+	ZOOM_10
 	ZOOM_11
 	ZOOM_12
 	ZOOM_13

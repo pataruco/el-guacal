@@ -195,15 +195,14 @@ async fn test_graphql_store_mutations() {
                 address: "New Address",
                 lat: 1.23,
                 lng: 4.56,
-                productIds: ["{}"]
+                productIds: ["{product_id}"]
             }}) {{
                 storeId
                 name
                 address
             }}
         }}
-    "#,
-        product_id
+    "#
     );
 
     let request = async_graphql::Request::new(create_mutation)
@@ -224,14 +223,13 @@ async fn test_graphql_store_mutations() {
         r#"
         mutation {{
             updateStore(input: {{
-                storeId: "{}",
+                storeId: "{store_id}",
                 name: "Updated Store"
             }}) {{
                 name
             }}
         }}
-    "#,
-        store_id
+    "#
     );
 
     let request = async_graphql::Request::new(update_mutation)
@@ -246,10 +244,9 @@ async fn test_graphql_store_mutations() {
     let delete_mutation = format!(
         r#"
         mutation {{
-            deleteStore(id: "{}")
+            deleteStore(id: "{store_id}")
         }}
-    "#,
-        store_id
+    "#
     );
 
     let request = async_graphql::Request::new(delete_mutation)
@@ -269,6 +266,9 @@ async fn test_graphql_store_mutations() {
 
 #[tokio::test]
 #[ignore = "integration tests"]
+// Integration test sequence (setup → multiple acts → asserts → teardown) reads
+// more clearly as one function than split across helpers that obscure ordering.
+#[allow(clippy::too_many_lines)]
 async fn test_graphql_stores_near_filter() {
     let config = Config::new().expect("Failed to load config");
     let pool = PgPoolOptions::new()
@@ -315,13 +315,12 @@ async fn test_graphql_stores_near_filter() {
                 address: "Filtered Address",
                 lat: 51.5,
                 lng: -0.1,
-                productIds: ["{}", "{}"]
+                productIds: ["{p1_id}", "{p2_id}"]
             }}) {{
                 storeId
             }}
         }}
-    "#,
-        p1_id, p2_id
+    "#
     );
 
     let response = schema
@@ -346,13 +345,12 @@ async fn test_graphql_stores_near_filter() {
                 address: "Filtered Address",
                 lat: 51.5,
                 lng: -0.1,
-                productIds: ["{}"]
+                productIds: ["{p1_id}"]
             }}) {{
                 storeId
             }}
         }}
-    "#,
-        p1_id
+    "#
     );
 
     let response = schema
@@ -375,14 +373,13 @@ async fn test_graphql_stores_near_filter() {
             storesNear(
                 location: {{lat: 51.5, lng: -0.1}},
                 radius: ZOOM_11,
-                productIds: ["{}", "{}"]
+                productIds: ["{p1_id}", "{p2_id}"]
             ) {{
                 storeId
                 name
             }}
         }}
-    "#,
-        p1_id, p2_id
+    "#
     );
 
     let response = schema.execute(query).await;
@@ -411,10 +408,9 @@ async fn test_graphql_stores_near_filter() {
         let delete_mutation = format!(
             r#"
             mutation {{
-                deleteStore(id: "{}")
+                deleteStore(id: "{id}")
             }}
-        "#,
-            id
+        "#
         );
         schema
             .execute(
@@ -432,6 +428,9 @@ async fn test_graphql_stores_near_filter() {
 
 #[tokio::test]
 #[ignore = "integration tests"]
+// Integration test sequence (setup → multiple acts → asserts → teardown) reads
+// more clearly as one function than split across helpers that obscure ordering.
+#[allow(clippy::too_many_lines)]
 async fn test_proposal_lifecycle() {
     let config = Config::new().expect("Failed to load config");
     let pool = PgPoolOptions::new()
@@ -480,7 +479,7 @@ async fn test_proposal_lifecycle() {
                 address: "123 Test Street",
                 lat: 51.5,
                 lng: -0.1,
-                productIds: ["{}"],
+                productIds: ["{product_id}"],
                 clientNonce: "test-nonce-lifecycle"
             }}) {{
                 proposalId
@@ -488,8 +487,7 @@ async fn test_proposal_lifecycle() {
                 status
             }}
         }}
-    "#,
-        product_id
+    "#
     );
 
     let contributor_auth = server::auth::AuthenticatedUser {
@@ -515,7 +513,7 @@ async fn test_proposal_lifecycle() {
         r#"
         mutation {{
             reviewStoreProposal(input: {{
-                proposalId: "{}",
+                proposalId: "{proposal_id}",
                 decision: APPROVE,
                 note: "Looks good"
             }}) {{
@@ -523,8 +521,7 @@ async fn test_proposal_lifecycle() {
                 targetStoreId
             }}
         }}
-    "#,
-        proposal_id
+    "#
     );
 
     let admin_auth = server::auth::AuthenticatedUser {
@@ -549,12 +546,11 @@ async fn test_proposal_lifecycle() {
     let check_query = format!(
         r#"
         query {{
-            getStoreById(id: "{}") {{
+            getStoreById(id: "{target_store_id}") {{
                 name
             }}
         }}
-    "#,
-        target_store_id
+    "#
     );
 
     let response = schema.execute(check_query).await;
@@ -563,10 +559,7 @@ async fn test_proposal_lifecycle() {
     assert_eq!(data["getStoreById"]["name"], "Test Proposal Store");
 
     // Cleanup
-    let delete_mutation = format!(
-        r#"mutation {{ deleteStore(id: "{}") }}"#,
-        target_store_id
-    );
+    let delete_mutation = format!(r#"mutation {{ deleteStore(id: "{target_store_id}") }}"#);
     schema
         .execute(
             async_graphql::Request::new(delete_mutation)
@@ -591,4 +584,74 @@ async fn test_proposal_lifecycle() {
         .execute(&pool)
         .await
         .ok();
+}
+
+#[tokio::test]
+#[ignore = "integration tests"]
+async fn test_graphql_stores_near_at_low_zoom() {
+    let config = Config::new().expect("Failed to load config");
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .connect(&config.database_url)
+        .await
+        .expect("Failed to create pool");
+
+    let allowed_origins = config
+        .cors_allowed_origins
+        .iter()
+        .map(|origin| origin.parse().expect("Invalid CORS origin"))
+        .collect();
+
+    let schema = create_schema(pool.clone(), None);
+    let app = create_router(
+        schema,
+        allowed_origins,
+        config.gcp_project_id,
+        None,
+        pool.clone(),
+    );
+
+    // ZOOM_2 produces a search radius wider than Earth's circumference, so the
+    // query must accept the new enum value end-to-end and PostGIS must return
+    // results without erroring on the very large distance.
+    let query = r"
+        query {
+            storesNear(location: {lat: 51.4622233, lng: -0.1140086}, radius: ZOOM_2) {
+                name
+                address
+                location {
+                    lat
+                    lng
+                }
+            }
+        }
+    ";
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/graphql")
+                .header("Content-Type", "application/json")
+                .body(Body::from(json!({ "query": query }).to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
+    let body: Value = serde_json::from_slice(&body).unwrap();
+
+    if let Some(errors) = body["errors"].as_array() {
+        panic!("GraphQL errors at z=2: {errors:?}");
+    }
+
+    let stores = body["data"]["storesNear"]
+        .as_array()
+        .expect("storesNear should be an array");
+    assert!(!stores.is_empty(), "Should return at least one store at z=2");
 }

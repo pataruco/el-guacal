@@ -23,7 +23,7 @@ mod tests {
         let lat = 51.5074;
         let lng = -0.1278;
         let loc = Location::new(lat, lng);
-        assert_eq!(loc.lat, lat);
-        assert_eq!(loc.lng, lng);
+        assert_eq!(loc.lat.to_bits(), lat.to_bits());
+        assert_eq!(loc.lng.to_bits(), lng.to_bits());
     }
 }
