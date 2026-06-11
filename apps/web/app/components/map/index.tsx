@@ -23,19 +23,14 @@ const MapComponent = () => {
   const dispatch = useAppDispatch();
   const { center, zoom, selectedProductIds } = useAppSelector(selectMap);
 
-  const roundedZoom = Math.round(zoom);
-  const skip = roundedZoom < 11 || roundedZoom > 22;
-  const radius = skip ? 'ZOOM_11' : (`ZOOM_${roundedZoom}` as Radius);
+  const clampedZoom = Math.min(22, Math.max(1, Math.round(zoom)));
+  const radius = `ZOOM_${clampedZoom}` as Radius;
 
-  const { data, isLoading } = useGetStoresNearQuery(
-    {
-      location: center,
-      productIds:
-        selectedProductIds.length > 0 ? selectedProductIds : undefined,
-      radius,
-    },
-    { skip },
-  );
+  const { data, isLoading } = useGetStoresNearQuery({
+    location: center,
+    productIds: selectedProductIds.length > 0 ? selectedProductIds : undefined,
+    radius,
+  });
 
   const handleOnLoad = () => {
     dispatch(getUserLocation());

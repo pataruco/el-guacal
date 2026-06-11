@@ -51,7 +51,7 @@ impl FirebaseVerifier {
 
         {
             let mut cache = self.keys_cache.write().unwrap();
-            *cache = Some((keys.clone(), Instant::now() + Duration::from_secs(3600)));
+            *cache = Some((keys.clone(), Instant::now() + Duration::from_hours(1)));
         }
 
         Ok(keys)

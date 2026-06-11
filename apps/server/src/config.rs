@@ -30,8 +30,7 @@ impl Config {
         dotenv().ok();
 
         let port = env::var("PORT")
-            .map(|p| p.parse::<u16>())
-            .unwrap_or(Ok(default_port()))?;
+            .map_or(Ok(default_port()), |p| p.parse::<u16>())?;
 
         let cors_allowed_origins = env::var("CORS_ALLOWED_ORIGINS")
             .unwrap_or_else(|_| "http://localhost:5173,https://el-guacal.web.app,https://elguacal.com,https://www.elguacal.com".to_string())

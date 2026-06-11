@@ -96,7 +96,7 @@ mod tests {
         assert_eq!(store.store_id, id);
         assert_eq!(store.name, "Test Store");
         assert_eq!(store.address, "123 Test St");
-        assert_eq!(store.location.lat, loc.lat);
-        assert_eq!(store.location.lng, loc.lng);
+        assert_eq!(store.location.lat.to_bits(), loc.lat.to_bits());
+        assert_eq!(store.location.lng.to_bits(), loc.lng.to_bits());
     }
 }
