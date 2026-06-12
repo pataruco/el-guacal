@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/pataruco/el-guacal/compare/web-v1.18.0...web-v1.19.0) (2026-06-12)
+
+
+### Features
+
+* versions ([#165](https://github.com/pataruco/el-guacal/issues/165)) ([1d2dd37](https://github.com/pataruco/el-guacal/commit/1d2dd375f4c92280452b2da9ada6c761ad6b7450))
+
 ## [1.18.0](https://github.com/pataruco/el-guacal/compare/web-v1.17.1...web-v1.18.0) (2026-06-11)
 
 
