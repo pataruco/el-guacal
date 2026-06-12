@@ -17,27 +17,31 @@ vi.mock('react-router', () => ({
 }));
 
 describe('Footer', () => {
-  it('renders the API version as a link to the server release tag', () => {
+  it.each([
+    { kind: 'API', tagPrefix: 'server-v' },
+    { kind: 'Web', tagPrefix: 'web-v' },
+  ])(
+    'renders the $kind version as a link to the $tagPrefix release tag',
+    ({ kind, tagPrefix }) => {
+      render(<Footer />);
+
+      const link = screen.getByRole('link', {
+        name: new RegExp(`^${kind} \\d+\\.\\d+\\.\\d+$`),
+      });
+
+      expect(link.getAttribute('href')).toMatch(
+        new RegExp(
+          `^https://github\\.com/pataruco/el-guacal/releases/tag/${tagPrefix}\\d+\\.\\d+\\.\\d+$`,
+        ),
+      );
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    },
+  );
+
+  it('hides the separator from screen readers', () => {
     render(<Footer />);
 
-    const apiLink = screen.getByRole('link', { name: /^API \d+\.\d+\.\d+$/ });
-
-    expect(apiLink.getAttribute('href')).toMatch(
-      /^https:\/\/github\.com\/pataruco\/el-guacal\/releases\/tag\/server-v\d+\.\d+\.\d+$/,
-    );
-    expect(apiLink.getAttribute('target')).toBe('_blank');
-    expect(apiLink.getAttribute('rel')).toBe('noopener noreferrer');
-  });
-
-  it('renders the Web version as a link to the web release tag', () => {
-    render(<Footer />);
-
-    const webLink = screen.getByRole('link', { name: /^Web \d+\.\d+\.\d+$/ });
-
-    expect(webLink.getAttribute('href')).toMatch(
-      /^https:\/\/github\.com\/pataruco\/el-guacal\/releases\/tag\/web-v\d+\.\d+\.\d+$/,
-    );
-    expect(webLink.getAttribute('target')).toBe('_blank');
-    expect(webLink.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(screen.getByText('|').getAttribute('aria-hidden')).toBe('true');
   });
 });
