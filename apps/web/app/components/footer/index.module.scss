@@ -22,15 +22,32 @@
     // Full-width content row — same change we made to the header
     // (no max-width cap). Privacy link sits flush-left with the
     // page gutter, matching the header logo column.
+    //
+    // flex-wrap lets the versions block flow below the nav on
+    // narrow viewports instead of overflowing the container.
     &__container {
       width: 100%;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      column-gap: var(--space-4);
+      row-gap: var(--space-2);
     }
 
     ul {
       display: flex;
       column-gap: var(--space-4);
+    }
+
+    // Right-anchored version display. `margin-left: auto` pushes
+    // it to the right edge on wide screens; on narrow screens the
+    // container wraps it to a new line.
+    &__versions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      column-gap: var(--space-2);
+      color: var(--color-ink-muted);
     }
 
     a {
