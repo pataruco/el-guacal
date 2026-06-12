@@ -7,16 +7,16 @@ import { readApiVersion, readWebVersion } from './versions';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  define: {
+    __API_VERSION__: JSON.stringify(readApiVersion()),
+    __WEB_VERSION__: JSON.stringify(readWebVersion()),
+  },
   // @ts-expect-error
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '..', 'app'),
     },
-  },
-  define: {
-    __WEB_VERSION__: JSON.stringify(readWebVersion()),
-    __API_VERSION__: JSON.stringify(readApiVersion()),
   },
   test: {
     environment: 'jsdom',

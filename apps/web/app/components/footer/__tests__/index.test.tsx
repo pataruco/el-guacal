@@ -20,24 +20,24 @@ describe('Footer', () => {
   it.each([
     { kind: 'API', tagPrefix: 'server-v' },
     { kind: 'Web', tagPrefix: 'web-v' },
-  ])(
-    'renders the $kind version as a link to the $tagPrefix release tag',
-    ({ kind, tagPrefix }) => {
-      render(<Footer />);
+  ])('renders the $kind version as a link to the $tagPrefix release tag', ({
+    kind,
+    tagPrefix,
+  }) => {
+    render(<Footer />);
 
-      const link = screen.getByRole('link', {
-        name: new RegExp(`^${kind} \\d+\\.\\d+\\.\\d+$`),
-      });
+    const link = screen.getByRole('link', {
+      name: new RegExp(`^${kind} \\d+\\.\\d+\\.\\d+$`),
+    });
 
-      expect(link.getAttribute('href')).toMatch(
-        new RegExp(
-          `^https://github\\.com/pataruco/el-guacal/releases/tag/${tagPrefix}\\d+\\.\\d+\\.\\d+$`,
-        ),
-      );
-      expect(link.getAttribute('target')).toBe('_blank');
-      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
-    },
-  );
+    expect(link.getAttribute('href')).toMatch(
+      new RegExp(
+        `^https://github\\.com/pataruco/el-guacal/releases/tag/${tagPrefix}\\d+\\.\\d+\\.\\d+$`,
+      ),
+    );
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+  });
 
   it('hides the separator from screen readers', () => {
     render(<Footer />);

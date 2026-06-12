@@ -5,15 +5,15 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { readApiVersion, readWebVersion } from './config/versions';
 
 export default defineConfig({
+  define: {
+    __API_VERSION__: JSON.stringify(readApiVersion()),
+    __WEB_VERSION__: JSON.stringify(readWebVersion()),
+  },
   plugins: [reactRouter(), tsconfigPaths()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'app'),
     },
-  },
-  define: {
-    __WEB_VERSION__: JSON.stringify(readWebVersion()),
-    __API_VERSION__: JSON.stringify(readApiVersion()),
   },
   server: {
     proxy: {
