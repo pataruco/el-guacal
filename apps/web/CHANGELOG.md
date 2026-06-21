@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.1](https://github.com/pataruco/el-guacal/compare/web-v1.19.0...web-v1.19.1) (2026-06-21)
+
+
+### Bug Fixes
+
+* ga race condition ([b091c14](https://github.com/pataruco/el-guacal/commit/b091c14616853c45c90dab04c8bccedfe44c1c00))
+* ga race condition ([#167](https://github.com/pataruco/el-guacal/issues/167)) ([51ee820](https://github.com/pataruco/el-guacal/commit/51ee820bdfc70409ddbdcce5d3afa1b06eea1886))
+
 ## [1.19.0](https://github.com/pataruco/el-guacal/compare/web-v1.18.0...web-v1.19.0) (2026-06-12)
 
 
