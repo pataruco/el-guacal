@@ -90,6 +90,23 @@ Verified live: a session with `localStorage.tracking_consent = "granted"` loads
 with no banner and no click, and the `page_view`/`scroll` hits are `gcs=G111`,
 `npa=0`, with `_ga` set and `ics` entries showing `update: true`.
 
+### Follow-up: the consent-restore race (fixed 2026-06-21)
+
+The first fix (above) re-applied consent in a React effect, which runs only
+after hydration. The consent default has `wait_for_update: 500`, so on a slow
+load the Google tag would send the first `page_view` as **denied** before the
+effect ran — intermittently undercounting returning visitors' landing hit
+(`gcs=G100` on `page_view`, then `gcs=G111` on later events in the same
+session).
+
+Fix (code): re-apply stored consent **synchronously in the inline `<head>`
+bootstrap**, before the tag loads, instead of waiting for React.
+`apps/web/app/components/google-tag-manager/bootstrap.ts` reads
+`localStorage.tracking_consent` and issues `gtag('consent', 'update', …)`
+immediately after the consent default. The cookie-banner effect still handles
+the click path. Verified live: returning-visitor `page_view` is now `gcs=G111`
+on every reload; first-time visitors still start `gcs=G100` with the banner.
+
 ## 5. Counting hits: use Performance Resource Timing, not the network panel
 
 When checking how many `/collect` requests actually fired, count via the
